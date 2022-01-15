@@ -23,6 +23,11 @@
 #include "stm32l4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "uart.h"
+#include "ComSLIP.h"
+#include "WiMODLRHCI.h"
+#include "WiMODLoRaWAN.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,10 +66,8 @@ extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim8;
 extern UART_HandleTypeDef huart2;
-extern TIM_HandleTypeDef htim6;
-
 /* USER CODE BEGIN EV */
-
+extern TWiMODLORAWAN_ActivateDeviceData activationData;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -192,7 +195,7 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
-
+  HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
@@ -225,7 +228,12 @@ void TIM2_IRQHandler(void)
 void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
-
+//	TWiMODLRHCI.WaitForResponse(0x01, 0x01);
+	TWiMODLRHCI.Process();
+	if(EmWimodData.ReceiveFrmUserRequest) {
+		WiMODLoRaWAN.Process(&TWiMODLRHCI.Rx.Message);
+		EmWimodData.ReceiveFrmUserRequest = 0x0;
+	}
   /* USER CODE END TIM4_IRQn 0 */
   HAL_TIM_IRQHandler(&htim4);
   /* USER CODE BEGIN TIM4_IRQn 1 */
@@ -273,20 +281,6 @@ void TIM8_UP_IRQHandler(void)
   /* USER CODE BEGIN TIM8_UP_IRQn 1 */
 
   /* USER CODE END TIM8_UP_IRQn 1 */
-}
-
-/**
-  * @brief This function handles TIM6 global interrupt, DAC channel1 and channel2 underrun error interrupts.
-  */
-void TIM6_DAC_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
-
-  /* USER CODE END TIM6_DAC_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim6);
-  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
-
-  /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
