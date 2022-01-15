@@ -1,4 +1,5 @@
 PiMS62F_Nucleo/Debug/*
+
 Debug/
 
 # Prerequisites
@@ -52,4 +53,5 @@ Debug/
 modules.order
 Module.symvers
 Mkfile.old
+
 dkms.conf
