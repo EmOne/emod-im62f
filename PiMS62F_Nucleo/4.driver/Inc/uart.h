@@ -55,7 +55,7 @@ typedef struct {
 
 extern Stream  Serial;
 extern uint8_t Rx2_buffer[kMaxUARTPayloadSize];
-extern uint8_t Rx2_byte;
+extern __IO uint8_t Rx2_byte;
 /*-----------------------------------------main function-------------------------------------*/
 void UART_Init (uint32_t baudrate);
 void UART_DeInit (void);

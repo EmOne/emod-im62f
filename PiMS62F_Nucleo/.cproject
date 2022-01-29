@@ -55,6 +55,10 @@
 									<listOptionValue builtIn="false" value="&quot;C:\ST\STM32CubeIDE_1.7.0\STM32CubeIDE\project\PiMS62F_Nucleo\1.system\Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\ST\STM32CubeIDE_1.7.0\STM32CubeIDE\project\PiMS62F_Nucleo\2.module\emWIMOD\Src\SAP&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\ST\STM32CubeIDE_1.7.0\STM32CubeIDE\project\PiMS62F_Nucleo\2.module\emWIMOD\Src\utils&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/PiMS62F/2.module/emWIMOD/Src/HCI}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/PiMS62F/2.module/emWIMOD/Src/LoRaWAN}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/PiMS62F/2.module/emWIMOD/Src/SAP}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/PiMS62F/2.module/emWIMOD/Src/utils}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.189903775" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -81,12 +85,12 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="4.driver"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="3.component"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="1.system"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="2.module"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="3.component"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="4.driver"/>
+						<entry excluding="Src/system_stm32l1xx.c|Src/stm32l1xx_it.c|Src/stm32l1xx_hal_timebase_tim.c|Src/stm32l1xx_hal_msp.c|Src/spi.c|Src/rtc.c|Src/wwdg.c|Src/usart.c|Src/tim.c|Src/iwdg.c|Src/i2c.c|Src/gpio.c|Src/crc.c|Src/adc.c|Startup/startup_stm32l151ucyx.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry excluding="STM32L1xx_HAL_Driver" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -160,12 +164,12 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="4.driver"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="3.component"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="1.system"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="2.module"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="3.component"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="4.driver"/>
+						<entry excluding="Src/system_stm32l1xx.c|Src/stm32l1xx_it.c|Src/stm32l1xx_hal_timebase_tim.c|Src/stm32l1xx_hal_msp.c|Src/spi.c|Src/rtc.c|Src/wwdg.c|Src/usart.c|Src/tim.c|Src/iwdg.c|Src/i2c.c|Src/gpio.c|Src/crc.c|Src/adc.c|Startup/startup_stm32l151ucyx.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry excluding="STM32L1xx_HAL_Driver" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

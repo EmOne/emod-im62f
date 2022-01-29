@@ -25,6 +25,20 @@
 #include "WiMODLRHCI.h"
 #include "WiMODLoRaWAN.h"
 #include "uart.h"
+#if STM32L1
+#include "adc.h"
+#include "crc.h"
+#include "i2c.h"
+#include "iwdg.h"
+#include "rtc.h"
+#include "spi.h"
+#include "tim.h"
+#include "usart.h"
+#include "usb_device.h"
+#include "wwdg.h"
+#include "gpio.h"
+#else
+#endif
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -68,7 +82,7 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t Rx2_byte = 0x00;
+__IO uint8_t Rx2_byte = 0x00;
 
 const char NWKSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
 const char APPSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
@@ -105,14 +119,29 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+#ifdef STM32L1
+#else
   MX_GPIO_Init();
+//  MX_SPI1_Init();
   MX_SPI2_Init();
   MX_TIM2_Init();
   MX_TIM4_Init();
   MX_TIM8_Init();
   MX_USART2_UART_Init();
+//  MX_CRC_Init();
+//  MX_I2C1_Init();
+//  MX_RTC_Init();
+//  MX_SPI2_Init();
+//  MX_USART1_UART_Init();
+//  MX_ADC_Init();
+//  MX_IWDG_Init();
+//  MX_SPI3_Init();
+//  MX_TIM3_Init();
+//  MX_WWDG_Init();
+//  MX_USB_DEVICE_Init();
+#endif
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart2, &Rx2_byte, 1);
+  HAL_UART_Receive_IT(&huart2, (uint8_t*) &Rx2_byte, 1);
 
   TWiMODLRHCI.begin();
   WiMODLoRaWAN.beginAndAutoSetup();
@@ -148,6 +177,7 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Configure the main internal regulator output voltage
   */
@@ -158,7 +188,7 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -184,6 +214,12 @@ void SystemClock_Config(void)
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK)
   {
     Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+	  Error_Handler();
   }
 }
 
@@ -406,9 +442,9 @@ static void MX_USART2_UART_Init(void)
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_8;
   huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT|UART_ADVFEATURE_DMADISABLEONERROR_INIT;
-  huart2.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
-  huart2.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
+//  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT|UART_ADVFEATURE_DMADISABLEONERROR_INIT;
+//  huart2.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
+//  huart2.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
   if (HAL_UART_Init(&huart2) != HAL_OK)
   {
     Error_Handler();

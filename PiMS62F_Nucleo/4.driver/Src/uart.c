@@ -9,7 +9,7 @@
 
 /*------------------------------------extern variable--------------------------------*/
 extern UART_HandleTypeDef huart2;
-extern uint8_t Rx2_byte;
+extern __IO uint8_t Rx2_byte;
 /*-------------------------------------main variable---------------------------------*/
 uint8_t Rx2_buffer[kMaxUARTPayloadSize];
 Ci EmWimodData;
@@ -91,10 +91,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
     if(huart == &huart2) {
+//    	__disable_irq();
         Rx2_buffer[EmWimodData.CmdFrmUserCount] = Rx2_byte;
+//        __enable_irq();
         EmWimodData.CmdFrmUserCount++;
         Rx2_byte = 0x00;
-        HAL_UART_Receive_IT(huart, &Rx2_byte, 1);
+        HAL_UART_Receive_IT(huart, (uint8_t * ) &Rx2_byte, 1);
     }
 }
 
@@ -113,7 +115,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 
         Rx2_byte = 0x00;
 
-        HAL_UART_Receive_IT(huart, &Rx2_byte, 1);
+        HAL_UART_Receive_IT(huart, (uint8_t *) &Rx2_byte, 1);
     }
 
 }
