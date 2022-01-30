@@ -8,7 +8,7 @@
 #include "uart.h"
 
 /*------------------------------------extern variable--------------------------------*/
-extern UART_HandleTypeDef huart2;
+static UART_HandleTypeDef* uartHandler;
 extern __IO uint8_t Rx2_byte;
 /*-------------------------------------main variable---------------------------------*/
 uint8_t Rx2_buffer[kMaxUARTPayloadSize];
@@ -24,9 +24,9 @@ Stream  Serial =
 };
 
 /*-------------------------------------main function---------------------------------*/
-void UART_Init (uint32_t baudrate)
+void UART_Init (void * handler, uint32_t baudrate)
 {
-
+	uartHandler = (UART_HandleTypeDef *) handler;
 }
 
 
@@ -47,7 +47,7 @@ int UART_Read (void)
 
 void UART_Write (uint8_t data)
 {
-	HAL_UART_Transmit(&huart2, &data, 1, 0xFF);
+	HAL_UART_Transmit(uartHandler, &data, 1, 0xFF);
 }
 
 void UART_Print (uint8_t* data)
@@ -55,7 +55,7 @@ void UART_Print (uint8_t* data)
 	uint16_t size;
 
 	size = strlen((char *) data);
-	HAL_UART_Transmit(&huart2, data, size, 0xFF);
+	HAL_UART_Transmit(uartHandler, data, size, 0xFF);
 }
 
 /* ------------------------------------------------------------------- From User ------------------------------------------------------------*/
@@ -90,7 +90,7 @@ uint8_t CmdFrmUserIsReceived(Ci * pData)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
-    if(huart == &huart2) {
+    if(huart == uartHandler) {
 //    	__disable_irq();
         Rx2_buffer[EmWimodData.CmdFrmUserCount] = Rx2_byte;
 //        __enable_irq();
@@ -103,12 +103,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 
-    if(huart == &huart2) {
+    if(huart == uartHandler) {
 
-        __USART2_FORCE_RESET();
-        __USART2_RELEASE_RESET();
+//        __USART2_FORCE_RESET();
+//        __USART2_RELEASE_RESET();
+//        UART2_ReInit();
 
-        UART2_ReInit();
         EmWimodData.ReceiveFrmUserRequest = 0x0;
         EmWimodData.CmdFrmUserCount = 0x0;
         SetValue(&Rx2_buffer[0], 0, kMaxUARTPayloadSize);
