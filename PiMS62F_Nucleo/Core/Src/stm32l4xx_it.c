@@ -27,6 +27,7 @@
 #include "ComSLIP.h"
 #include "WiMODLRHCI.h"
 #include "WiMODLoRaWAN.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -237,7 +238,6 @@ void TIM4_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim4);
   /* USER CODE BEGIN TIM4_IRQn 1 */
   HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-
   /* USER CODE END TIM4_IRQn 1 */
 }
 
