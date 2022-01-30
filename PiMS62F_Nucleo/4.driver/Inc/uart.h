@@ -44,7 +44,7 @@ extern Ci EmWimodData;
 
 typedef struct {
 
-	void (*begin)(uint32_t baudrate);
+	void (*begin)(void* handler, uint32_t baudrate);
 	void (*end)(void);
 	int (*read)(void);
 	void (*write)(uint8_t data);
@@ -55,9 +55,9 @@ typedef struct {
 
 extern Stream  Serial;
 extern uint8_t Rx2_buffer[kMaxUARTPayloadSize];
-extern uint8_t Rx2_byte;
+extern __IO uint8_t Rx2_byte;
 /*-----------------------------------------main function-------------------------------------*/
-void UART_Init (uint32_t baudrate);
+void UART_Init (void* handler, uint32_t baudrate);
 void UART_DeInit (void);
 int UART_Read (void);
 void UART_Write (uint8_t data);

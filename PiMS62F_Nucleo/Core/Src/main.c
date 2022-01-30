@@ -25,6 +25,20 @@
 #include "WiMODLRHCI.h"
 #include "WiMODLoRaWAN.h"
 #include "uart.h"
+#ifdef STM32L1
+//#include "adc.h"
+//#include "crc.h"
+//#include "i2c.h"
+//#include "iwdg.h"
+//#include "rtc.h"
+//#include "spi.h"
+//#include "tim.h"
+//#include "usart.h"
+//#include "usb_device.h"
+//#include "wwdg.h"
+//#include "gpio.h"
+#else
+#endif
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,12 +56,15 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
-
+SPI_HandleTypeDef hspi3;
 TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
+TIM_HandleTypeDef htim6;
 TIM_HandleTypeDef htim8;
-
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -68,7 +85,7 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t Rx2_byte = 0x00;
+__IO uint8_t Rx2_byte = 0x00;
 
 const char NWKSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
 const char APPSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
@@ -104,15 +121,26 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+//  MX_SPI1_Init();
   MX_SPI2_Init();
+//  MX_SPI3_Init();
   MX_TIM2_Init();
+//  MX_TIM3_Init();
   MX_TIM4_Init();
-  MX_TIM8_Init();
+//  MX_TIM8_Init();
+//  MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+//  MX_CRC_Init();
+//  MX_I2C1_Init();
+//  MX_RTC_Init();
+//  MX_ADC_Init();
+//  MX_IWDG_Init();
+//  MX_WWDG_Init();
+//  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart2, &Rx2_byte, 1);
+  HAL_UART_Receive_IT(&huart2, (uint8_t*) &Rx2_byte, 1);
 
-  TWiMODLRHCI.begin();
+  TWiMODLRHCI.begin(&huart2);
   WiMODLoRaWAN.beginAndAutoSetup();
 //  WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
   //setup data
@@ -144,26 +172,36 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
   /** Configure the main internal regulator output voltage
   */
+#ifdef STM32L1
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+#else
   if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
   {
     Error_Handler();
   }
+#endif
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+#ifdef STM32L1
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL6;
+  RCC_OscInitStruct.PLL.PLLDIV = RCC_PLL_DIV3;
+#else
   RCC_OscInitStruct.PLL.PLLM = 1;
   RCC_OscInitStruct.PLL.PLLN = 10;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
+#endif
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -177,9 +215,15 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
   {
     Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
+  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+	  Error_Handler();
   }
 }
 
@@ -202,7 +246,7 @@ static void MX_SPI2_Init(void)
   hspi2.Instance = SPI2;
   hspi2.Init.Mode = SPI_MODE_MASTER;
   hspi2.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi2.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_HARD_OUTPUT;
@@ -331,6 +375,8 @@ static void MX_TIM4_Init(void)
 
 }
 
+#ifdef STM32L1
+#else
 /**
   * @brief TIM8 Initialization Function
   * @param None
@@ -377,7 +423,7 @@ static void MX_TIM8_Init(void)
   /* USER CODE END TIM8_Init 2 */
 
 }
-
+#endif
 /**
   * @brief USART2 Initialization Function
   * @param None
