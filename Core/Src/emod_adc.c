@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    adc.c
+  * @file    emod_adc.c
   * @brief   This file provides code for the configuration
   *          of the ADC instances.
   ******************************************************************************
@@ -18,7 +18,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "adc.h"
+#include <emod_adc.h>
 
 /* USER CODE BEGIN 0 */
 

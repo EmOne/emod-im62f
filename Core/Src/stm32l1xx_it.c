@@ -18,11 +18,11 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include <emod_uart.h>
 #include "main.h"
 #include "stm32l1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "uart.h"
 #include "ComSLIP.h"
 #include "WiMODLRHCI.h"
 #include "WiMODLoRaWAN.h"

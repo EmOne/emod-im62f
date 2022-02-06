@@ -18,7 +18,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "usart.h"
+#include <emod_usart.h>
 
 /* USER CODE BEGIN 0 */
 

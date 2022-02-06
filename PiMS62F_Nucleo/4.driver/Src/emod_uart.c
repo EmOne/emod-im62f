@@ -1,11 +1,11 @@
 /*
- * uart.c
+ * emod_uart.c
  *
  *  Created on: Dec 19, 2021
  *      Author: HP
  */
 
-#include "uart.h"
+#include <emod_uart.h>
 
 /*------------------------------------extern variable--------------------------------*/
 static UART_HandleTypeDef* uartHandler;

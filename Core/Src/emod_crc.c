@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    crc.c
+  * @file    emod_crc.c
   * @brief   This file provides code for the configuration
   *          of the CRC instances.
   ******************************************************************************
@@ -18,7 +18,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "crc.h"
+#include <emod_crc.h>
 
 /* USER CODE BEGIN 0 */
 
