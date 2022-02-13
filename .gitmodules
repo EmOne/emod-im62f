@@ -5,3 +5,11 @@
 [submodule "ibm-lmic"]
 	path = ibm-lmic
 	url = https://github.com/EmOne/ibm-lmic.git
+
+[submodule "sx126x_driver.git"]
+	path = sx126x_driver
+	url = https://github.com/EmOne/sx126x_driver.git
+	
+[submodule "sx126x_driver"]
+	path = sx126x_driver
+	url = https://github.com/EmOne/sx126x_driver.git
