@@ -94,11 +94,15 @@
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
-						<entry excluding="timer.c|systime.c|nvmm.c|i2c.c|gps.c|gpio.c|delay.c|adc.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="LoRaMac-node/src/system"/>
 						<entry excluding="LoRaWAN/mac|mac" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="PiMS62F_Nucleo/2.module"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="PiMS62F_Nucleo/4.driver"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
+						<entry excluding="mcu/stm32|mcu/saml21|SKiM980A|SKiM881AXL|SKiM880B|SAMR34|NucleoL476|NucleoL152|NucleoL073|NAMote72|B-L072Z-LRWAN1|adc-board.h|board.h|delay-board.h|display-board.h|eeprom-board.h|encoder-board.h|gpio-board.h|gps-board.h|i2c-board.h|lpm-board.h|lr1110-board.h|pinName-board.h|pinName-ioe.h|rtc-board.h|spi-board.h|sx126x-board.h|sx1272-board.h|sx1276-board.h|uart-board.h|uart-usb-board.h|usb_device.h|usbd_cdc_if.h|usbd_conf.h|usbd_desc.h|utilities.h|wdt-board.h" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="boards"/>
+						<entry excluding="region/RegionUS915.c|region/RegionRU864.c|region/RegionKR920.c|region/RegionIN865.c|region/RegionEU868.c|region/RegionEU433.c|region/RegionCN779.c|region/RegionCN470B26.c|region/RegionCN470B20.c|region/RegionCN470A26.c|region/RegionCN470A20.c|region/RegionCN470.c|region/RegionBaseUS.c|region/RegionAU915.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="mac"/>
+						<entry excluding="sx1276|sx1272|lr1110|radio.h" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="radio"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="soft-se"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="system"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -178,11 +182,12 @@
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
-						<entry excluding="timer.c|systime.c|nvmm.c|i2c.c|gps.c|gpio.c|delay.c|adc.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="LoRaMac-node/src/system"/>
 						<entry excluding="LoRaWAN/mac|mac" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="PiMS62F_Nucleo/2.module"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="PiMS62F_Nucleo/4.driver"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
+						<entry excluding="stm32|saml21" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="boards/mcu"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="radio/sx126x"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

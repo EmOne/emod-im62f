@@ -22,7 +22,9 @@
 #include "stm32l1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "uart.h"
+#include "tim.h"
+#include "spi.h"
+#include "usart.h"
 #include "ComSLIP.h"
 #include "WiMODLRHCI.h"
 #include "WiMODLoRaWAN.h"
@@ -59,6 +61,12 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+#ifdef STM32L1
+//extern PCD_HandleTypeDef hpcd_USB_FS;
+//extern ADC_HandleTypeDef hadc;
+//extern I2C_HandleTypeDef hi2c1;
+//extern WWDG_HandleTypeDef hwwdg;
+#else
 //extern PCD_HandleTypeDef hpcd_USB_FS;
 //extern ADC_HandleTypeDef hadc;
 //extern I2C_HandleTypeDef hi2c1;
@@ -73,7 +81,7 @@ extern TIM_HandleTypeDef htim8;
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 //extern WWDG_HandleTypeDef hwwdg;
-
+#endif
 
 /* USER CODE BEGIN EV */
 extern TWiMODLORAWAN_ActivateDeviceData activationData;
@@ -273,20 +281,6 @@ void SysTick_Handler(void)
 //  /* USER CODE END USB_LP_IRQn 1 */
 //}
 
-/**
-  * @brief This function handles TIM3 global interrupt.
-  */
-void TIM3_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM3_IRQn 0 */
-
-  /* USER CODE END TIM3_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim3);
-  /* USER CODE BEGIN TIM3_IRQn 1 */
-
-  /* USER CODE END TIM3_IRQn 1 */
-}
-
 ///**
 //  * @brief This function handles I2C1 event interrupt.
 //  */
@@ -344,6 +338,20 @@ void SPI2_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles SPI3 global interrupt.
+  */
+void SPI3_IRQHandler(void)
+{
+  /* USER CODE BEGIN SPI3_IRQn 0 */
+
+  /* USER CODE END SPI3_IRQn 0 */
+  HAL_SPI_IRQHandler(&hspi3);
+  /* USER CODE BEGIN SPI3_IRQn 1 */
+
+  /* USER CODE END SPI3_IRQn 1 */
+}
+
+/**
   * @brief This function handles USART1 global interrupt.
   */
 void USART1_IRQHandler(void)
@@ -358,6 +366,21 @@ void USART1_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles USART2 global interrupt.
+  */
+void USART2_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART2_IRQn 0 */
+
+  /* USER CODE END USART2_IRQn 0 */
+  HAL_UART_IRQHandler(&huart2);
+  /* USER CODE BEGIN USART2_IRQn 1 */
+
+  /* USER CODE END USART2_IRQn 1 */
+}
+
+
+/**
   * @brief This function handles TIM2 global interrupt.
   */
 void TIM2_IRQHandler(void)
@@ -370,6 +393,20 @@ void TIM2_IRQHandler(void)
 //  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   /* USER CODE END TIM2_IRQn 1 */
 }
+
+///**
+//  * @brief This function handles TIM3 global interrupt.
+//  */
+//void TIM3_IRQHandler(void)
+//{
+//  /* USER CODE BEGIN TIM3_IRQn 0 */
+//
+//  /* USER CODE END TIM3_IRQn 0 */
+//  HAL_TIM_IRQHandler(&htim3);
+//  /* USER CODE BEGIN TIM3_IRQn 1 */
+//
+//  /* USER CODE END TIM3_IRQn 1 */
+//}
 
 /**
   * @brief This function handles TIM4 global interrupt.
@@ -391,32 +428,32 @@ void TIM4_IRQHandler(void)
   /* USER CODE END TIM4_IRQn 1 */
 }
 
+///**
+//  * @brief This function handles TIM6 global interrupt.
+//  */
+//void TIM6_IRQHandler(void)
+//{
+//  /* USER CODE BEGIN TIM6_IRQn 0 */
+//
+//  /* USER CODE END TIM6_IRQn 0 */
+//  HAL_TIM_IRQHandler(&htim6);
+//  /* USER CODE BEGIN TIM6_IRQn 1 */
+//
+//  /* USER CODE END TIM6_IRQn 1 */
+//}
+
 /**
-  * @brief This function handles TIM6 global interrupt.
+  * @brief This function handles TIM8 global interrupt.
   */
-void TIM6_IRQHandler(void)
+void TIM8_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM6_IRQn 0 */
+  /* USER CODE BEGIN TIM8_IRQn 0 */
 
-  /* USER CODE END TIM6_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim6);
-  /* USER CODE BEGIN TIM6_IRQn 1 */
+  /* USER CODE END TIM8_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim8);
+  /* USER CODE BEGIN TIM8_IRQn 1 */
 
-  /* USER CODE END TIM6_IRQn 1 */
-}
-
-/**
-  * @brief This function handles SPI3 global interrupt.
-  */
-void SPI3_IRQHandler(void)
-{
-  /* USER CODE BEGIN SPI3_IRQn 0 */
-
-  /* USER CODE END SPI3_IRQn 0 */
-  HAL_SPI_IRQHandler(&hspi3);
-  /* USER CODE BEGIN SPI3_IRQn 1 */
-
-  /* USER CODE END SPI3_IRQn 1 */
+  /* USER CODE END TIM8_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
