@@ -31,7 +31,7 @@
 //#include "i2c.h"
 //#include "iwdg.h"
 //#include "rtc.h"
-#include "spi.h"
+//#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 //#include "usb_device.h"
@@ -77,7 +77,6 @@ UART_HandleTypeDef huart2;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -120,7 +119,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
+//  MX_SPI1_Init();
 //  MX_SPI2_Init();
 //  MX_SPI3_Init();
   MX_TIM2_Init();
@@ -221,7 +220,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
     Error_Handler();
   }

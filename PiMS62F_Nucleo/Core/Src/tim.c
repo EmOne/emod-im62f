@@ -27,7 +27,7 @@
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
-TIM_HandleTypeDef htim8;
+//TIM_HandleTypeDef htim8;
 
 /* TIM3 init function */
 void MX_TIM3_Init(void)
