@@ -22,6 +22,11 @@
 #include "stm32l1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "tim.h"
+#include "usart.h"
+#include "ComSLIP.h"
+#include "WiMODLRHCI.h"
+#include "WiMODLoRaWAN.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,7 +46,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+extern TWiMODLORAWAN_ActivateDeviceData activationData;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -243,6 +248,82 @@ void USART1_IRQHandler(void)
   /* USER CODE END USART1_IRQn 1 */
 }
 
+/**
+  * @brief This function handles TIM2 global interrupt.
+  */
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+//  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+  /* USER CODE END TIM2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM4 global interrupt.
+  */
+void TIM4_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM4_IRQn 0 */
+//	TWiMODLRHCI.WaitForResponse(0x01, 0x01);
+	TWiMODLRHCI.Process();
+	if(EmWimodData.ReceiveFrmUserRequest) {
+		WiMODLoRaWAN.Process(&TWiMODLRHCI.Rx.Message);
+		EmWimodData.ReceiveFrmUserRequest = 0x0;
+	}
+  /* USER CODE END TIM4_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim4);
+  /* USER CODE BEGIN TIM4_IRQn 1 */
+//  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+  /* USER CODE END TIM4_IRQn 1 */
+}
+
+#ifdef STM32L1
+///**
+//  * @brief This function handles TIM5 global interrupt.
+//  */
+//void TIM5_IRQHandler(void)
+//{
+//  /* USER CODE BEGIN TIM5_IRQn 0 */
+//
+//  /* USER CODE END TIM5_IRQn 0 */
+//  HAL_TIM_IRQHandler(&htim5);
+//  /* USER CODE BEGIN TIM5_IRQn 1 */
+//
+//  /* USER CODE END TIM5_IRQn 1 */
+//}
+
+/**
+  * @brief This function handles TIM9 global interrupt.
+  */
+void TIM9_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM9_IRQn 0 */
+
+  /* USER CODE END TIM9_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim9);
+  /* USER CODE BEGIN TIM9_IRQn 1 */
+
+  /* USER CODE END TIM9_IRQn 1 */
+}
+#else
+/**
+  * @brief This function handles TIM8 global interrupt.
+  */
+void TIM8_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM8_IRQn 0 */
+
+  /* USER CODE END TIM8_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim8);
+  /* USER CODE BEGIN TIM8_IRQn 1 */
+
+  /* USER CODE END TIM8_IRQn 1 */
+}
+#endif
 /**
   * @brief This function handles TIM6 global interrupt.
   */

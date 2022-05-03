@@ -123,9 +123,14 @@ int main(void)
 //  MX_SPI2_Init();
 //  MX_SPI3_Init();
   MX_TIM2_Init();
-//  MX_TIM3_Init();
+  MX_TIM3_Init();
   MX_TIM4_Init();
-//  MX_TIM8_Init();
+#ifdef STM32L1
+//  MX_TIM5_Init();
+  MX_TIM9_Init();
+#else
+  MX_TIM8_Init();
+#endif
 #ifdef STM32L1
   MX_USART1_UART_Init();
 #else
@@ -155,7 +160,12 @@ int main(void)
 
   HAL_TIM_Base_Start_IT(&htim2);
   HAL_TIM_Base_Start_IT(&htim4);
-//  HAL_TIM_Base_Start_IT(&htim8);
+#ifdef STM32L1
+//  HAL_TIM_Base_Start_IT(&htim5);
+//  HAL_TIM_Base_Start_IT(&htim9);
+#else
+  HAL_TIM_Base_Start_IT(&htim8);
+#endif
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -165,6 +175,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  HAL_Delay(1000);
+	  HAL_GPIO_TogglePin(IO1_GPIO_Port, IO1_Pin);
+	  HAL_GPIO_TogglePin(IO2_GPIO_Port, IO2_Pin);
   }
   /* USER CODE END 3 */
 }
