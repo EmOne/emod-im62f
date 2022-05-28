@@ -944,13 +944,13 @@ void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg)
         	WiMOD_SAP_DevMgmt.GetSystemStatus(&SystemInfo, statusRsp);
         	break;
         case DEVMGMT_MSG_SET_RTC_ALARM_REQ:
-        	WiMOD_SAP_DevMgmt.SetRtcAlarm(rxMsg->Payload[0], statusRsp);
+        	WiMOD_SAP_DevMgmt.SetRtcAlarm((TWiMODLR_DevMgmt_RtcAlarm*) rxMsg->Payload[0], statusRsp);
         	break;
         case DEVMGMT_MSG_CLEAR_RTC_ALARM_REQ:
         	WiMOD_SAP_DevMgmt.ClearRtcAlarm(statusRsp);
         	break;
         case DEVMGMT_MSG_GET_RTC_ALARM_REQ:
-        	WiMOD_SAP_DevMgmt.GetRtcAlarm(rxMsg->Payload[0], statusRsp);
+        	WiMOD_SAP_DevMgmt.GetRtcAlarm((TWiMODLR_DevMgmt_RtcAlarm* ) rxMsg->Payload[0], statusRsp);
         	break;
         default:
             break;
