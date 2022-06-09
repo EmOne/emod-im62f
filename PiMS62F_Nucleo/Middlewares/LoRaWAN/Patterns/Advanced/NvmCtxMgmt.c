@@ -32,6 +32,7 @@
  */
 
 #include <stdio.h>
+#include "nvmm.h"
 #include "NvmCtxMgmt.h"
 #include "utilities.h"
 
@@ -41,13 +42,13 @@
  * Enables/Disables the context storage management storage at all. Must be enabled for LoRaWAN 1.1.x.
  * WARNING: Still under development and not tested yet.
  */
-#define CONTEXT_MANAGEMENT_ENABLED         0
+#define CONTEXT_MANAGEMENT_ENABLED         1
 
 /*!
  * Enables/Disables maximum persistent context storage management. All module contexts will be saved on a non-volatile memory.
  * WARNING: Still under development and not tested yet.
  */
-#define MAX_PERSISTENT_CTX_MGMT_ENABLED    0
+#define MAX_PERSISTENT_CTX_MGMT_ENABLED    1
 
 #if ( MAX_PERSISTENT_CTX_MGMT_ENABLED == 1 )
 #define NVM_CTX_STORAGE_MASK               0xFF

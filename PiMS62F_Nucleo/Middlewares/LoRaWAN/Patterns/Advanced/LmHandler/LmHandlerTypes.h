@@ -90,20 +90,22 @@ typedef struct CommissioningParams_s
     bool IsOtaaActivation;
     uint8_t DevEui[8];
     uint8_t JoinEui[8];
-#if( ABP_ACTIVATION_LRWAN_VERSION == ABP_ACTIVATION_LRWAN_VERSION_V10x )
+    union {
+    //#if( ABP_ACTIVATION_LRWAN_VERSION == ABP_ACTIVATION_LRWAN_VERSION_V10x )
     uint8_t GenAppKey[16];
-#else
+//#else
     uint8_t AppKey[16];
-#endif
+//#endif
+	};
     uint8_t NwkKey[16];
     uint32_t NetworkId;
     uint32_t DevAddr;
-#if ( OVER_THE_AIR_ACTIVATION == 0 )
+//#if ( OVER_THE_AIR_ACTIVATION == 0 )
     uint8_t FNwkSIntKey[16];
     uint8_t SNwkSIntKey[16];
     uint8_t NwkSEncKey[16];
     uint8_t AppSKey[16];
-#endif
+//#endif
 }CommissioningParams_t;
 
 /*!

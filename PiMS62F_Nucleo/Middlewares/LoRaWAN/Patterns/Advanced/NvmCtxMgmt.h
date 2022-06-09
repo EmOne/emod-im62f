@@ -39,6 +39,16 @@
 
 #include "LoRaMac.h"
 
+
+typedef struct
+{
+	union{
+		uint8_t u8[32];
+		uint16_t u16[16];
+		uint32_t u32[8];
+	};
+}NvmmDataBlock_t;
+
 /*!
  * Data structure containing the status of a operation
  */

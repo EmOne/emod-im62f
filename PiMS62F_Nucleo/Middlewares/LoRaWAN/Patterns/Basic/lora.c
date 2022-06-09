@@ -61,14 +61,14 @@ static uint8_t NwkKey[] = LORAWAN_NWK_KEY;
 
 static MlmeReqJoin_t JoinParameters;
 
-#if( OVER_THE_AIR_ACTIVATION == 0 )
+//#if( OVER_THE_AIR_ACTIVATION == 0 )
 
 static uint8_t FNwkSIntKey[] = LORAWAN_F_NWK_S_INT_KEY;
 static uint8_t SNwkSIntKey[] = LORAWAN_S_NWK_S_INT_KEY;
 static uint8_t NwkSEncKey[] = LORAWAN_NWK_S_ENC_KEY;
 static uint8_t AppSKey[] = LORAWAN_APP_S_KEY;
 static uint32_t DevAddr = LORAWAN_DEVICE_ADDRESS;
-#endif
+//#endif
 
 #ifdef LORAMAC_CLASSB_ENABLED
 static LoraErrorStatus LORA_BeaconReq( void);
@@ -448,13 +448,13 @@ void LORA_Init (LoRaMainCallback_t *callbacks, LoRaParam_t* LoRaParam )
   LoRaMainCallbacks->BoardGetUniqueId( devEui );  
 #endif
   
-#if( OVER_THE_AIR_ACTIVATION != 0 )
+//#if( OVER_THE_AIR_ACTIVATION != 0 )
 
   PPRINTF( "OTAA\n\r"); 
   PPRINTF( "DevEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(devEui));
   PPRINTF( "AppEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(joinEui));
   PPRINTF( "AppKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(AppKey));
-#else
+//#else
 
 #if (STATIC_DEVICE_ADDRESS != 1)
   // Random seed initialization
@@ -467,7 +467,7 @@ void LORA_Init (LoRaMainCallback_t *callbacks, LoRaParam_t* LoRaParam )
   PPRINTF( "DevAdd=  %08X\n\r", DevAddr) ;
   PPRINTF( "NwkSKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(NwkSEncKey));
   PPRINTF( "AppSKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(AppSKey));
-#endif
+//#endif
   LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;
   LoRaMacPrimitives.MacMcpsIndication = McpsIndication;
   LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;

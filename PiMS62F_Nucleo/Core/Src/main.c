@@ -176,7 +176,8 @@ __IO uint8_t Rx2_byte = 0x00;
 
 const char NWKSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
 const char APPSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
- // create a local variable
+
+// create a local variable
 TWiMODLORAWAN_ActivateDeviceData activationData;
 
 /* load Main call backs structure*/
@@ -284,19 +285,23 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim8);
 #endif
   /* Configure the debug mode*/
-    DBG_Init();
+  DBG_Init();
 
-    /* Configure the hardware*/
-    HW_Init();
+  /* Configure the hardware*/
+  HW_Init();
 
-    /*Disbale Stand-by mode*/
-	LPM_SetOffMode(LPM_APPLI_Id, LPM_Disable);
+  /*Disbale Stand-by mode*/
+  LPM_SetOffMode(LPM_APPLI_Id, LPM_Disable);
 
-	PRINTF("APP_VERSION= %02X.%02X.%02X.%02X\r\n", (uint8_t)(__APP_VERSION >> 24), (uint8_t)(__APP_VERSION >> 16), (uint8_t)(__APP_VERSION >> 8), (uint8_t)__APP_VERSION);
-	PRINTF("MAC_VERSION= %02X.%02X.%02X.%02X\r\n", (uint8_t)(__LORA_MAC_VERSION >> 24), (uint8_t)(__LORA_MAC_VERSION >> 16), (uint8_t)(__LORA_MAC_VERSION >> 8), (uint8_t)__LORA_MAC_VERSION);
+  PRINTF("APP_VERSION= %02X.%02X.%02X.%02X\r\n", (uint8_t)(__APP_VERSION >> 24), (uint8_t)(__APP_VERSION >> 16), (uint8_t)(__APP_VERSION >> 8), (uint8_t)__APP_VERSION);
+  PRINTF("MAC_VERSION= %02X.%02X.%02X.%02X\r\n", (uint8_t)(__LORA_MAC_VERSION >> 24), (uint8_t)(__LORA_MAC_VERSION >> 16), (uint8_t)(__LORA_MAC_VERSION >> 8), (uint8_t)__LORA_MAC_VERSION);
 
-	/* Configure the Lora Stack*/
-	LORA_Init(&LoRaMainCallbacks, &LoRaParamInit);
+  /* Configure the Lora Stack*/
+  LORA_Init(&LoRaMainCallbacks, &LoRaParamInit);
+
+  LORA_Join();
+
+  LoraStartTx(TX_ON_EVENT);
   /* USER CODE END 2 */
 
   /* Infinite loop */
