@@ -302,7 +302,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
             else
             {
                 // Join was not successful. Try to join again
-                LORA_Join();
+                LORA_Join(&LoRaParamInit);
             }
             break;
         }
@@ -448,14 +448,15 @@ void LORA_Init (LoRaMainCallback_t *callbacks, LoRaParam_t* LoRaParam )
   LoRaMainCallbacks->BoardGetUniqueId( devEui );  
 #endif
   
-//#if( OVER_THE_AIR_ACTIVATION != 0 )
-
+if( LoRaParam->OTA_Activation != 0 )
+{
   PPRINTF( "OTAA\n\r"); 
   PPRINTF( "DevEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(devEui));
   PPRINTF( "AppEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(joinEui));
   PPRINTF( "AppKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(AppKey));
-//#else
-
+}
+else
+{
 #if (STATIC_DEVICE_ADDRESS != 1)
   // Random seed initialization
   srand1( LoRaMainCallbacks->BoardGetRandomSeed( ) );
@@ -467,7 +468,7 @@ void LORA_Init (LoRaMainCallback_t *callbacks, LoRaParam_t* LoRaParam )
   PPRINTF( "DevAdd=  %08X\n\r", DevAddr) ;
   PPRINTF( "NwkSKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(NwkSEncKey));
   PPRINTF( "AppSKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(AppSKey));
-//#endif
+}
   LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;
   LoRaMacPrimitives.MacMcpsIndication = McpsIndication;
   LoRaMacPrimitives.MacMlmeConfirm = MlmeConfirm;
@@ -561,7 +562,7 @@ void LORA_Init (LoRaMainCallback_t *callbacks, LoRaParam_t* LoRaParam )
 }
 
 
-void LORA_Join( void)
+void LORA_Join( LoRaParam_t* LoRaParam )
 {
     MlmeReq_t mlmeReq;
   
@@ -570,9 +571,12 @@ void LORA_Join( void)
   
     JoinParameters = mlmeReq.Req.Join;
 
-#if( OVER_THE_AIR_ACTIVATION != 0 )
+if( LoRaParam->OTA_Activation != 0 )
+{
     LoRaMacMlmeRequest( &mlmeReq );
-#else
+}
+else
+{
     mibReq.Type = MIB_NET_ID;
     mibReq.Param.NetID = LORAWAN_NETWORK_ID;
     LoRaMacMibSetRequestConfirm( &mibReq );
@@ -614,7 +618,7 @@ void LORA_Join( void)
     LoRaMacMibSetRequestConfirm( &mibReq );
 
     LoRaMainCallbacks->LORA_HasJoined();
-#endif
+}//#endif
 }
 
 LoraFlagStatus LORA_JoinStatus( void)

@@ -132,6 +132,11 @@ typedef struct sLoRaParam
  *
  */
 	uint32_t Period;
+/*!
+ * @brief OVER_THE_AIR_ACTIVATION
+ *
+ */
+	bool OTA_Activation;
 } LoRaParam_t;
 
 /* Lora Main callbacks*/
@@ -227,7 +232,7 @@ bool LORA_send(lora_AppData_t* AppData, LoraConfirm_t IsTxConfirmed);
  * @param [IN] none
  * @retval none
  */
-void LORA_Join( void);
+void LORA_Join( LoRaParam_t* LoRaParam );
 
 /**
  * @brief Check whether the Device is joined to the network

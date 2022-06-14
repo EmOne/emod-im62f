@@ -93,7 +93,9 @@ uint32_t Crc32( uint8_t *buffer, uint16_t length )
     {
         return 0;
     }
-
+#if HW_CRC
+    crc ^= HAL_CRC_Calculate(hcrc, buffer, length);
+#else
     for( uint16_t i = 0; i < length; ++i )
     {
         crc ^= ( uint32_t )buffer[i];
@@ -102,13 +104,16 @@ uint32_t Crc32( uint8_t *buffer, uint16_t length )
             crc = ( crc >> 1 ) ^ ( reversedPolynom & ~( ( crc & 0x01 ) - 1 ) );
         }
     }
-
+#endif
     return ~crc;
 }
 
 uint32_t Crc32Init( void )
 {
+#if HW_CRC
 	MX_CRC_Init();
+#else
+#endif
     return 0xFFFFFFFF;
 }
 
@@ -124,7 +129,10 @@ uint32_t Crc32Update( uint32_t crcInit, uint8_t *buffer, uint16_t length )
     {
         return 0;
     }
+#if HW_CRC
 
+    crc ^= HAL_CRC_Accumulate(hcrc, buffer, length);
+#else
     for( uint16_t i = 0; i < length; ++i )
     {
         crc ^= ( uint32_t )buffer[i];
@@ -133,6 +141,7 @@ uint32_t Crc32Update( uint32_t crcInit, uint8_t *buffer, uint16_t length )
             crc = ( crc >> 1 ) ^ ( reversedPolynom & ~( ( crc & 0x01 ) - 1 ) );
         }
     }
+#endif
     return crc;
 }
 

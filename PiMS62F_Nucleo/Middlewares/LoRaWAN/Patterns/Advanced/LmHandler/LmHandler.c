@@ -51,14 +51,14 @@ static CommissioningParams_t CommissioningParams =
     .IsOtaaActivation = OVER_THE_AIR_ACTIVATION,
     .DevEui = LORAWAN_DEVICE_EUI,
     .JoinEui = LORAWAN_JOIN_EUI,
-#if( ABP_ACTIVATION_LRWAN_VERSION == ABP_ACTIVATION_LRWAN_VERSION_V10x )
+//#if( ABP_ACTIVATION_LRWAN_VERSION == ABP_ACTIVATION_LRWAN_VERSION_V10x )
     .GenAppKey = LORAWAN_GEN_APP_KEY,
-#else
+//#else
     .AppKey = LORAWAN_APP_KEY,
-#endif
+//#endif
     .NwkKey = LORAWAN_NWK_KEY,
 
-#if( OVER_THE_AIR_ACTIVATION == 0 )
+//#if( OVER_THE_AIR_ACTIVATION == 0 )
 
     .NetworkId = LORAWAN_NETWORK_ID,
     .DevAddr = LORAWAN_DEVICE_ADDRESS,
@@ -67,7 +67,7 @@ static CommissioningParams_t CommissioningParams =
     .NwkSEncKey = LORAWAN_NWK_S_ENC_KEY,
     .AppSKey = LORAWAN_APP_S_KEY,
 
-#endif
+//#endif
 };
 
 static LmhPackage_t *LmHandlerPackages[PKG_MAX_NUMBER];
@@ -255,22 +255,22 @@ LmHandlerErrorStatus_t LmHandlerInit( LmHandlerCallbacks_t *handlerCallbacks,
     }
     else
     {
-#if( OVER_THE_AIR_ACTIVATION == 0 )
+//#if( OVER_THE_AIR_ACTIVATION == 0 )
         // Tell the MAC layer which network server version are we connecting too.
         mibReq.Type = MIB_ABP_LORAWAN_VERSION;
         mibReq.Param.AbpLrWanVersion.Value = ABP_ACTIVATION_LRWAN_VERSION;
         LoRaMacMibSetRequestConfirm( &mibReq );
-#endif
+//#endif
 
-#if( ABP_ACTIVATION_LRWAN_VERSION == ABP_ACTIVATION_LRWAN_VERSION_V10x )
+//#if( ABP_ACTIVATION_LRWAN_VERSION == ABP_ACTIVATION_LRWAN_VERSION_V10x )
         mibReq.Type = MIB_GEN_APP_KEY;
         mibReq.Param.GenAppKey = CommissioningParams.GenAppKey;
         LoRaMacMibSetRequestConfirm( &mibReq );
-#else
+//#else
         mibReq.Type = MIB_APP_KEY;
         mibReq.Param.AppKey = CommissioningParams.AppKey;
         LoRaMacMibSetRequestConfirm( &mibReq );
-#endif
+//#endif
 
         mibReq.Type = MIB_NWK_KEY;
         mibReq.Param.NwkKey = CommissioningParams.NwkKey;
@@ -288,7 +288,7 @@ LmHandlerErrorStatus_t LmHandlerInit( LmHandlerCallbacks_t *handlerCallbacks,
         mibReq.Param.JoinEui = CommissioningParams.JoinEui;
         LoRaMacMibSetRequestConfirm( &mibReq );
 
-#if( OVER_THE_AIR_ACTIVATION == 0 )
+//#if( OVER_THE_AIR_ACTIVATION == 0 )
 
 #if( STATIC_DEVICE_ADDRESS != 1 )
         // Random seed initialization
@@ -320,7 +320,7 @@ LmHandlerErrorStatus_t LmHandlerInit( LmHandlerCallbacks_t *handlerCallbacks,
         mibReq.Type = MIB_APP_S_KEY;
         mibReq.Param.AppSKey = CommissioningParams.AppSKey;
         LoRaMacMibSetRequestConfirm( &mibReq );
-#endif
+//#endif
     }
     mibReq.Type = MIB_PUBLIC_NETWORK;
     mibReq.Param.EnablePublicNetwork = LmHandlerParams->PublicNetworkEnable;

@@ -265,7 +265,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   //TODO: Restore user setting
-  NvmCtxMgmtRestore();
 
 #ifdef STM32L1
   HAL_UART_Receive_IT(&huart1, (uint8_t*) &Rx2_byte, 1);
@@ -275,7 +274,9 @@ int main(void)
   TWiMODLRHCI.begin(&huart2);
 #endif
   WiMODLoRaWAN.beginAndAutoSetup();
+
 //  WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
+
   //setup data
   activationData.DeviceAddress = WIMOD_DEV_ADDR;
   memcpy(activationData.NwkSKey, NWKSKEY, 16);
@@ -304,7 +305,9 @@ int main(void)
   /* Configure the Lora Stack*/
   LORA_Init(&LoRaMainCallbacks, &LoRaParamInit);
 
-  LORA_Join();
+  NvmCtxMgmtRestore();
+
+  LORA_Join(&LoRaParamInit);
 
   LoraStartTx(TX_ON_EVENT);
   /* USER CODE END 2 */
@@ -425,9 +428,9 @@ void LoraMacProcessNotify(void)
 
 static void LORA_HasJoined(void)
 {
-#if( OVER_THE_AIR_ACTIVATION != 0 )
+//#if( OVER_THE_AIR_ACTIVATION != 0 )
   PRINTF("JOINED\n\r");
-#endif
+//#endif
   LORA_RequestClass(LORAWAN_DEFAULT_CLASS);
 }
 
@@ -443,7 +446,7 @@ static void Send(void *context)
   if (LORA_JoinStatus() != LORA_SET)
   {
     /*Not joined, try again later*/
-    LORA_Join();
+    LORA_Join(&LoRaParamInit);
     return;
   }
 
