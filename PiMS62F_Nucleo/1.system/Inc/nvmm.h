@@ -91,6 +91,8 @@ bool NvmmCrc32Check( uint16_t size, uint16_t offset );
  */
 bool NvmmReset( uint16_t size, uint16_t offset );
 
+bool NvmmDeclare( uint16_t size, uint16_t offset );
+
 #ifdef __cplusplus
 }
 #endif

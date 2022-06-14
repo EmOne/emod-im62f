@@ -109,7 +109,6 @@ uint32_t Crc32( uint8_t *buffer, uint16_t length )
 uint32_t Crc32Init( void )
 {
 	MX_CRC_Init();
-	HAL_CRC
     return 0xFFFFFFFF;
 }
 

@@ -40,14 +40,7 @@
 #include "LoRaMac.h"
 
 
-typedef struct
-{
-	union{
-		uint8_t u8[32];
-		uint16_t u16[16];
-		uint32_t u32[8];
-	};
-}NvmmDataBlock_t;
+typedef uint16_t NvmmDataBlock_t;
 
 /*!
  * Data structure containing the status of a operation
@@ -57,11 +50,43 @@ typedef enum NvmCtxMgmtStatus_e
     /*!
      * Operation was successful
      */
-    NVMCTXMGMT_STATUS_SUCCESS,
-    /*!
-     * Operation was not successful
-     */
-    NVMCTXMGMT_STATUS_FAIL
+    NVMCTXMGMT_STATUS_SUCCESS = 0,
+	/*!
+	 * Crypto Operation was not successful
+	 */
+	NVMCTXMGMT_STATUS_FAIL_CRYPTO = 0x01,
+	/*!
+	 * Secure Operation was not successful
+	 */
+	NVMCTXMGMT_STATUS_FAIL_SECURE = 0x02,
+	/*!
+	 * Mac Operation was not successful
+	 */
+	NVMCTXMGMT_STATUS_FAIL_MAC = 0x04,
+	/*!
+	 * Region Operation was not successful
+	 */
+	NVMCTXMGMT_STATUS_FAIL_REGION = 0x08,
+	/*!
+	 * Command Operation was not successful
+	 */
+	NVMCTXMGMT_STATUS_FAIL_CMD = 0x10,
+	/*!
+	 * CLASS B Operation was not successful
+	 */
+	NVMCTXMGMT_STATUS_FAIL_CLASS_B = 0x20,
+	/*!
+	 * Confirm queue Operation was not successful
+	 */
+	NVMCTXMGMT_STATUS_FAIL_CONFIRM_Q = 0x40,
+	/*!
+	 * User setting was not successful
+	 */
+	NVMCTXMGMT_STATUS_FAIL_USER = 0x80,
+	/*!
+	 * Operation was not successful
+	 */
+	NVMCTXMGMT_STATUS_FAIL = 0xFF,
 }NvmCtxMgmtStatus_t;
 
 /*!
@@ -72,8 +97,25 @@ typedef enum NvmCtxMgmtStatus_e
  */
 void NvmCtxMgmtEvent( LoRaMacNvmCtxModule_t module );
 
+/*!
+ * \brief Function which stores the MAC data into NVM, if required.
+ *
+ * \retval Number of bytes which were stored.
+ */
 NvmCtxMgmtStatus_t NvmCtxMgmtStore( void );
 
+/*!
+ * \brief Function which restores the MAC data from NVM, if required.
+ *
+ * \retval Number of bytes which were restored.
+ */
 NvmCtxMgmtStatus_t NvmCtxMgmtRestore(void );
+
+/*!
+ * \brief Resets the NVM data.
+ *
+ * \retval Returns Number of bytes, if successful.
+ */
+NvmCtxMgmtStatus_t NvmDataMgmtFactoryReset( void );
 
 #endif // __NVMCTXMGMT_H__

@@ -88,3 +88,8 @@ bool NvmmReset( uint16_t size, uint16_t offset )
     }
     return NVMM_FAIL;
 }
+
+bool NvmmDeclare( uint16_t size, uint16_t offset )
+{
+	return NVMM_SUCCESS;
+}

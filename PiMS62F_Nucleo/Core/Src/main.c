@@ -205,7 +205,8 @@ static TimerEvent_t TxTimer;
  */
 static  LoRaParam_t LoRaParamInit = {LORAWAN_ADR_STATE,
                                      LORAWAN_DEFAULT_DATA_RATE,
-                                     LORAWAN_PUBLIC_NETWORK
+                                     LORAWAN_PUBLIC_NETWORK,
+									 APP_TX_DUTYCYCLE
                                     };
 /* USER CODE END 0 */
 
@@ -262,6 +263,10 @@ int main(void)
 //  MX_WWDG_Init();
 //  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+
+  //TODO: Restore user setting
+  NvmCtxMgmtRestore();
+
 #ifdef STM32L1
   HAL_UART_Receive_IT(&huart1, (uint8_t*) &Rx2_byte, 1);
   TWiMODLRHCI.begin(&huart1);
@@ -629,7 +634,7 @@ static void LoraStartTx(TxEventType_t EventType)
   {
     /* send everytime timer elapses */
     TimerInit(&TxTimer, OnTxTimerEvent);
-    TimerSetValue(&TxTimer,  APP_TX_DUTYCYCLE);
+    TimerSetValue(&TxTimer,  LoRaParamInit.Period);
     OnTxTimerEvent(NULL);
   }
   else

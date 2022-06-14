@@ -362,6 +362,14 @@ typedef struct sLoRaMacCtxs
      * \brief   Size of MLME Confirm queue module context
      */
     size_t ConfirmQueueNvmCtxSize;
+    /*!
+	 * \brief   Pointer to USER setting module context
+	 */
+	void* UserSettingNvmCtx;
+	/*!
+	 * \brief   Size of USER setting module context
+	 */
+	size_t UserSettingNvmCtxSize;
 }LoRaMacCtxs_t;
 
 /*!
@@ -2324,6 +2332,10 @@ typedef enum LoRaMacNvmCtxModule_e
      * Context for the confirm queue
      */
     LORAMAC_NVMCTXMODULE_CONFIRM_QUEUE,
+	/*!
+	 * Context for the user setting
+	 */
+	LORAMAC_NVMCTXMODULE_USER_SETTING,
 }LoRaMacNvmCtxModule_t;
 
 

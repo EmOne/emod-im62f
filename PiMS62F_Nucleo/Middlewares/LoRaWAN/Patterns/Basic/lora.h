@@ -127,7 +127,11 @@ typedef struct sLoRaParam
  *
  */
     bool EnablePublicNetwork;
-
+/*!
+ * @brief Periodically
+ *
+ */
+	uint32_t Period;
 } LoRaParam_t;
 
 /* Lora Main callbacks*/
