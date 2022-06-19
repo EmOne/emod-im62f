@@ -43,7 +43,11 @@
 
 #include "WiMOD_SAP_DEVMGMT.h"
 #include <string.h>
+#include <time.h>
+#include <timeServer.h>
+#include <rtc.h>
 
+static TimerEvent_t timerReset;
 //------------------------------------------------------------------------------
 //
 // Section public functions
@@ -90,7 +94,7 @@ static void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg);
 
 TWiMODLR_DevMgmt_DevInfo DeviceInfo = {
 		WiMODLR_RESULT_OK,
-		WIMOD_MODULE_TYPE_IM880B,
+		ModuleType_iMS62F, //WIMOD_MODULE_TYPE_IM880B,
 		WIMOD_DEV_ADDR,
 		0x00,
 		0x01,
@@ -102,7 +106,7 @@ TWiMODLR_DevMgmt_FwInfo firmwareInfo = {
 		0x01,
 		0x0000,
 		"14 Jan 22",
-		"WIMOD Module by EmOne",
+		"eMOD Module by EmOne",
 };
 
 TWiMODLR_DevMgmt_SystemStatus SystemInfo = {
@@ -185,9 +189,10 @@ TWiMODLRResultCodes ping(UINT8* statusRsp)
             TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
             // put data to tx
-            tx->Payload[0] = 0x55;
+            tx->Payload[0] = DeviceInfo.Status; //0x55;
 
-            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,DEVMGMT_MSG_PING_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(
+            		DEVMGMT_SAP_ID,DEVMGMT_MSG_PING_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
             result = WiMODLR_RESULT_OK;
     }
     return result;
@@ -213,9 +218,15 @@ TWiMODLRResultCodes reset(UINT8* statusRsp)
 			TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
 			// put data to tx
-			tx->Payload[0] = 0x55;
+			tx->Payload[0] = DeviceInfo.Status; //0x55;
 
 			*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_RESET_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+
+			//start timer reset (approx. 200ms)
+			TimerInit(&timerReset, HAL_NVIC_SystemReset);
+			TimerSetValue(&timerReset, 200);
+			TimerStart(&timerReset);
+
 			result = WiMODLR_RESULT_OK;
 	}
     return result;
@@ -366,7 +377,7 @@ TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp)
 
     	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
     	tx->Payload[offset++] = RTCAlarm.AlarmStatus;
-    	*((UINT32 *) &tx->Payload[offset])	= *rtcTime;
+    	*((UINT32 *) &tx->Payload[offset])	= *rtcTime = TimerGetCurrentTime();
         offset += 0x04;
 		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_GET_RTC_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 5);
 		result = WiMODLR_RESULT_OK;
@@ -393,7 +404,31 @@ TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp)
     if (statusRsp && (WiMOD_SAP_DevMgmt.HciParser->Rx.Message.Length >= 4)) {
 
     	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
-        RTCTime = rtcTime;
+    	time_t raw = RTCTime = rtcTime;
+    	struct tm ts;
+    	ts = *localtime(&raw);
+
+    	RTC_TimeTypeDef RTC_TimeStruct;
+    	RTC_DateTypeDef RTC_DateStruct;
+
+    	  RTC_DateStruct.Year = ts.tm_year;
+    	  RTC_DateStruct.Month = ts.tm_mon;
+    	  RTC_DateStruct.Date = ts.tm_mday;
+    	  RTC_DateStruct.WeekDay = ts.tm_wday;
+    	  HAL_RTC_SetDate(&hrtc, &RTC_DateStruct, RTC_FORMAT_BIN);
+
+    	  /*at 0:0:0*/
+    	  RTC_TimeStruct.Hours = ts.tm_hour;
+    	  RTC_TimeStruct.Minutes = ts.tm_min;
+
+    	  RTC_TimeStruct.Seconds = ts.tm_sec;
+    	  RTC_TimeStruct.TimeFormat = 0;
+    	  RTC_TimeStruct.SubSeconds = 0;
+    	  RTC_TimeStruct.StoreOperation = RTC_DAYLIGHTSAVING_NONE;
+    	  RTC_TimeStruct.DayLightSaving = RTC_STOREOPERATION_RESET;
+
+    	  HAL_RTC_SetTime(&hrtc, &RTC_TimeStruct, RTC_FORMAT_BIN);
+
         *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 4);
         result = WiMODLR_RESULT_OK;
     }

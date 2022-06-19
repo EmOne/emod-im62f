@@ -101,7 +101,7 @@ extern "C" {
  * IEEE Organizationally Unique Identifier ( OUI ) (big endian)
  * \remark This is unique to a company or organization
  */
-#define IEEE_OUI                                           0x01, 0x01, 0x01
+#define IEEE_OUI                                           0xCA, 0x7D, 0xDD //EmOne CID:CA7DDD
 
 /*!
  * When set to 1 DevEui is LORAWAN_DEVICE_EUI
