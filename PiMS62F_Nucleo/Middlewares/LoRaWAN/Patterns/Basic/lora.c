@@ -28,7 +28,7 @@
  *  - Device_Time_req   Available for V1.0.3 or later                          
  *  - Beacon_time_Req   Available for V1.0.2 and before                        
  */
-#define USE_DEVICE_TIMING
+//#define USE_DEVICE_TIMING
 
 /*!
  * Join requests trials duty cycle.

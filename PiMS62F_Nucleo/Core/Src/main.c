@@ -206,7 +206,8 @@ static TimerEvent_t TxTimer;
 static  LoRaParam_t LoRaParamInit = {LORAWAN_ADR_STATE,
                                      LORAWAN_DEFAULT_DATA_RATE,
                                      LORAWAN_PUBLIC_NETWORK,
-									 APP_TX_DUTYCYCLE
+									 APP_TX_DUTYCYCLE,
+									 true
                                     };
 /* USER CODE END 0 */
 
