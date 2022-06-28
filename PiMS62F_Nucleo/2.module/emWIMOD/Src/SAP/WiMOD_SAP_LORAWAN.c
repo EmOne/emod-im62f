@@ -210,7 +210,7 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         offset += WiMODLORAWAN_NWK_SESSION_KEY_LEN;
         memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], activationData->AppSKey, WiMODLORAWAN_APP_SESSION_KEY_LEN);
         offset += WiMODLORAWAN_APP_SESSION_KEY_LEN;
-
+#if 0
         result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
                                            LORAWAN_MSG_ACTIVATE_DEVICE_REQ,
                                            LORAWAN_MSG_ACTIVATE_DEVICE_RSP,
@@ -219,6 +219,17 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         if (result == WiMODLR_RESULT_OK) {
             *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
         }
+#else
+		// copy response status
+		if (result == WiMODLR_RESULT_OK) {
+			TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+			tx->Payload[0] = DeviceInfo.Status;
+			*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+					LORAWAN_SAP_ID,
+					LORAWAN_MSG_ACTIVATE_DEVICE_RSP,
+					&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+		}
+#endif
     }
     return result;
 }
