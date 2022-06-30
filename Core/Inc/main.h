@@ -101,14 +101,17 @@ void Error_Handler(void);
 #define ADC1_GPIO_Port GPIOA
 #define RF_DIO2_Pin GPIO_PIN_11
 #define RF_DIO2_GPIO_Port GPIOB
+#define RF_DIO2_EXTI_IRQn EXTI15_10_IRQn
 #define RF_BUSY_Pin GPIO_PIN_1
 #define RF_BUSY_GPIO_Port GPIOB
+#define RF_BUSY_EXTI_IRQn EXTI1_IRQn
 #define RF_SCk_Pin GPIO_PIN_5
 #define RF_SCk_GPIO_Port GPIOA
 #define RF_NRST_Pin GPIO_PIN_2
 #define RF_NRST_GPIO_Port GPIOA
 #define RF_DIO1_Pin GPIO_PIN_10
 #define RF_DIO1_GPIO_Port GPIOB
+#define RF_DIO1_EXTI_IRQn EXTI15_10_IRQn
 #define RF_NSS_Pin GPIO_PIN_0
 #define RF_NSS_GPIO_Port GPIOB
 #define RF_MOSI_Pin GPIO_PIN_7

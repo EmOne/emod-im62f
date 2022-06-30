@@ -21,7 +21,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 /* USER CODE BEGIN Includes */
-
+#include "hw.h"
+#include "timeServer.h"
+/* when fast wake up is enabled, the mcu wakes up in ~20us  * and
+ * does not wait for the VREFINT to be settled. THis is ok for
+ * most of the case except when adc must be used in this case before
+ *starting the adc, you must make sure VREFINT is settled*/
+#define ENABLE_FAST_WAKEUP
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,7 +61,15 @@
 /* USER CODE END ExternalFunctions */
 
 /* USER CODE BEGIN 0 */
-
+/**
+  * @brief This function provides delay (in ms)
+  * @param Delay: specifies the delay time length, in milliseconds.
+  * @retval None
+  */
+void HAL_Delay(__IO uint32_t Delay)
+{
+  HW_RTC_DelayMs(Delay);   /* based on RTC */
+}
 /* USER CODE END 0 */
 /**
   * Initializes the Global MSP.
@@ -83,7 +97,19 @@ void HAL_MspInit(void)
   HAL_PWR_EnablePVD();
 
   /* USER CODE BEGIN MspInit 1 */
+  /* Set MCU in ULP (Ultra Low Power) */
+  HAL_PWREx_EnableUltraLowPower();
+#ifdef ENABLE_FAST_WAKEUP
+  /*Disable fast wakeUp*/
+  HAL_PWREx_EnableFastWakeUp();
+#else
+  HAL_PWREx_DisableFastWakeUp();
+#endif
 
+  /* Configure all IOs in analog input              */
+  /* Except PA143 and PA14 (SWCLK and SWD) for debug*/
+  /* PA13 and PA14 are configured in debug_init     */
+  HW_GpioInit();
   /* USER CODE END MspInit 1 */
 }
 

@@ -43,7 +43,11 @@
 
 #include "WiMOD_SAP_DEVMGMT.h"
 #include <string.h>
+#include <time.h>
+#include <timeServer.h>
+#include <rtc.h>
 
+static TimerEvent_t timerReset;
 //------------------------------------------------------------------------------
 //
 // Section public functions
@@ -90,7 +94,7 @@ static void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg);
 
 TWiMODLR_DevMgmt_DevInfo DeviceInfo = {
 		WiMODLR_RESULT_OK,
-		WIMOD_MODULE_TYPE_IM880B,
+		ModuleType_iMS62F, //WIMOD_MODULE_TYPE_IM880B,
 		WIMOD_DEV_ADDR,
 		0x00,
 		0x01,
@@ -102,7 +106,7 @@ TWiMODLR_DevMgmt_FwInfo firmwareInfo = {
 		0x01,
 		0x0000,
 		"14 Jan 22",
-		"WIMOD Module by EmOne",
+		"eMOD Module by EmOne",
 };
 
 TWiMODLR_DevMgmt_SystemStatus SystemInfo = {
@@ -130,6 +134,8 @@ TWiMODLR_DevMgmt_RtcAlarm RTCAlarm = {
 		0x05,
 		0x00,
 };
+
+TWiMODLR_DevMgmt_RadioConfig RadioConfig = {0};
 
 WiMOD_SAP_DevMgmt_t WiMOD_SAP_DevMgmt = {
 	ping,
@@ -186,9 +192,10 @@ TWiMODLRResultCodes ping(UINT8* statusRsp)
             TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
             // put data to tx
-            tx->Payload[0] = 0x55;
+            tx->Payload[0] = DeviceInfo.Status; //0x55;
 
-            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,DEVMGMT_MSG_PING_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(
+            		DEVMGMT_SAP_ID,DEVMGMT_MSG_PING_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
             result = WiMODLR_RESULT_OK;
     }
     return result;
@@ -214,9 +221,15 @@ TWiMODLRResultCodes reset(UINT8* statusRsp)
 			TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
 			// put data to tx
-			tx->Payload[0] = 0x55;
+			tx->Payload[0] = DeviceInfo.Status; //0x55;
 
 			*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_RESET_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+
+			//start timer reset (approx. 200ms)
+			TimerInit(&timerReset, HAL_NVIC_SystemReset);
+			TimerSetValue(&timerReset, 200);
+			TimerStart(&timerReset);
+
 			result = WiMODLR_RESULT_OK;
 	}
     return result;
@@ -367,7 +380,7 @@ TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp)
 
     	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
     	tx->Payload[offset++] = RTCAlarm.AlarmStatus;
-    	*((UINT32 *) &tx->Payload[offset])	= *rtcTime;
+    	*((UINT32 *) &tx->Payload[offset])	= *rtcTime = TimerGetCurrentTime();
         offset += 0x04;
 		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_GET_RTC_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 5);
 		result = WiMODLR_RESULT_OK;
@@ -390,13 +403,42 @@ TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp)
 {
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
 
+//    if (statusRsp && (WiMOD_SAP_DevMgmt.HciParser->Rx.Message.Length >= 4)) {
+	if (statusRsp) {
+		TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
+		time_t raw = RTCTime = rtcTime;
+		struct tm ts;
+		ts = *localtime(&raw);
 
-    if (statusRsp && (WiMOD_SAP_DevMgmt.HciParser->Rx.Message.Length >= 4)) {
+		RTC_TimeTypeDef RTC_TimeStruct;
+		RTC_DateTypeDef RTC_DateStruct;
 
-    	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
-        RTCTime = rtcTime;
-        *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 4);
-        result = WiMODLR_RESULT_OK;
+		RTC_DateStruct.Year = ts.tm_year;
+		RTC_DateStruct.Month = ts.tm_mon;
+		RTC_DateStruct.Date = ts.tm_mday;
+		RTC_DateStruct.WeekDay = ts.tm_wday;
+		HAL_RTC_SetDate(&hrtc, &RTC_DateStruct, RTC_FORMAT_BIN);
+
+		/*at 0:0:0*/
+		RTC_TimeStruct.Hours = ts.tm_hour;
+		RTC_TimeStruct.Minutes = ts.tm_min;
+
+		RTC_TimeStruct.Seconds = ts.tm_sec;
+		RTC_TimeStruct.TimeFormat = 0;
+		RTC_TimeStruct.SubSeconds = 0;
+		RTC_TimeStruct.StoreOperation = RTC_DAYLIGHTSAVING_NONE;
+		RTC_TimeStruct.DayLightSaving = RTC_STOREOPERATION_RESET;
+
+		HAL_RTC_SetTime(&hrtc, &RTC_TimeStruct, RTC_FORMAT_BIN);
+
+		/*Enable Direct Read of the calendar registers (not through Shadow) */
+		HAL_RTCEx_EnableBypassShadow(&hrtc);
+
+		HW_RTC_SetTimerContext();
+
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 4);
+
+		result = WiMODLR_RESULT_OK;
     }
     return result;
 }
@@ -417,43 +459,42 @@ TWiMODLRResultCodes getRadioConfig(TWiMODLR_DevMgmt_RadioConfig* radioCfg, UINT8
 
     if (radioCfg && statusRsp) {
 
-        result = WiMOD_SAP_DevMgmt.HciParser->SendHCIMessage(DEVMGMT_SAP_ID,
-                                           DEVMGMT_MSG_GET_RADIO_CONFIG_REQ,
-                                           DEVMGMT_MSG_GET_RADIO_CONFIG_RSP,
-                                           NULL, 0);
-
+//        result = WiMOD_SAP_DevMgmt.HciParser->SendHCIMessage(DEVMGMT_SAP_ID,
+//                                           DEVMGMT_MSG_GET_RADIO_CONFIG_REQ,
+//                                           DEVMGMT_MSG_GET_RADIO_CONFIG_RSP,
+//                                           NULL, 0);
         if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage();
-            *statusRsp = rx->Payload[offset++];
+//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage();
+            *statusRsp = RadioConfig.Status = DeviceInfo.Status;// rx->Payload[offset++];
 
             // status check
             if (*statusRsp == DEVMGMT_STATUS_OK) {
                     radioCfg->Status = *statusRsp;
-                    radioCfg->RadioMode = (TRadioCfg_RadioMode) rx->Payload[offset++];
-                    radioCfg->GroupAddress = rx->Payload[offset++];
-                    radioCfg->TxGroupAddress = rx->Payload[offset++];
-                    radioCfg->DeviceAddress = NTOH16(&rx->Payload[offset]);
-                    offset += 0x02;
-                    radioCfg->TxDeviceAddress = NTOH16(&rx->Payload[offset]);
-                    offset += 0x02;
-                    radioCfg->Modulation = (TRadioCfg_Modulation) rx->Payload[offset++];
-                    radioCfg->RfFreq_LSB = rx->Payload[offset++];
-                    radioCfg->RfFreq_MID = rx->Payload[offset++];
-                    radioCfg->RfFreq_MSB = rx->Payload[offset++];
-                    radioCfg->LoRaBandWidth = (TRadioCfg_LoRaBandwidth) rx->Payload[offset++];
-                    radioCfg->LoRaSpreadingFactor = (TRadioCfg_LoRaSpreadingFactor) rx->Payload[offset++];;
-                    radioCfg->ErrorCoding = (TRadioCfg_ErrorCoding) rx->Payload[offset++];;
-                    radioCfg->PowerLevel =  (TRadioCfg_PowerLevel)  rx->Payload[offset++];
-                    radioCfg->TxControl = rx->Payload[offset++];
-                    radioCfg->RxControl = (TRadioCfg_RxControl) rx->Payload[offset++];
-                    radioCfg->RxWindowTime = NTOH16(&rx->Payload[offset]);
-                    offset += 0x02;
-                    radioCfg->LedControl = rx->Payload[offset++];
-                    radioCfg->MiscOptions = rx->Payload[offset++];
-                    radioCfg->FskDatarate = (TRadioCfg_FskDatarate) rx->Payload[offset++];
-                    radioCfg->PowerSavingMode = (TRadioCfg_PowerSavingMode) rx->Payload[offset++];
-                    radioCfg->LbtThreshold = (INT16) NTOH16(&rx->Payload[offset]);
-                    offset += 0x02;
+                    radioCfg->RadioMode = (TRadioCfg_RadioMode) RadioConfig.RadioMode; //rx->Payload[offset++];
+                    radioCfg->GroupAddress = RadioConfig.GroupAddress; //rx->Payload[offset++];
+                    radioCfg->TxGroupAddress = RadioConfig.TxGroupAddress;//rx->Payload[offset++];
+                    radioCfg->DeviceAddress = RadioConfig.DeviceAddress;//NTOH16(&rx->Payload[offset]);
+//                    offset += 0x02;
+                    radioCfg->TxDeviceAddress = RadioConfig.TxDeviceAddress;//NTOH16(&rx->Payload[offset]);
+//                    offset += 0x02;
+                    radioCfg->Modulation = (TRadioCfg_Modulation) RadioConfig.Modulation;//rx->Payload[offset++];
+                    radioCfg->RfFreq_LSB = RadioConfig.RfFreq_LSB; //rx->Payload[offset++];
+                    radioCfg->RfFreq_MID = RadioConfig.RfFreq_MID; //rx->Payload[offset++];
+                    radioCfg->RfFreq_MSB = RadioConfig.RfFreq_MSB; //rx->Payload[offset++];
+                    radioCfg->LoRaBandWidth = (TRadioCfg_LoRaBandwidth) RadioConfig.LoRaBandWidth;//rx->Payload[offset++];
+                    radioCfg->LoRaSpreadingFactor = (TRadioCfg_LoRaSpreadingFactor) RadioConfig.LoRaSpreadingFactor; // rx->Payload[offset++];;
+                    radioCfg->ErrorCoding = (TRadioCfg_ErrorCoding) RadioConfig.ErrorCoding; //rx->Payload[offset++];;
+                    radioCfg->PowerLevel =  (TRadioCfg_PowerLevel) RadioConfig.PowerLevel; // rx->Payload[offset++];
+                    radioCfg->TxControl = RadioConfig.TxControl; // rx->Payload[offset++];
+                    radioCfg->RxControl = (TRadioCfg_RxControl) RadioConfig.RxControl;// rx->Payload[offset++];
+                    radioCfg->RxWindowTime = RadioConfig.RxWindowTime; // NTOH16(&rx->Payload[offset]);
+//                    offset += 0x02;
+                    radioCfg->LedControl = RadioConfig.LedControl; //rx->Payload[offset++];
+                    radioCfg->MiscOptions = RadioConfig.MiscOptions; //rx->Payload[offset++];
+                    radioCfg->FskDatarate = (TRadioCfg_FskDatarate) RadioConfig.FskDatarate; //rx->Payload[offset++];
+                    radioCfg->PowerSavingMode = (TRadioCfg_PowerSavingMode) RadioConfig.PowerSavingMode;//rx->Payload[offset++];
+                    radioCfg->LbtThreshold = (INT16) RadioConfig.LbtThreshold;//NTOH16(&rx->Payload[offset]);
+//                    offset += 0x02;
             }
         }
     }
@@ -475,12 +516,13 @@ TWiMODLRResultCodes setRadioConfig(const TWiMODLR_DevMgmt_RadioConfig* radioCfg,
     UINT8              offset = 0;
 
     if (radioCfg && statusRsp && (WiMOD_SAP_DevMgmt.txyPayloadSize >= 0x1A)) {
+#if 0
     	WiMOD_SAP_DevMgmt.txPayload[offset++] = (UINT8) radioCfg->StoreNwmFlag;
     	WiMOD_SAP_DevMgmt.txPayload[offset++] = (UINT8) radioCfg->RadioMode;
     	WiMOD_SAP_DevMgmt.txPayload[offset++] = (UINT8) radioCfg->GroupAddress;
     	WiMOD_SAP_DevMgmt.txPayload[offset++] = (UINT8) radioCfg->TxGroupAddress;
-        HTON16(&WiMOD_SAP_DevMgmt.txPayload[offset], radioCfg->DeviceAddress);
-        offset += 0x02;
+    	HTON16(&WiMOD_SAP_DevMgmt.txPayload[offset], radioCfg->DeviceAddress);
+    	offset += 0x02;
         HTON16(&WiMOD_SAP_DevMgmt.txPayload[offset], radioCfg->TxDeviceAddress);
         offset += 0x02;
         WiMOD_SAP_DevMgmt.txPayload[offset++] = (UINT8) radioCfg->Modulation;
@@ -506,19 +548,51 @@ TWiMODLRResultCodes setRadioConfig(const TWiMODLR_DevMgmt_RadioConfig* radioCfg,
                 DEVMGMT_MSG_SET_RADIO_CONFIG_REQ,
                 DEVMGMT_MSG_SET_RADIO_CONFIG_RSP,
 				WiMOD_SAP_DevMgmt.txPayload, offset);
-
         if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage();
-            offset = WiMODLR_HCI_RSP_STATUS_POS;
-            *statusRsp = rx->Payload[offset++];
+                   const TWiMODLR_HCIMessage* rx = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage();
+                   offset = WiMODLR_HCI_RSP_STATUS_POS;
+                   *statusRsp = rx->Payload[offset++];
 
-            // status check
-            if (*statusRsp == DEVMGMT_STATUS_OK) {
+                   // status check
+                   if (*statusRsp == DEVMGMT_STATUS_OK) {
 
 
-            } else {
-            }
-        }
+                   } else {
+                   }
+               }
+#else
+    	RadioConfig.StoreNwmFlag = (UINT8) radioCfg->StoreNwmFlag;
+    	RadioConfig.RadioMode = (UINT8) radioCfg->RadioMode;
+    	RadioConfig.GroupAddress = (UINT8) radioCfg->GroupAddress;
+    	RadioConfig.TxGroupAddress = (UINT8) radioCfg->TxGroupAddress;
+    	RadioConfig.DeviceAddress = radioCfg->DeviceAddress;
+        RadioConfig.TxDeviceAddress = radioCfg->TxDeviceAddress;
+        RadioConfig.Modulation = (UINT8) radioCfg->Modulation;
+        RadioConfig.RfFreq_LSB = (UINT8) radioCfg->RfFreq_LSB;
+        RadioConfig.RfFreq_MID = (UINT8) radioCfg->RfFreq_MID;
+        RadioConfig.RfFreq_MSB = (UINT8) radioCfg->RfFreq_MSB;
+        RadioConfig.LoRaBandWidth = (UINT8) radioCfg->LoRaBandWidth;
+        RadioConfig.LoRaSpreadingFactor = (UINT8) radioCfg->LoRaSpreadingFactor;
+        RadioConfig.ErrorCoding = (UINT8) radioCfg->ErrorCoding;
+        RadioConfig.PowerLevel = (UINT8) radioCfg->PowerLevel;
+        RadioConfig.TxControl = (UINT8) radioCfg->TxControl;
+        RadioConfig.RxControl = (UINT8) radioCfg->RxControl;
+        RadioConfig.RxWindowTime = radioCfg->RxWindowTime;
+
+        RadioConfig.LedControl = (UINT8) radioCfg->LedControl;
+        RadioConfig.MiscOptions = (UINT8) radioCfg->MiscOptions;
+        RadioConfig.FskDatarate = (UINT8) radioCfg->FskDatarate;
+        RadioConfig.PowerSavingMode = (UINT8) radioCfg->PowerSavingMode;
+        RadioConfig.LbtThreshold = (UINT16) radioCfg->LbtThreshold;
+
+        TWiMODLR_HCIMessage *tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+		DEVMGMT_MSG_SET_RADIO_CONFIG_RSP,
+				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 4);
+
+		result = WiMODLR_RESULT_OK;
+#endif
+
     }
     return result;
 }
@@ -535,14 +609,23 @@ TWiMODLRResultCodes setRadioConfig(const TWiMODLR_DevMgmt_RadioConfig* radioCfg,
 TWiMODLRResultCodes resetRadioConfig(UINT8* statusRsp) {
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
     if (statusRsp) {
-        result = WiMOD_SAP_DevMgmt.HciParser->SendHCIMessage(DEVMGMT_SAP_ID,
-                DEVMGMT_MSG_RESET_RADIO_CONFIG_REQ,
-                DEVMGMT_MSG_RESET_RADIO_CONFIG_RSP,
-                NULL, 0);
-        // copy response status
-        if (WiMODLR_RESULT_OK == result) {
-            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-        }
+//        result = WiMOD_SAP_DevMgmt.HciParser->SendHCIMessage(DEVMGMT_SAP_ID,
+//                DEVMGMT_MSG_RESET_RADIO_CONFIG_REQ,
+//                DEVMGMT_MSG_RESET_RADIO_CONFIG_RSP,
+//                NULL, 0);
+//
+//        // copy response status
+//        if (WiMODLR_RESULT_OK == result) {
+//            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//        }
+
+        TWiMODLR_HCIMessage *tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
+
+        tx->Payload[0] = DeviceInfo.Status;
+
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+				DEVMGMT_MSG_RESET_RADIO_CONFIG_RSP,
+				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
     }
     return result;
 }
@@ -560,7 +643,7 @@ TWiMODLRResultCodes resetRadioConfig(UINT8* statusRsp) {
  */
 TWiMODLRResultCodes getOperationMode(TWiMOD_OperationMode* opMode, UINT8* statusRsp) {
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
-//    if (statusRsp && opMode) {
+    if (statusRsp && opMode) {
 //        result = WiMOD_SAP_DevMgmt.HciParser->SendHCIMessage(DEVMGMT_SAP_ID,
 //                DEVMGMT_MSG_GET_OPMODE_REQ,
 //                DEVMGMT_MSG_GET_OPMODE_RSP,
@@ -570,20 +653,20 @@ TWiMODLRResultCodes getOperationMode(TWiMOD_OperationMode* opMode, UINT8* status
 //            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //            *opMode = (TWiMOD_OperationMode) WiMOD_SAP_DevMgmt.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_CMD_PAYLOAD_POS];
 //        }
-//    }
-//    return result;
 
-	if (statusRsp) {
+    	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
-			TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
+		// put data to tx
+		tx->Payload[0] = *statusRsp = DeviceInfo.Status;
+		tx->Payload[1] = *opMode =OperationMode	;
 
-			// put data to tx
-			tx->Payload[0] = *opMode;
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+				DEVMGMT_MSG_GET_OPMODE_RSP,
+				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 2);
+		result = WiMODLR_RESULT_OK;
 
-			*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_GET_OPMODE_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
-			result = WiMODLR_RESULT_OK;
 	}
-    return result;
+	return result;
 }
 
 //-----------------------------------------------------------------------------
@@ -615,10 +698,13 @@ TWiMODLRResultCodes setOperationMode(const TWiMOD_OperationMode opMode, UINT8* s
 			TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
 			// put data to tx
+			tx->Payload[0] = DeviceInfo.Status;
 			OperationMode = opMode;
 
-			*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_OPMODE_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
-			result = WiMODLR_RESULT_OK;
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+				DEVMGMT_MSG_SET_OPMODE_RSP,
+				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+		result = WiMODLR_RESULT_OK;
 	}
     return result;
 }
@@ -638,8 +724,10 @@ TWiMODLRResultCodes setOperationMode(const TWiMOD_OperationMode opMode, UINT8* s
 TWiMODLRResultCodes setRadioMode(const TRadioCfg_RadioMode radioMode, UINT8* statusRsp) {
      TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
      if (statusRsp && (WiMOD_SAP_DevMgmt.txyPayloadSize >= 1)) {
+
     	 WiMOD_SAP_DevMgmt.txPayload[0] = (UINT8) radioMode;
-         result = WiMOD_SAP_DevMgmt.HciParser->SendHCIMessage(DEVMGMT_SAP_ID,
+#if 0
+    	 result = WiMOD_SAP_DevMgmt.HciParser->SendHCIMessage(DEVMGMT_SAP_ID,
                  DEVMGMT_MSG_SET_RADIO_MODE_REQ,
                  DEVMGMT_MSG_SET_RADIO_MODE_RSP,
 				 WiMOD_SAP_DevMgmt.txPayload, 1);
@@ -647,6 +735,20 @@ TWiMODLRResultCodes setRadioMode(const TRadioCfg_RadioMode radioMode, UINT8* sta
          if (WiMODLR_RESULT_OK == result) {
              *statusRsp = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
          }
+#else
+         TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
+
+         // put data to tx
+		tx->Payload[0] = *statusRsp = DeviceInfo.Status;
+		tx->Payload[1] = DEVMGMT_STATUS_WRONG_PARAMETER; //ERROR CODE
+
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+				DEVMGMT_MSG_SET_RADIO_MODE_RSP,
+				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 2);
+		 result = WiMODLR_RESULT_OK;
+#endif
+
+
      }
      return result;
  }
@@ -667,6 +769,8 @@ TWiMODLRResultCodes setAesKey(const UINT8* key, UINT8* statusRsp) {
     if (statusRsp && key && (WiMOD_SAP_DevMgmt.txyPayloadSize >= DEVMGMT_AES_KEY_LEN)) {
 
         memcpy(WiMOD_SAP_DevMgmt.txPayload, key, DEVMGMT_AES_KEY_LEN);
+#if 0
+        memcpy(WiMOD_SAP_DevMgmt.txPayload, key, DEVMGMT_AES_KEY_LEN);
         result = WiMOD_SAP_DevMgmt.HciParser->SendHCIMessage(DEVMGMT_SAP_ID,
                 DEVMGMT_MSG_SET_AES_KEY_REQ,
                 DEVMGMT_MSG_SET_AES_KEY_RSP,
@@ -675,6 +779,18 @@ TWiMODLRResultCodes setAesKey(const UINT8* key, UINT8* statusRsp) {
         if (WiMODLR_RESULT_OK == result) {
             *statusRsp = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
         }
+#else
+        TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
+
+		// put data to tx
+		tx->Payload[0] = *statusRsp = DeviceInfo.Status;
+
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+				DEVMGMT_MSG_SET_AES_KEY_RSP,
+				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+		result = WiMODLR_RESULT_OK;
+#endif
+
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
@@ -695,7 +811,7 @@ TWiMODLRResultCodes getAesKey(UINT8* key, UINT8* statusRsp)
 {
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
     if (statusRsp && key) {
-
+#if 0
         result = WiMOD_SAP_DevMgmt.HciParser->SendHCIMessage(DEVMGMT_SAP_ID,
                 DEVMGMT_MSG_GET_AES_KEY_REQ,
                 DEVMGMT_MSG_GET_AES_KEY_RSP,
@@ -706,6 +822,17 @@ TWiMODLRResultCodes getAesKey(UINT8* key, UINT8* statusRsp)
             *statusRsp = WiMOD_SAP_DevMgmt.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
             memcpy(key, &WiMOD_SAP_DevMgmt.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_CMD_PAYLOAD_POS],  DEVMGMT_AES_KEY_LEN);
         }
+#else
+		TWiMODLR_HCIMessage *tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
+
+		// put data to tx
+		tx->Payload[0] = *statusRsp = DeviceInfo.Status;
+
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+				DEVMGMT_MSG_GET_AES_KEY_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+				1);
+		result = WiMODLR_RESULT_OK;
+#endif
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
@@ -730,13 +857,21 @@ TWiMODLRResultCodes setRtcAlarm(const TWiMODLR_DevMgmt_RtcAlarm* rtcAlarm, UINT8
     if (statusRsp && rtcAlarm && (WiMOD_SAP_DevMgmt.HciParser->Rx.ExpectedRsponseMsg.Length >= 0x04)) {
 
     	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
-
-    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Options;
-    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Hour;
-    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Minutes;
-    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Seconds;
-
-		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_ALARM_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], sizeof(TWiMODLR_DevMgmt_RtcAlarm));
+#if 0
+    	tx->Payload[offset++] = (UINT8) rtcAlarm->Options;
+    	tx->Payload[offset++] = (UINT8) rtcAlarm->Hour;
+    	tx->Payload[offset++] = (UINT8) rtcAlarm->Minutes;
+    	tx->Payload[offset++] = (UINT8) rtcAlarm->Seconds;
+    	*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+    					DEVMGMT_MSG_SET_RTC_ALARM_RSP,
+    					&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+    					sizeof(TWiMODLR_DevMgmt_RtcAlarm));
+#else
+		tx->Payload[0] = RTCAlarm.AlarmStatus;
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+		DEVMGMT_MSG_SET_RTC_ALARM_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+				1);
+#endif
 		result = WiMODLR_RESULT_OK;
     }
     else {
@@ -763,13 +898,27 @@ TWiMODLRResultCodes getRtcAlarm(TWiMODLR_DevMgmt_RtcAlarm* rtcAlarm, UINT8* stat
     // copy response status
     if (statusRsp) {
     	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
+#if 0
     	tx->Payload[offset++] = *statusRsp;
 		tx->Payload[offset++] = rtcAlarm->AlarmStatus;
 		tx->Payload[offset++] = rtcAlarm->Options;
 		tx->Payload[offset++] = rtcAlarm->Hour;
 		tx->Payload[offset++] = rtcAlarm->Minutes;
 		tx->Payload[offset++] = rtcAlarm->Seconds;
-		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_GET_RTC_ALARM_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], sizeof(TWiMODLR_DevMgmt_RtcAlarm) + 1);
+#else
+		RTC_AlarmTypeDef sAlarm;
+		HAL_RTC_GetAlarm(&hrtc, &sAlarm, RTC_ALARM_A, RTC_FORMAT_BIN);
+		tx->Payload[offset++] = DeviceInfo.Status;
+		tx->Payload[offset++] = rtcAlarm->AlarmStatus = RTCAlarm.AlarmStatus;
+		tx->Payload[offset++] = rtcAlarm->Options = RTCAlarm.Options;
+		tx->Payload[offset++] = rtcAlarm->Hour = RTCAlarm.Hour = sAlarm.AlarmTime.Hours;
+		tx->Payload[offset++] = rtcAlarm->Minutes = RTCAlarm.Minutes = sAlarm.AlarmTime.Minutes;
+		tx->Payload[offset++] = rtcAlarm->Seconds = RTCAlarm.Seconds = sAlarm.AlarmTime.Seconds;
+#endif
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,
+				DEVMGMT_MSG_GET_RTC_ALARM_RSP,
+				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+				sizeof(TWiMODLR_DevMgmt_RtcAlarm) + 1);
 		result = WiMODLR_RESULT_OK;
     }
     else {
@@ -945,13 +1094,13 @@ void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg)
         	WiMOD_SAP_DevMgmt.GetSystemStatus(&SystemInfo, statusRsp);
         	break;
         case DEVMGMT_MSG_SET_RTC_ALARM_REQ:
-        	WiMOD_SAP_DevMgmt.SetRtcAlarm(rxMsg->Payload[0], statusRsp);
+        	WiMOD_SAP_DevMgmt.SetRtcAlarm((TWiMODLR_DevMgmt_RtcAlarm*) rxMsg->Payload[0], statusRsp);
         	break;
         case DEVMGMT_MSG_CLEAR_RTC_ALARM_REQ:
         	WiMOD_SAP_DevMgmt.ClearRtcAlarm(statusRsp);
         	break;
         case DEVMGMT_MSG_GET_RTC_ALARM_REQ:
-        	WiMOD_SAP_DevMgmt.GetRtcAlarm(rxMsg->Payload[0], statusRsp);
+        	WiMOD_SAP_DevMgmt.GetRtcAlarm((TWiMODLR_DevMgmt_RtcAlarm* ) rxMsg->Payload[0], statusRsp);
         	break;
         default:
             break;

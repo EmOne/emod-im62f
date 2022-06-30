@@ -73,11 +73,30 @@ void HAL_MspInit(void)
 
   /* System interrupt init*/
 
+  /* Peripheral interrupt init */
+  /* PVD_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(PVD_IRQn, 0, 0);
+  /* PVD_IRQn interrupt configuration */
+  HAL_NVIC_EnableIRQ(PVD_IRQn);
+  /* FLASH_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(FLASH_IRQn, 0, 0);
+  /* FLASH_IRQn interrupt configuration */
+  HAL_NVIC_EnableIRQ(FLASH_IRQn);
+  /* RCC_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(RCC_IRQn, 0, 0);
+  /* RCC_IRQn interrupt configuration */
+  HAL_NVIC_EnableIRQ(RCC_IRQn);
+  /* RCC_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(RCC_IRQn, 0, 0);
+  /* RCC_IRQn interrupt configuration */
+  HAL_NVIC_EnableIRQ(RCC_IRQn);
+
   /** PVD Configuration
   */
-  sConfigPVD.PVDLevel = PWR_PVDLEVEL_0;
+  sConfigPVD.PVDLevel = PWR_PVDLEVEL_3;
   sConfigPVD.Mode = PWR_PVD_MODE_NORMAL;
   HAL_PWR_ConfigPVD(&sConfigPVD);
+
   /** Enable the PVD Output
   */
   HAL_PWR_EnablePVD();
@@ -90,4 +109,3 @@ void HAL_MspInit(void)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-
