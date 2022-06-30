@@ -182,6 +182,7 @@ TWiMODLRResultCodes ping(UINT8* statusRsp)
 
     if (statusRsp) {
 
+    		//WiMODLoRaWAN.SapDevMgmt->HciParser = &TWiMODLRHCI;
             TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
             // put data to tx
@@ -730,10 +731,10 @@ TWiMODLRResultCodes setRtcAlarm(const TWiMODLR_DevMgmt_RtcAlarm* rtcAlarm, UINT8
 
     	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
-    	tx->Payload[offset++] = (UINT8) rtcAlarm->Options;
-    	tx->Payload[offset++] = (UINT8) rtcAlarm->Hour;
-    	tx->Payload[offset++] = (UINT8) rtcAlarm->Minutes;
-    	tx->Payload[offset++] = (UINT8) rtcAlarm->Seconds;
+    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Options;
+    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Hour;
+    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Minutes;
+    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Seconds;
 
 		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_ALARM_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], sizeof(TWiMODLR_DevMgmt_RtcAlarm));
 		result = WiMODLR_RESULT_OK;

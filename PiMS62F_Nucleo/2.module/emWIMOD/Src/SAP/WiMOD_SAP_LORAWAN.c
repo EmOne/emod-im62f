@@ -92,6 +92,7 @@ static TWiMODLRResultCodes setBatteryLevelStatus(UINT8 battStatus, UINT8* status
 static void dispatchLoRaWANMessage(TWiMODLR_HCIMessage* rxMsg);
 static void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg);
 //-----------------------------------------------------------------------------
+
 /**
  * @brief Constructor
  *
@@ -159,6 +160,23 @@ WiMOD_SAP_LoRaWAN_t WiMOD_SAP_LoRaWAN = {
 		LoRaWAN_Region_EU868, // default init
 };
 
+/*******************************************************************************/
+
+//process declare
+
+UINT32* devAdr;
+const TWiMODLORAWAN_TX_Data* data;
+const UINT8* deviceEUI;
+const TWiMODLORAWAN_MacCmd* cmd;
+const INT8 rfGain;
+TWiMODLORAWAN_JoinParams* joinParams;
+TWiMODLORAWAN_NwkStatus_Data* nwkStatus;
+TWiMODLORAWAN_SupportedBands* supportedBands;
+TWiMODLORAWAN_TxPwrLimitConfig* txPwrLimitCfg;
+TWiMODLORAWAN_LinkAdrReqConfig* linkAdrReqCfg;
+
+/******************************************************************************/
+
 //-----------------------------------------------------------------------------
 /**
  * @brief Destructor
@@ -199,7 +217,7 @@ void SetRegion(TLoRaWANregion regionalSetting)
 TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationData, UINT8* statusRsp)
 {
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
-    UINT8              offset = 0;
+    UINT8               offset = 0;
 
     if ( statusRsp &&
             (WiMOD_SAP_LoRaWAN.txPayloadSize >= (4+ WiMODLORAWAN_NWK_SESSION_KEY_LEN + WiMODLORAWAN_APP_SESSION_KEY_LEN)))
@@ -211,6 +229,11 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], activationData->AppSKey, WiMODLORAWAN_APP_SESSION_KEY_LEN);
         offset += WiMODLORAWAN_APP_SESSION_KEY_LEN;
 
+        result = WiMODLR_RESULT_OK;
+
+#if 0
+
+        //WiMODLoRaWAN.SapLoRaWan->HciParser = &TWiMODLRHCI;
         result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
                                            LORAWAN_MSG_ACTIVATE_DEVICE_REQ,
                                            LORAWAN_MSG_ACTIVATE_DEVICE_RSP,
@@ -218,8 +241,21 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         // copy response status
         if (result == WiMODLR_RESULT_OK) {
             *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+        	//*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
         }
+#else
+        //copy response status
+        if (result == WiMODLR_RESULT_OK) {
+        			TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+        			tx->Payload[0] =  0x55; //DeviceInfo.Status;
+        			*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+        					LORAWAN_SAP_ID,
+        					LORAWAN_MSG_ACTIVATE_DEVICE_RSP,
+        					&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+        		}
+        #endif
     }
+
     return result;
 }
 
@@ -1614,7 +1650,77 @@ TWiMODLRResultCodes setBatteryLevelStatus(UINT8 battStatus, UINT8* statusRsp)
  */
 void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg)
 {
+	 switch (rxMsg->MsgID)
+	    {
+	        case LORAWAN_MSG_ACTIVATE_DEVICE_REQ:
+	        	WiMOD_SAP_LoRaWAN.ActivateDevice(&activationData, statusRsp);
 
+	            break;
+	        case LORAWAN_MSG_REACTIVATE_DEVICE_REQ:
+	        	WiMOD_SAP_LoRaWAN.ReactivateDevice(&devAdr, statusRsp);
+
+	        	break;
+	        case LORAWAN_MSG_SET_JOIN_PARAM_REQ:
+	        	WiMOD_SAP_LoRaWAN.SetJoinParameter(&joinParams, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_JOIN_NETWORK_REQ:
+	        	WiMOD_SAP_LoRaWAN.JoinNetwork(statusRsp);
+	        	break;
+	        /*case LORAWAN_MSG_SEND_UDATA_REQ:
+	        	WiMOD_SAP_LoRaWAN.SendUData(rxMsg->Payload[0], statusRsp);
+	        	break;
+	        case LORAWAN_MSG_SEND_CDATA_REQ:
+	        	WiMOD_SAP_LoRaWAN.SendCData(&data, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_SET_RSTACK_CONFIG_REQ:
+	        	WiMOD_SAP_LoRaWAN.SetRadioStackConfig(NTOH32(rxMsg->Payload[0]), statusRsp);
+	        	break;
+	        case LORAWAN_MSG_GET_RSTACK_CONFIG_REQ:
+	        	WiMOD_SAP_LoRaWAN.GetRadioStackConfig(&data, statusRsp);
+	        	break;*/
+	        case LORAWAN_MSG_DEACTIVATE_DEVICE_REQ:
+	        	WiMOD_SAP_LoRaWAN.DeactivateDevice(statusRsp);
+	        	break;
+	        case LORAWAN_MSG_FACTORY_RESET_REQ:
+	        	WiMOD_SAP_LoRaWAN.FactoryReset(statusRsp);
+	        	break;
+	        case LORAWAN_MSG_SET_DEVICE_EUI_REQ:
+	        	WiMOD_SAP_LoRaWAN.SetDeviceEUI(&deviceEUI, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_GET_DEVICE_EUI_REQ:
+	        	WiMOD_SAP_LoRaWAN.GetDeviceEUI(&deviceEUI, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_GET_NWK_STATUS_REQ:
+	        	WiMOD_SAP_LoRaWAN.GetNwkStatus(&nwkStatus, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_SEND_MAC_CMD_REQ:
+	        	WiMOD_SAP_LoRaWAN.SendMacCmd(&cmd, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_SET_CUSTOM_CFG_REQ:
+	        	WiMOD_SAP_LoRaWAN.SetCustomConfig(&rfGain, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_GET_CUSTOM_CFG_REQ:
+	        	WiMOD_SAP_LoRaWAN.GetCustomConfig(&rfGain, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_GET_SUPPORTED_BANDS_REQ:
+	        	WiMOD_SAP_LoRaWAN.GetSupportedBands(&supportedBands, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_GET_TXPOWER_LIMIT_CONFIG_REQ:
+	        	WiMOD_SAP_LoRaWAN.GetTxPowerLimitConfig(&txPwrLimitCfg, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_SET_TXPOWER_LIMIT_CONFIG_REQ:
+	        	WiMOD_SAP_LoRaWAN.SetTxPowerLimitConfig(&txPwrLimitCfg, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_GET_LINKADRREQ_CONFIG_REQ:
+	        	WiMOD_SAP_LoRaWAN.GetLinkAdrReqConfig(&linkAdrReqCfg, statusRsp);
+	        	break;
+	        case LORAWAN_MSG_SET_LINKADRREQ_CONFIG_REQ:
+	        	WiMOD_SAP_LoRaWAN.SetLinkAdrReqConfig(&linkAdrReqCfg, statusRsp);
+	        	break;
+	        default:
+	            break;
+	    }
+	    return;
 }
 //------------------------------------------------------------------------------
 //
