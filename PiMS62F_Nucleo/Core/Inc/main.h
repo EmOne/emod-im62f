@@ -61,7 +61,31 @@ void UART2_ReInit (void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#ifdef STM32L1
+#ifdef NUCLEO_L1
+#define SX_NRST_Pin			GPIO_PIN_0
+#define SX_NRST_GPIO_Port	GPIOA
+#define SX_SCK_Pin			GPIO_PIN_5
+#define SX_SCK_GPIO_Port	GPIOA
+#define SX_MISO_Pin			GPIO_PIN_6
+#define SX_MISO_GPIO_Port	GPIOA
+#define SX_MOSI_Pin			GPIO_PIN_7
+#define SX_MOSI_GPIO_Port	GPIOA
+#define SX_ANT_SW_Pin		GPIO_PIN_9
+#define SX_ANT_SW_GPIO_Port	GPIOA
+#define SX_NSS_Pin			GPIO_PIN_8
+#define SX_NSS_GPIO_Port	GPIOA
+#define SX_DIO1_Pin			GPIO_PIN_4
+#define SX_DIO1_GPIO_Port	GPIOB
+#define SX_BUSY_Pin			GPIO_PIN_3
+#define SX_BUSY_GPIO_Port	GPIOB
+#define SX_TX_Pin			GPIO_PIN_2
+#define SX_TX_GPIO_Port		GPIOA
+#define SX_RX_Pin			GPIO_PIN_3
+#define SX_RX_GPIO_Port		GPIOA
+#define B1_Pin				GPIO13
+#define B1_GPIO_Port		GPIOC
+
+#elif defined( STM32L1 )
 #define DI_Pin GPIO_PIN_11
 #define DI_GPIO_Port GPIOC
 #define CS_Pin GPIO_PIN_2
@@ -122,7 +146,7 @@ void UART2_ReInit (void);
 #define RF_TX_SW_GPIO_Port GPIOA
 #define ADC2_Pin GPIO_PIN_3
 #define ADC2_GPIO_Port GPIOA
-#else
+#elif defined(STM32L4)
 #define B1_Pin GPIO_PIN_13
 #define B1_GPIO_Port GPIOC
 #define USART_TX_Pin GPIO_PIN_2

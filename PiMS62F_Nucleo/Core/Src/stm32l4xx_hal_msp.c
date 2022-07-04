@@ -316,36 +316,36 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 
 }
 
-/**
-* @brief UART MSP De-Initialization
-* This function freeze the hardware resources used in this example
-* @param huart: UART handle pointer
-* @retval None
-*/
-void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
-{
-  if(huart->Instance==USART2)
-  {
-  /* USER CODE BEGIN USART2_MspDeInit 0 */
-
-  /* USER CODE END USART2_MspDeInit 0 */
-    /* Peripheral clock disable */
-    __HAL_RCC_USART2_CLK_DISABLE();
-
-    /**USART2 GPIO Configuration
-    PA2     ------> USART2_TX
-    PA3     ------> USART2_RX
-    */
-    HAL_GPIO_DeInit(GPIOA, USART_TX_Pin|USART_RX_Pin);
-
-    /* USART2 interrupt DeInit */
-    HAL_NVIC_DisableIRQ(USART2_IRQn);
-  /* USER CODE BEGIN USART2_MspDeInit 1 */
-
-  /* USER CODE END USART2_MspDeInit 1 */
-  }
-
-}
+///**
+//* @brief UART MSP De-Initialization
+//* This function freeze the hardware resources used in this example
+//* @param huart: UART handle pointer
+//* @retval None
+//*/
+//void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
+//{
+//  if(huart->Instance==USART2)
+//  {
+//  /* USER CODE BEGIN USART2_MspDeInit 0 */
+//
+//  /* USER CODE END USART2_MspDeInit 0 */
+//    /* Peripheral clock disable */
+//    __HAL_RCC_USART2_CLK_DISABLE();
+//
+//    /**USART2 GPIO Configuration
+//    PA2     ------> USART2_TX
+//    PA3     ------> USART2_RX
+//    */
+//    HAL_GPIO_DeInit(GPIOA, USART_TX_Pin|USART_RX_Pin);
+//
+//    /* USART2 interrupt DeInit */
+//    HAL_NVIC_DisableIRQ(USART2_IRQn);
+//  /* USER CODE BEGIN USART2_MspDeInit 1 */
+//
+//  /* USER CODE END USART2_MspDeInit 1 */
+//  }
+//
+//}
 
 /* USER CODE BEGIN 1 */
 

@@ -210,7 +210,8 @@ typedef enum TWiMOD_ModuleType
 	ModuleType_iU880B    = 0x99,
 	ModuleType_iM881A    = 0xA0,
 	ModuleType_iU881A    = 0xA1,
-	ModuleType_iM282A    = 0xB0
+	ModuleType_iM282A    = 0xB0,
+	ModuleType_iMS62F    = 0xF0
 } TWiMOD_ModuleType;
 
 

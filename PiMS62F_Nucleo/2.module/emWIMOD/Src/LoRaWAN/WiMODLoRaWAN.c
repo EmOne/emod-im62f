@@ -283,7 +283,7 @@ void Begin(TLoRaWANregion region)
 void BeginAndAutoSetup(void)
 {
 
-	WiMODLoRaWAN.begin(LoRaWAN_Region_EU868);
+	WiMODLoRaWAN.begin(LoRaWAN_Region_AS923);
 //    isOpen = true;
 //    WiMODLoRaWAN.SapLoRaWan.setRegion(LoRaWAN_Region_EU868); // default pre-set
 //    WiMODLoRaWAN.autoSetupSupportedRegion();

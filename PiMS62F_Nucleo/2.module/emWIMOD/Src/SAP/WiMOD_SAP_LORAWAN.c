@@ -228,7 +228,6 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         offset += WiMODLORAWAN_NWK_SESSION_KEY_LEN;
         memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], activationData->AppSKey, WiMODLORAWAN_APP_SESSION_KEY_LEN);
         offset += WiMODLORAWAN_APP_SESSION_KEY_LEN;
-
         result = WiMODLR_RESULT_OK;
 
 #if 0
@@ -252,8 +251,8 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         					LORAWAN_SAP_ID,
         					LORAWAN_MSG_ACTIVATE_DEVICE_RSP,
         					&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
-        		}
-        #endif
+  		}
+#endif
     }
 
     return result;

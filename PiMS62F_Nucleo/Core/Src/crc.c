@@ -81,5 +81,73 @@ void HAL_CRC_MspDeInit(CRC_HandleTypeDef* crcHandle)
 }
 
 /* USER CODE BEGIN 1 */
+uint32_t Crc32( uint8_t *buffer, uint16_t length )
+{
+    // The CRC calculation follows CCITT - 0x04C11DB7
+    const uint32_t reversedPolynom = 0xEDB88320;
+
+    // CRC initial value
+    uint32_t crc = 0xFFFFFFFF;
+
+    if( buffer == NULL )
+    {
+        return 0;
+    }
+#if HW_CRC
+    crc ^= HAL_CRC_Calculate(hcrc, buffer, length);
+#else
+    for( uint16_t i = 0; i < length; ++i )
+    {
+        crc ^= ( uint32_t )buffer[i];
+        for( uint16_t i = 0; i < 8; i++ )
+        {
+            crc = ( crc >> 1 ) ^ ( reversedPolynom & ~( ( crc & 0x01 ) - 1 ) );
+        }
+    }
+#endif
+    return ~crc;
+}
+
+uint32_t Crc32Init( void )
+{
+#if HW_CRC
+	MX_CRC_Init();
+#else
+#endif
+    return 0xFFFFFFFF;
+}
+
+uint32_t Crc32Update( uint32_t crcInit, uint8_t *buffer, uint16_t length )
+{
+    // The CRC calculation follows CCITT - 0x04C11DB7
+    const uint32_t reversedPolynom = 0xEDB88320;
+
+    // CRC initial value
+    uint32_t crc = crcInit;
+
+    if( buffer == NULL )
+    {
+        return 0;
+    }
+#if HW_CRC
+
+    crc ^= HAL_CRC_Accumulate(hcrc, buffer, length);
+#else
+    for( uint16_t i = 0; i < length; ++i )
+    {
+        crc ^= ( uint32_t )buffer[i];
+        for( uint16_t i = 0; i < 8; i++ )
+        {
+            crc = ( crc >> 1 ) ^ ( reversedPolynom & ~( ( crc & 0x01 ) - 1 ) );
+        }
+    }
+#endif
+    return crc;
+}
+
+uint32_t Crc32Finalize( uint32_t crc )
+{
+    return ~crc;
+}
 
 /* USER CODE END 1 */

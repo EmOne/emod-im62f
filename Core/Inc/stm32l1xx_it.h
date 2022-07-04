@@ -56,6 +56,10 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 void WWDG_IRQHandler(void);
+void PVD_IRQHandler(void);
+void FLASH_IRQHandler(void);
+void RCC_IRQHandler(void);
+void EXTI1_IRQHandler(void);
 void ADC1_IRQHandler(void);
 void USB_HP_IRQHandler(void);
 void USB_LP_IRQHandler(void);
@@ -67,7 +71,7 @@ void I2C1_ER_IRQHandler(void);
 void SPI1_IRQHandler(void);
 void SPI2_IRQHandler(void);
 void USART1_IRQHandler(void);
-void TIM6_IRQHandler(void);
+void EXTI15_10_IRQHandler(void);
 void SPI3_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
