@@ -1666,10 +1666,10 @@ void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg)
 	        case LORAWAN_MSG_JOIN_NETWORK_REQ:
 	        	WiMOD_SAP_LoRaWAN.JoinNetwork(statusRsp);
 	        	break;
-	        /*case LORAWAN_MSG_SEND_UDATA_REQ:
-	        	WiMOD_SAP_LoRaWAN.SendUData(rxMsg->Payload[0], statusRsp);
+	        case LORAWAN_MSG_SEND_UDATA_REQ:
+	        	WiMOD_SAP_LoRaWAN.SendUData(&data, statusRsp);
 	        	break;
-	        case LORAWAN_MSG_SEND_CDATA_REQ:
+	        /*case LORAWAN_MSG_SEND_CDATA_REQ:
 	        	WiMOD_SAP_LoRaWAN.SendCData(&data, statusRsp);
 	        	break;
 	        case LORAWAN_MSG_SET_RSTACK_CONFIG_REQ:
