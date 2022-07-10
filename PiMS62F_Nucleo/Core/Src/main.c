@@ -304,13 +304,13 @@ int main(void)
   PRINTF("MAC_VERSION= %02X.%02X.%02X.%02X\r\n", (uint8_t)(__LORA_MAC_VERSION >> 24), (uint8_t)(__LORA_MAC_VERSION >> 16), (uint8_t)(__LORA_MAC_VERSION >> 8), (uint8_t)__LORA_MAC_VERSION);
 
   /* Configure the Lora Stack*/
-  LORA_Init(&LoRaMainCallbacks, &LoRaParamInit);
+ /* LORA_Init(&LoRaMainCallbacks, &LoRaParamInit);
 
   NvmCtxMgmtRestore();
 
   LORA_Join(&LoRaParamInit);
 
-  LoraStartTx(TX_ON_EVENT);
+  LoraStartTx(TX_ON_EVENT); */
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -324,30 +324,30 @@ int main(void)
 	  HAL_GPIO_TogglePin(IO1_GPIO_Port, IO1_Pin);
 	  HAL_GPIO_TogglePin(IO2_GPIO_Port, IO2_Pin);
 
-	  if (AppProcessRequest == LORA_SET) {
+	 // if (AppProcessRequest == LORA_SET) {
 			/*reset notification flag*/
-			AppProcessRequest = LORA_RESET;
+		//	AppProcessRequest = LORA_RESET;
 			/*Send*/
-			Send(NULL);
-		}
-		if (LoraMacProcessRequest == LORA_SET) {
+		//	Send(NULL);
+		//}
+		//if (LoraMacProcessRequest == LORA_SET) {
 			/*reset notification flag*/
-			LoraMacProcessRequest = LORA_RESET;
-			LoRaMacProcess();
-		}
+		//	LoraMacProcessRequest = LORA_RESET;
+		//	LoRaMacProcess();
+		//}
 		/*If a flag is set at this point, mcu must not enter low power and must loop*/
-		DISABLE_IRQ();
+		//DISABLE_IRQ();
 
 		/* if an interrupt has occurred after DISABLE_IRQ, it is kept pending
 		 * and cortex will not enter low power anyway  */
-		if ((LoraMacProcessRequest != LORA_SET)
-				&& (AppProcessRequest != LORA_SET)) {
-#ifndef LOW_POWER_DISABLE
-			LPM_EnterLowPower();
-#endif
-		}
+		//if ((LoraMacProcessRequest != LORA_SET)
+		//		&& (AppProcessRequest != LORA_SET)) {
+//#ifndef LOW_POWER_DISABLE
+//			LPM_EnterLowPower();
+//#endif
+//		}
 
-		ENABLE_IRQ();
+//		ENABLE_IRQ();
   }
   /* USER CODE END 3 */
 }

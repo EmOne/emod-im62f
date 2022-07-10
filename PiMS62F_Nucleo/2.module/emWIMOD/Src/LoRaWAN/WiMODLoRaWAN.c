@@ -90,8 +90,8 @@ static void registerRxCDataIndicationClient(TRxCDataIndicationCallback cb);
 static void registerRxMacCmdIndicationClient(TRxMacCmdIndicationCallback cb);
 static void registerJoinedNwkIndicationClient(TJoinedNwkIndicationCallback cb);
 static void registerRxAckIndicationClient(TRxAckIndicationCallback cb);
-static bool sendUData(const TWiMODLORAWAN_TX_Data* data, TWiMODLRResultCodes* hciResult, UINT8* rspStatus);
-static bool sendCData(const TWiMODLORAWAN_TX_Data* data, TWiMODLRResultCodes* hciResult, UINT8* rspStatus);
+//static bool sendUData(const TWiMODLORAWAN_TX_Data* data, TWiMODLRResultCodes* hciResult, UINT8* rspStatus);
+//static bool sendCData(const TWiMODLORAWAN_TX_Data* data, TWiMODLRResultCodes* hciResult, UINT8* rspStatus);
 static bool setRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, TWiMODLRResultCodes* hciResult, UINT8* rspStatus);
 static bool getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, TWiMODLRResultCodes* hciResult, UINT8* rspStatus);
 static bool deactivateDevice(TWiMODLRResultCodes* hciResult, UINT8* rspStatus);
@@ -176,8 +176,8 @@ WiMODLoRaWAN_t WiMODLoRaWAN = {
 		registerRxMacCmdIndicationClient,
 		registerJoinedNwkIndicationClient,
 		registerRxAckIndicationClient,
-		sendUData,
-		sendCData,
+		NULL,
+		NULL,
 		setRadioStackConfig,
 		getRadioStackConfig,
 		deactivateDevice,
