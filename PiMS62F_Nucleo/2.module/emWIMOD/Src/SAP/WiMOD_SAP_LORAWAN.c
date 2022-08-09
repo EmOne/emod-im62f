@@ -91,6 +91,7 @@ static TWiMODLRResultCodes setLinkAdrReqConfig(TWiMODLORAWAN_LinkAdrReqConfig* l
 static TWiMODLRResultCodes setBatteryLevelStatus(UINT8 battStatus, UINT8* statusRsp);
 static void dispatchLoRaWANMessage(TWiMODLR_HCIMessage* rxMsg);
 static void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg);
+static TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRsp);
 //-----------------------------------------------------------------------------
 
 /**
@@ -125,7 +126,7 @@ WiMOD_SAP_LoRaWAN_t WiMOD_SAP_LoRaWAN = {
 		registerRxMacCmdIndicationClient,
 		registerJoinedNwkIndicationClient,
 		registerRxAckIndicationClient,
-		NULL,
+		sendUData,
 		NULL,
 		setRadioStackConfig,
 		getRadioStackConfig,
@@ -384,28 +385,41 @@ TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
     UINT8              offset = 0;
     UINT8              tmpSize;
+    UINT32				u32CreditTime;
 
-    if ( data && (data->Length > 0) && statusRsp) {
+    if ( data && (data->Length > 0) ) {
 
-        tmpSize = MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), data->Length);
+//        tmpSize = MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), data->Length);
+//        if (WiMOD_SAP_LoRaWAN.txPayloadSize >= tmpSize) {
+//        	WiMOD_SAP_LoRaWAN.txPayload[offset++] = data->Port;
+//            memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], data->Payload, MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), tmpSize));
+//            offset += tmpSize;
+//            result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                               LORAWAN_MSG_SEND_UDATA_REQ,
+//                                               LORAWAN_MSG_SEND_UDATA_RSP,
+//											   WiMOD_SAP_LoRaWAN.txPayload, offset);
+//            // copy response status
+//            if (result == WiMODLR_RESULT_OK) {
+//                *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//            }
+//        } else {
+//            result = WiMODLR_RESULT_PAYLOAD_LENGTH_ERROR;
+//        }
 
-        if (WiMOD_SAP_LoRaWAN.txPayloadSize >= tmpSize) {
-        	WiMOD_SAP_LoRaWAN.txPayload[offset++] = data->Port;
-            memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], data->Payload, MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), tmpSize));
-            offset += tmpSize;
+    	//START TODO: Register send unreliable data to LORA message queue and expected air-time calculation
+    	u32CreditTime = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_OK;
+    	//END  TODO
 
-            result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                               LORAWAN_MSG_SEND_UDATA_REQ,
-                                               LORAWAN_MSG_SEND_UDATA_RSP,
-											   WiMOD_SAP_LoRaWAN.txPayload, offset);
-            // copy response status
-            if (result == WiMODLR_RESULT_OK) {
-                *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-            }
-        } else {
-            result = WiMODLR_RESULT_PAYLOAD_LENGTH_ERROR;
-        }
-
+		if (result == WiMODLR_RESULT_OK) {
+			TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+			tx->Payload[0] = result; //DeviceInfo.Status;
+			memcpy(&tx->Payload[1], &u32CreditTime, sizeof(UINT32));
+			*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+			LORAWAN_SAP_ID,
+			LORAWAN_MSG_SEND_UDATA_RSP,
+					&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 4);
+		}
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
@@ -1666,10 +1680,10 @@ void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg)
 	        case LORAWAN_MSG_JOIN_NETWORK_REQ:
 	        	WiMOD_SAP_LoRaWAN.JoinNetwork(statusRsp);
 	        	break;
-	        /*case LORAWAN_MSG_SEND_UDATA_REQ:
+	       case LORAWAN_MSG_SEND_UDATA_REQ:
 	        	WiMOD_SAP_LoRaWAN.SendUData(rxMsg->Payload[0], statusRsp);
 	        	break;
-	        case LORAWAN_MSG_SEND_CDATA_REQ:
+	        /* case LORAWAN_MSG_SEND_CDATA_REQ:
 	        	WiMOD_SAP_LoRaWAN.SendCData(&data, statusRsp);
 	        	break;
 	        case LORAWAN_MSG_SET_RSTACK_CONFIG_REQ:
