@@ -45,7 +45,8 @@ void MX_SPI2_Init(void);
 void MX_SPI3_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+void SPI_Read();
+void SPI_Write();
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

@@ -21,7 +21,7 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "vcom.h"
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -88,6 +88,10 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 
   /* USER CODE END USART1_MspInit 1 */
   }
+  else if (uartHandle->Instance == USART2)
+  {
+	  vcom_MspInit(uartHandle->Instance);
+  }
 }
 
 void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
@@ -112,7 +116,25 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE BEGIN USART1_MspDeInit 1 */
 
   /* USER CODE END USART1_MspDeInit 1 */
-  }
+	} else if (uartHandle->Instance == USART2) {
+		/* USER CODE BEGIN USART2_MspDeInit 0 */
+		vcom_MspDeInit(uartHandle->Instance);
+		/* USER CODE END USART2_MspDeInit 0 */
+		/* Peripheral clock disable */
+//		__HAL_RCC_USART2_CLK_DISABLE();
+
+		/**USART2 GPIO Configuration
+		 PA2     ------> USART2_TX
+		 PA3     ------> USART2_RX
+		 */
+//		HAL_GPIO_DeInit(GPIOA, USART_TX_Pin | USART_RX_Pin);
+
+		/* USART2 interrupt DeInit */
+//		HAL_NVIC_DisableIRQ(USART2_IRQn);
+		/* USER CODE BEGIN USART2_MspDeInit 1 */
+
+		/* USER CODE END USART2_MspDeInit 1 */
+	}
 }
 
 /* USER CODE BEGIN 1 */

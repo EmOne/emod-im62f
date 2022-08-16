@@ -281,7 +281,7 @@ void TIM4_IRQHandler(void)
   /* USER CODE END TIM4_IRQn 1 */
 }
 
-#ifdef STM32L1
+#if defined (USE_EMOD_IMS64F)
 ///**
 //  * @brief This function handles TIM5 global interrupt.
 //  */

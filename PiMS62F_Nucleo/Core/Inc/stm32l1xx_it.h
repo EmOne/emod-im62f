@@ -64,7 +64,7 @@ void SysTick_Handler(void);
 //void SPI1_IRQHandler(void);
 //void SPI2_IRQHandler(void);
 //void SPI3_IRQHandler(void);
-#ifdef STM32L1
+#if defined(EMOD_IMS64F)
 void USART1_IRQHandler(void);
 #else
 void USART2_IRQHandler(void);
@@ -73,7 +73,7 @@ void TIM2_IRQHandler(void);
 void TIM3_IRQHandler(void);
 void TIM4_IRQHandler(void);
 void TIM6_IRQHandler(void);
-#ifdef STM32L1
+#if defined(EMOD_IMS64F)
 //void TIM5_IRQHandler(void);
 void TIM9_IRQHandler(void);
 #else

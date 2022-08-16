@@ -36,7 +36,7 @@ extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim6;
-#ifdef STM32L1
+#if defined(USE_EMOD_IMS64F)
 //extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim9;
 #else
@@ -51,7 +51,7 @@ void MX_TIM3_Init(void);
 /* USER CODE BEGIN Prototypes */
 void MX_TIM2_Init(void);
 void MX_TIM4_Init(void);
-#ifdef STM32L1
+#if defined (USE_EMOD_IMS64F)
 //void MX_TIM5_Init(void);
 void MX_TIM9_Init(void);
 #else

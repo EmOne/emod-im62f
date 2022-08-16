@@ -381,14 +381,14 @@ TWiMODLRResultCodes joinNetwork(UINT8* statusRsp)
  *
  * @retval WiMODLR_RESULT_OK     if command transmit to WiMOD was ok
  */
-TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRsp)
-{
-    TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
-    UINT8              offset = 0;
-    UINT8              tmpSize;
-    UINT32				u32CreditTime;
+TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data *data,
+		UINT8 *statusRsp) {
+	TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
+	UINT8 offset = 0;
+	UINT8 tmpSize;
+	UINT32 u32CreditTime;
 
-    if ( data && (data->Length > 0) ) {
+	if (data && (data->Length > 0)) {
 
 //        tmpSize = MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), data->Length);
 //        if (WiMOD_SAP_LoRaWAN.txPayloadSize >= tmpSize) {
@@ -407,25 +407,22 @@ TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
 //            result = WiMODLR_RESULT_PAYLOAD_LENGTH_ERROR;
 //        }
 
-    	//START TODO: Register send unreliable data to LORA message queue and expected air-time calculation
-    	u32CreditTime = 0xFFFFFFFF;
-    	result = WiMODLR_RESULT_OK;
-    	//END  TODO
+		//START TODO: Register send unreliable data to LORA message queue and expected air-time calculation
+		u32CreditTime = 0xFFFFFFFF;
+		result = WiMODLR_RESULT_OK;
+		//END  TODO
+	} else {
+		result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+	}
+	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+	tx->Payload[0] = result; //DeviceInfo.Status;
+	memcpy(&tx->Payload[1], &u32CreditTime, sizeof(UINT32));
+	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+	LORAWAN_SAP_ID,
+	LORAWAN_MSG_SEND_UDATA_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+			1 + 4);
 
-		if (result == WiMODLR_RESULT_OK) {
-			TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
-			tx->Payload[0] = result; //DeviceInfo.Status;
-			memcpy(&tx->Payload[1], &u32CreditTime, sizeof(UINT32));
-			*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
-			LORAWAN_SAP_ID,
-			LORAWAN_MSG_SEND_UDATA_RSP,
-					&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 4);
-		}
-    } else {
-        result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
-    }
-
-    return result;
+	return result;
 
 }
 
@@ -443,10 +440,10 @@ TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
  */
 TWiMODLRResultCodes sendCData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRsp)
 {
-    TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
-    UINT8              offset = 0;
-
-    if ( data && (data->Length > 0) && statusRsp) {
+	TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
+	UINT8 offset = 0;
+	UINT32 u32CreditTime;
+	if (data && (data->Length > 0)) {
 
 //    	WiMOD_SAP_LoRaWAN.txPayload[offset++] = data->Port;
 //        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], data->Payload, MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), data->Length));
@@ -465,28 +462,22 @@ TWiMODLRResultCodes sendCData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
 //    }
 
 //START TODO: Register send unreliable data to LORA message queue and expected air-time calculation
-    	UINT32 u32CreditTime = 0xFFFFFFFF;
-    	result = WiMODLR_RESULT_OK;
+		u32CreditTime = 0xFFFFFFFF;
+		result = WiMODLR_RESULT_OK;
 //END  TODO
+	} else {
+		//TODO: Something
+		result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+	}
 
-    	if (result == WiMODLR_RESULT_OK)
-    	{
-    		TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
-    		tx->Payload[0] = result; //DeviceInfo.Status;
-    		memcpy(&tx->Payload[1], &u32CreditTime, sizeof(UINT32));
-    		*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
-    		LORAWAN_SAP_ID,
-    		LORAWAN_MSG_SEND_CDATA_RSP,
-    		&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 4);
-    	}
+	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+	tx->Payload[0] = result; //DeviceInfo.Status;
+	memcpy(&tx->Payload[1], &u32CreditTime, sizeof(UINT32));
+	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+	LORAWAN_SAP_ID,
+	LORAWAN_MSG_SEND_CDATA_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+			1 + 4);
 
-    	else
-    	{
-    	    result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
-    	}
-    } else {
-    	//TODO: Something
-    }
     return result;
 
 }
@@ -1362,6 +1353,14 @@ TWiMODLRResultCodes sendMacCmd(const TWiMODLORAWAN_MacCmd* cmd, UINT8* statusRsp
             result = WiMODLR_RESULT_PAYLOAD_LENGTH_ERROR;
         }
     }
+
+    TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+	tx->Payload[0] = result; //DeviceInfo.Status;
+	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+	LORAWAN_SAP_ID,
+	LORAWAN_MSG_SEND_MAC_CMD_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+			1 + 4);
+
     return result;
 }
 

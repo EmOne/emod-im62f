@@ -27,7 +27,7 @@
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
-#ifdef STM32L1
+#if defined (USE_EMOD_IMS64F)
 //TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim9;
 #else
@@ -242,7 +242,7 @@ void MX_TIM4_Init(void)
 
 }
 
-#ifdef STM32L1
+#if defined (USE_EMOD_IMS64F)
 ///**
 //  * @brief TIM5 Initialization Function
 //  * @param None
