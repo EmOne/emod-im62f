@@ -282,24 +282,41 @@ TWiMODLRResultCodes reactivateDevice(UINT32* devAdr, UINT8* statusRsp)
     if ( statusRsp && devAdr)
     {
 
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_REACTIVATE_DEVICE_REQ,
-                                           LORAWAN_MSG_REACTIVATE_DEVICE_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, offset);
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_REACTIVATE_DEVICE_REQ,
+//                                           LORAWAN_MSG_REACTIVATE_DEVICE_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, offset);
 
-        if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
+//        if (result == WiMODLR_RESULT_OK) {
+//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
 
-            *devAdr = NTOH32(&rx->Payload[WiMODLR_HCI_RSP_CMD_PAYLOAD_POS]);
+    		//TODO: Reactivate in LoRa stack
+            *devAdr = 0x0; //NTOH32(&rx->Payload[WiMODLR_HCI_RSP_CMD_PAYLOAD_POS]);
 
             // copy response status
-            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-       }  else {
-    	   result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
-       }
+//            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//       }  else {
+//    	   result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+//       }
+
+            result = WiMODLR_RESULT_OK;
+    } else {
+    	 *devAdr = 0xFFFFFFFF;
+ 	   result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
-    return result;
+
+    *statusRsp = WiMODLR_RESULT_OK;
+
+    TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+	tx->Payload[0] = result; //DeviceInfo.Status;
+	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+	LORAWAN_SAP_ID,	LORAWAN_MSG_REACTIVATE_DEVICE_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+			1 + 4);
+
+	return result;
 }
+
 
 //-----------------------------------------------------------------------------
 /**
