@@ -20,8 +20,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
 #include <stdlib.h>
-#include "hw.h"
-#include "timeServer.h"
+//#include "hw.h"
+//#include "timeServer.h"
 #include "bsp.h"
 #if defined(LRWAN_NS1)
 #include "lrwan_ns1_humidity.h"

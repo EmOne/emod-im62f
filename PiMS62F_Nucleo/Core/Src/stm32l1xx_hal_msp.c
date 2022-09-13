@@ -66,10 +66,10 @@
   * @param Delay: specifies the delay time length, in milliseconds.
   * @retval None
   */
-void HAL_Delay(__IO uint32_t Delay)
-{
-  HW_RTC_DelayMs(Delay);   /* based on RTC */
-}
+//void HAL_Delay(__IO uint32_t Delay)
+//{
+//  HW_RTC_DelayMs(Delay);   /* based on RTC */
+//}
 /* USER CODE END 0 */
 /**
   * Initializes the Global MSP.

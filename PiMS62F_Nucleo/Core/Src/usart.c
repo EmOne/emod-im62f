@@ -19,14 +19,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
-
+#include "dma.h"
 /* USER CODE BEGIN 0 */
 #include "vcom.h"
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
-
+DMA_HandleTypeDef hdma_usart1_tx;
+DMA_HandleTypeDef hdma_usart2_tx;
 /* USART1 init function */
 
 void MX_USART1_UART_Init(void)
@@ -40,7 +41,7 @@ void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = USART_BAUDRATE;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -80,6 +81,35 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    /* USART1 DMA Init */
+    /* USART1_TX Init */
+    /* Configure the DMA handler for Transmission process */
+    hdma_usart1_tx.Instance                 = USARTx_TX_DMA_CHANNEL;
+    hdma_usart1_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+    hdma_usart1_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
+    hdma_usart1_tx.Init.MemInc              = DMA_MINC_ENABLE;
+    hdma_usart1_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart1_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
+    hdma_usart1_tx.Init.Mode                = DMA_NORMAL;
+    hdma_usart1_tx.Init.Priority            = DMA_PRIORITY_LOW;
+
+    if (HAL_DMA_Init(&hdma_usart1_tx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    /* Associate the initialized DMA handle to the UART handle */
+    __HAL_LINKDMA(uartHandle, hdmatx, hdma_usart1_tx);
+
+    /* Configure the NVIC for DMA */
+    /* NVIC configuration for DMA transfer complete interrupt (USART1_TX) */
+    HAL_NVIC_SetPriority(USARTx_DMA_TX_IRQn, USARTx_Priority, 1);
+    HAL_NVIC_EnableIRQ(USARTx_DMA_TX_IRQn);
+
+    /* NVIC for USART, to catch the TX complete */
+    HAL_NVIC_SetPriority(USARTx_IRQn, USARTx_DMA_Priority, 1);
+    HAL_NVIC_EnableIRQ(USARTx_IRQn);
 
     /* USART1 interrupt Init */
     HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
@@ -154,7 +184,7 @@ void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = USART_BAUDRATE;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
