@@ -252,7 +252,7 @@ TWiMODLRResultCodes getDeviceInfo (TWiMODLR_DevMgmt_DevInfo* info, UINT8* status
             tx->Payload[offset]					    = info->DevID;
             offset += 0x04;
 
-            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,DEVMGMT_MSG_GET_DEVICEINFO_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], sizeof(TWiMODLR_DevMgmt_DevInfo));
+            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,DEVMGMT_MSG_GET_DEVICEINFO_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 10);
             result = WiMODLR_RESULT_OK;
 
     }
@@ -395,7 +395,7 @@ TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp)
 
     	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
         RTCTime = rtcTime;
-        *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 4);
+        *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
         result = WiMODLR_RESULT_OK;
     }
     return result;
@@ -580,7 +580,7 @@ TWiMODLRResultCodes getOperationMode(TWiMOD_OperationMode* opMode, UINT8* status
 			// put data to tx
 			tx->Payload[0] = *opMode;
 
-			*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_GET_OPMODE_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+			*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_GET_OPMODE_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 2);
 			result = WiMODLR_RESULT_OK;
 	}
     return result;
@@ -736,7 +736,7 @@ TWiMODLRResultCodes setRtcAlarm(const TWiMODLR_DevMgmt_RtcAlarm* rtcAlarm, UINT8
     	tx->Payload[offset++] =  (UINT8) rtcAlarm->Minutes;
     	tx->Payload[offset++] =  (UINT8) rtcAlarm->Seconds;
 
-		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_ALARM_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], sizeof(TWiMODLR_DevMgmt_RtcAlarm));
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_ALARM_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
 		result = WiMODLR_RESULT_OK;
     }
     else {
