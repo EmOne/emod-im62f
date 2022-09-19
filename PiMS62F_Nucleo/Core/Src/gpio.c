@@ -22,7 +22,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-#include "hw_gpio.h"
+
 /* USER CODE END 0 */
 
 /*----------------------------------------------------------------------------*/

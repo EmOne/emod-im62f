@@ -35,7 +35,7 @@ extern "C" {
 #define RADIO_SPI_CLK_ENABLE()                    __HAL_RCC_SPI1_CLK_ENABLE()
 
 /* SPIx Bus Pin mapping */
-#define RADIO_SPI_SCK_GPIO_PIN           BUS_SPI1_SCK_GPIO_PIN
+#define RADIO_SPI_SCK_GPIO_PIN           BUS_SPI1_SCK _GPIO_PIN
 #define RADIO_SPI_MISO_GPIO_PIN          BUS_SPI1_MISO_GPIO_PIN
 #define RADIO_SPI_MOSI_GPIO_PIN          BUS_SPI1_MOSI_GPIO_PIN
 #define RADIO_SPI_SCK_GPIO_PORT          BUS_SPI1_SCK_GPIO_PORT
