@@ -281,7 +281,7 @@ void LoRaWAN_Init(void)
     /* USER CODE BEGIN LoRaWAN_Init_3 */
 
     /* send every time button is pushed */
-    BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
+//    BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
     /* USER CODE END LoRaWAN_Init_3 */
   }
 
@@ -295,9 +295,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   switch (GPIO_Pin)
   {
-    case  USER_BUTTON_PIN:
-      UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
-      break;
+//    case  USER_BUTTON_PIN:
+//      UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
+//      break;
     default:
       break;
   }

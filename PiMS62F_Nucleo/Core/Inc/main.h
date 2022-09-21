@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
 #include "stm32l1xx_hal.h"
 #else
 #include "stm32l4xx_hal.h"
@@ -70,7 +70,7 @@ void UART2_ReInit (void);
 #define RTC_PREDIV_A ((1<<(15-RTC_N_PREDIV_S))-1)
 #define USART_BAUDRATE 115200
 
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
 
 #define DI_Pin GPIO_PIN_11
 #define DI_GPIO_Port GPIOC

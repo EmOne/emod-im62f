@@ -26,7 +26,7 @@
 #include "WiMODLRHCI.h"
 #include "WiMODLoRaWAN.h"
 
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
 //#include "adc.h"
 //#include "crc.h"
 //#include "i2c.h"
@@ -122,7 +122,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
 
 #else
 SPI_HandleTypeDef hspi1;
@@ -248,13 +248,13 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
 //  MX_TIM5_Init();
   MX_TIM9_Init();
 #else
   MX_TIM8_Init();
 #endif
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
   MX_USART1_UART_Init();
 #else
   MX_USART2_UART_Init();
@@ -270,7 +270,7 @@ int main(void)
 
   //TODO: Restore user setting
 
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
   HAL_UART_Receive_IT(&huart1, (uint8_t*) &Rx2_byte, 1);
   TWiMODLRHCI.begin(&huart1);
 #elif defined(STM32L4)
@@ -290,7 +290,7 @@ int main(void)
 
   HAL_TIM_Base_Start_IT(&htim2);
   HAL_TIM_Base_Start_IT(&htim4);
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
 //  HAL_TIM_Base_Start_IT(&htim5);
   HAL_TIM_Base_Start_IT(&htim9);
 #else
@@ -390,7 +390,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL6;
   RCC_OscInitStruct.PLL.PLLDIV = RCC_PLL_DIV3;
 #else
@@ -654,7 +654,7 @@ void UART2_ReInit (void)
 //  else
 //  {
 //    /* send everytime button is pushed  or event requested*/
-//#ifdef USE_EMOD_IMS64F
+//#ifdef USE_EMOD_IMS62F
 //#elif defined(USE_STM32L1_NUCLEO)
 //	  GPIO_InitTypeDef initStruct = {0};
 //

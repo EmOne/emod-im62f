@@ -64,7 +64,7 @@
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
-#elif defined( USE_EMOD_IMS64F )
+#elif defined( USE_EMOD_IMS62F )
 /** Configure pins as
         * Analog
         * Input

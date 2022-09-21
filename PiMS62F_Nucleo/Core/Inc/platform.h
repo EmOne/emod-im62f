@@ -37,7 +37,7 @@ extern "C" {
 #include <stdbool.h>
 #include "stm32l1xx.h"
 #include "main.h"
-#include "stm32l1xx_hw_conf.h"
+#include "stm32l1xx_hal.h"
 #include "emod_l151_bus.h"
 
 /* USER CODE BEGIN include */

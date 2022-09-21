@@ -167,6 +167,28 @@ extern "C" {
 #define Sx_Board_SetLedRx          SX1261DVK1BAS_RADIO_BoardSetLedRx
 #define Sx_Board_SetLedTx          SX1261DVK1BAS_RADIO_BoardSetLedTx
 
+#elif defined(USE_EMOD_IMS62F)
+
+#include "S62F.h"
+
+#define Sx_Board_IoInit            S62F_RADIO_IoInit
+#define Sx_Board_IoDeInit          S62F_RADIO_IoDeInit
+#define Sx_Board_IoIrqInit         S62F_RADIO_IoIrqInit
+#define Sx_Board_SendRecv          S62F_RADIO_SendRecv
+#define Sx_Board_ChipSelect        S62F_RADIO_ChipSelect
+#define Sx_Board_CheckRfFrequency  S62F_RADIO_CheckRfFrequency
+#define Sx_Board_Reset             S62F_RADIO_Reset
+#define Sx_Board_SetXO             S62F_RADIO_SetXO
+#define Sx_Board_GetWakeUpTime     S62F_RADIO_GetWakeUpTime
+#define Sx_Board_GetPaSelect       S62F_RADIO_GetPaSelect
+#define Sx_Board_SetAntSw          S62F_RADIO_SetAntSw
+#define Sx_Board_Bus_Init          S62F_RADIO_Bus_Init
+#define Sx_Board_Bus_deInit        S62F_RADIO_Bus_deInit
+#define Sx_Board_WaitOnBusy        S62F_RADIO_WaitOnBusy
+#define Sx_Board_WakeUp            S62F_RADIO_WakeUp
+#define Sx_Board_IsTcxo            S62F_RADIO_BoardIsTcxo
+#define Sx_Board_SetLedRx          S62F_RADIO_BoardSetLedRx
+#define Sx_Board_SetLedTx          S62F_RADIO_BoardSetLedTx
 #else
 #error "include your board here"
 #endif

@@ -20,7 +20,7 @@
  *
  * \author    Gregory Cristian ( Semtech )
  */
-#include "stm32l1xx.h"
+#include "main.h"
 #include "utilities.h"
 #include "eeprom-board.h"
 

@@ -39,12 +39,13 @@ Maintainer: Miguel Luis and Gregory Cristian
 extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
+#include "stdint.h"
 /* Exported types ------------------------------------------------------------*/
 
 typedef struct
 {
   float pressure;    /* in mbar */
-  float temperature; /* in °C   */
+  float temperature; /* in ï¿½C   */
   float humidity;    /* in %    */
   int32_t latitude;
   int32_t longitude ;

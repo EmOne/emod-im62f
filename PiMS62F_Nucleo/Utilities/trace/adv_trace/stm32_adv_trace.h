@@ -51,7 +51,7 @@ typedef void cb_overrun(uint8_t **pData, uint16_t *size);
  *  @brief  List the Advanced trace function status.
  *  list of the returned status value, any negative value is corresponding to an error.
  */
-typedef enum{
+typedef enum {
   UTIL_ADV_TRACE_OK              =  0,     /*!< Operation terminated successfully.*/
   UTIL_ADV_TRACE_INVALID_PARAM   = -1,     /*!< Invalid Parameter.                */
   UTIL_ADV_TRACE_HW_ERROR        = -2,     /*!< Hardware Error.                   */

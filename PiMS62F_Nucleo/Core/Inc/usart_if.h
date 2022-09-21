@@ -19,10 +19,6 @@
   */
 /* USER CODE END Header */
 
-#include "stm32_adv_trace.h"
-#include "usart.h"
-#include "dma.h"
-
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USART_IF_H__
 #define __USART_IF_H__
@@ -33,7 +29,9 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stm32_adv_trace.h"
+#include "usart.h"
+#include "dma.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

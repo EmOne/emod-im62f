@@ -30,6 +30,7 @@
 void DBG_Init(void)
 {
 #ifdef DEBUG
+#ifndef USE_EMOD_IMS62F
   GPIO_InitTypeDef  gpioinitstruct = {0};
 
   /* Enable the GPIO_B Clock */
@@ -48,6 +49,7 @@ void DBG_Init(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+#endif
 
   __HAL_RCC_DBGMCU_CLK_ENABLE();
 

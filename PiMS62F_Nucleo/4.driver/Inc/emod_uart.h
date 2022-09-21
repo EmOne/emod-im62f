@@ -57,11 +57,11 @@ extern Stream  Serial;
 extern uint8_t Rx2_buffer[kMaxUARTPayloadSize];
 extern __IO uint8_t Rx2_byte;
 /*-----------------------------------------main function-------------------------------------*/
-void UART_Init (void* handler, uint32_t baudrate);
-void UART_DeInit (void);
-int UART_Read (void);
-void UART_Write (uint8_t data);
-void UART_Print (uint8_t* data);
+void emod_UART_Init (void* handler, uint32_t baudrate);
+void emod_UART_DeInit (void);
+int  emod_UART_Read (void);
+void emod_UART_Write (uint8_t data);
+void emod_UART_Print (uint8_t* data);
 uint8_t CmdFrmUserIsReceived(Ci * pData);
 UINT8* ProcessRxMessage(UINT8* rxBuffer, UINT16 rxLength);
 /*-----------------------------------------local function-------------------------------------*/

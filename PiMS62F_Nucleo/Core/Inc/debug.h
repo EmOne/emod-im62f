@@ -31,7 +31,7 @@ extern "C" {
 
 #include <string.h>
 #include <stdio.h>
-#include "hw_conf.h"
+#include "platform.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

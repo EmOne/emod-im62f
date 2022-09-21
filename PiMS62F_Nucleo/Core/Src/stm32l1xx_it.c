@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32l1xx_it.h"
+#include "radio_board_if.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "tim.h"
@@ -60,9 +61,13 @@ extern TWiMODLORAWAN_ActivateDeviceData activationData;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_usart1_tx;
 extern UART_HandleTypeDef huart1;
 //extern PCD_HandleTypeDef hpcd_USB_FS;
 extern TIM_HandleTypeDef htim6;
+extern RTC_HandleTypeDef hrtc;
+extern DMA_HandleTypeDef hdma_usart2_tx;
+extern UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN EV */
 
@@ -97,6 +102,7 @@ void HardFault_Handler(void)
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+	  __NOP();
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }
@@ -193,7 +199,7 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
-
+	 HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
@@ -281,7 +287,7 @@ void TIM4_IRQHandler(void)
   /* USER CODE END TIM4_IRQn 1 */
 }
 
-#if defined (USE_EMOD_IMS64F)
+#if defined (USE_EMOD_IMS62F)
 ///**
 //  * @brief This function handles TIM5 global interrupt.
 //  */
@@ -339,5 +345,94 @@ void TIM6_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+void EXTI0_IRQHandler(void)
+{
+}
 
+void EXTI1_IRQHandler(void)
+{
+}
+
+void EXTI2_IRQHandler(void)
+{
+}
+
+void EXTI3_IRQHandler(void)
+{
+#if (defined(SX1276MB1MAS) | defined(SX1276MB1LAS) | defined(SX1272MB2DAS))
+  HAL_EXTI_IRQHandler(&H_EXTI_3);
+#endif
+}
+
+void EXTI4_IRQHandler(void)
+{
+#ifndef USE_EMOD_IMS62F
+  HAL_EXTI_IRQHandler(&H_EXTI_4);
+#endif
+}
+
+void EXTI9_5_IRQHandler(void)
+{
+#if (defined(SX1276MB1MAS) | defined(SX1276MB1LAS) | defined(SX1272MB2DAS))
+  HAL_EXTI_IRQHandler(&H_EXTI_5);
+#endif
+}
+
+void EXTI15_10_IRQHandler(void)
+{
+#if (defined(SX1276MB1MAS) | defined(SX1276MB1LAS) | defined(SX1272MB2DAS) | defined(USE_EMOD_IMS62F))
+  HAL_EXTI_IRQHandler(&H_EXTI_10);
+#endif
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+}
+
+void DMA1_Channel4_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel4_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel4_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_tx);
+  /* USER CODE BEGIN DMA1_Channel4_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel4_IRQn 1 */
+}
+
+void DMA1_Channel7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel7_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel7_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart2_tx);
+  /* USER CODE BEGIN DMA1_Channel7_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel7_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART2 Interrupt.
+  */
+void USART2_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART2_IRQn 0 */
+
+  /* USER CODE END USART2_IRQn 0 */
+  HAL_UART_IRQHandler(&huart2);
+  /* USER CODE BEGIN USART2_IRQn 1 */
+
+  /* USER CODE END USART2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles RTC Alarms (A and B) Interrupt.
+  */
+void RTC_Alarm_IRQHandler(void)
+{
+  /* USER CODE BEGIN RTC_Alarm_IRQn 0 */
+
+  /* USER CODE END RTC_Alarm_IRQn 0 */
+  HAL_RTC_AlarmIRQHandler(&hrtc);
+  /* USER CODE BEGIN RTC_Alarm_IRQn 1 */
+
+  /* USER CODE END RTC_Alarm_IRQn 1 */
+}
 /* USER CODE END 1 */

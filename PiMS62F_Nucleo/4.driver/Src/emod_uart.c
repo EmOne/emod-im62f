@@ -16,26 +16,26 @@ Ci EmWimodData;
 
 Stream  Serial =
 {
-	UART_Init,
-	UART_DeInit,
-	UART_Read,
-	UART_Write,
-	UART_Print,
+	emod_UART_Init,
+	emod_UART_DeInit,
+	emod_UART_Read,
+	emod_UART_Write,
+	emod_UART_Print,
 };
 
 /*-------------------------------------main function---------------------------------*/
-void UART_Init (void * handler, uint32_t baudrate)
+void emod_UART_Init (void * handler, uint32_t baudrate)
 {
 	uartHandler = (UART_HandleTypeDef *) handler;
 }
 
 
-void UART_DeInit (void)
+void emod_UART_DeInit (void)
 {
 
 }
 
-int UART_Read (void)
+int emod_UART_Read (void)
 {
 	uint16_t lenght = 0x00;
 
@@ -45,12 +45,12 @@ int UART_Read (void)
 	return lenght;
 }
 
-void UART_Write (uint8_t data)
+void emod_UART_Write (uint8_t data)
 {
 	HAL_UART_Transmit(uartHandler, &data, 1, 0xFF);
 }
 
-void UART_Print (uint8_t* data)
+void emod_UART_Print (uint8_t* data)
 {
 	uint16_t size;
 

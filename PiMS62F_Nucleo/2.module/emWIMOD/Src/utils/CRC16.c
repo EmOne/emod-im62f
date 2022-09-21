@@ -138,7 +138,7 @@ CRC16_Calc  (UINT8*             data,
     // init crc
     UINT16    crc = initVal;
 #ifndef __linux__
-    UINT16 tmp;
+//    UINT16 tmp;
 #endif
     // iterate over all bytes
     while(length--)

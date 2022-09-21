@@ -47,6 +47,7 @@ extern "C"
 {
 #endif
 
+#include "stdbool.h"
 
 #define SX1261                                      1
 #define SX1262                                      2

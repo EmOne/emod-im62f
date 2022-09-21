@@ -21,8 +21,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 /* USER CODE BEGIN Includes */
-#include "hw.h"
-#include "timeServer.h"
+#include "platform.h"
+//#include "timeServer.h"
 /* when fast wake up is enabled, the mcu wakes up in ~20us  * and
  * does not wait for the VREFINT to be settled. THis is ok for
  * most of the case except when adc must be used in this case before
@@ -87,14 +87,17 @@ void HAL_MspInit(void)
 
   /* System interrupt init*/
 
-  /** PVD Configuration
-  */
-  sConfigPVD.PVDLevel = PWR_PVDLEVEL_0;
-  sConfigPVD.Mode = PWR_PVD_MODE_NORMAL;
-  HAL_PWR_ConfigPVD(&sConfigPVD);
-  /** Enable the PVD Output
-  */
-  HAL_PWR_EnablePVD();
+//  /** PVD Configuration
+//  */
+//  sConfigPVD.PVDLevel = PWR_PVDLEVEL_0;
+//  sConfigPVD.Mode = PWR_PVD_MODE_NORMAL;
+//  HAL_PWR_ConfigPVD(&sConfigPVD);
+//  /** Enable the PVD Output
+//  */
+//  HAL_PWR_EnablePVD();
+
+  /* Disable the Power Voltage Detector */
+  HAL_PWR_DisablePVD();
 
   /* USER CODE BEGIN MspInit 1 */
   /* Set MCU in ULP (Ultra Low Power) */
@@ -109,7 +112,7 @@ void HAL_MspInit(void)
   /* Configure all IOs in analog input              */
   /* Except PA143 and PA14 (SWCLK and SWD) for debug*/
   /* PA13 and PA14 are configured in debug_init     */
-  HW_GpioInit();
+//  HW_GpioInit();
   /* USER CODE END MspInit 1 */
 }
 

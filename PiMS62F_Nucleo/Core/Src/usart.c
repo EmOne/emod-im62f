@@ -21,7 +21,7 @@
 #include "usart.h"
 #include "dma.h"
 /* USER CODE BEGIN 0 */
-#include "vcom.h"
+//#include "vcom.h"
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
