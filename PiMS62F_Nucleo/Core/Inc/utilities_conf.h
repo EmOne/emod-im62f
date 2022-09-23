@@ -33,7 +33,7 @@ extern "C" {
 /* definition and callback for tiny_vsnprintf */
 #include "stm32_tiny_vsnprintf.h"
 
-#include "usart_if.h"
+//#include "usart_if.h"
 
 /*low power manager configuration*/
 typedef enum

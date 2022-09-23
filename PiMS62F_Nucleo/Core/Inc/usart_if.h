@@ -19,6 +19,7 @@
   */
 /* USER CODE END Header */
 
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USART_IF_H__
 #define __USART_IF_H__

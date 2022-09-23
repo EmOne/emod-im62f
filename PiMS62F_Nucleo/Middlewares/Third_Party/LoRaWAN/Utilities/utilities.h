@@ -50,12 +50,12 @@ extern "C"
 /* Exported macros -----------------------------------------------------------*/
 /* Defines -------------------------------------------------------------------*/
 
-#ifndef SUCCESS
-#define SUCCESS                                     1
-#endif
+//#ifndef SUCCESS
+//#define SUCCESS                                     0
+//#endif
 
 #ifndef FAIL
-#define FAIL                                        0
+#define FAIL                                        -1
 #endif
 
 /*!

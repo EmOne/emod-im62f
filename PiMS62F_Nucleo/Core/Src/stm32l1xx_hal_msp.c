@@ -79,7 +79,7 @@ void HAL_MspInit(void)
   /* USER CODE BEGIN MspInit 0 */
 
   /* USER CODE END MspInit 0 */
-  PWR_PVDTypeDef sConfigPVD = {0};
+//  PWR_PVDTypeDef sConfigPVD = {0};
 
   __HAL_RCC_COMP_CLK_ENABLE();
   __HAL_RCC_SYSCFG_CLK_ENABLE();

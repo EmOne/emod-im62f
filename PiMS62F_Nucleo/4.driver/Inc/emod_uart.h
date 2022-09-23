@@ -64,6 +64,9 @@ void emod_UART_Write (uint8_t data);
 void emod_UART_Print (uint8_t* data);
 uint8_t CmdFrmUserIsReceived(Ci * pData);
 UINT8* ProcessRxMessage(UINT8* rxBuffer, UINT16 rxLength);
+/*---------------------------------------------------------------------------------------*/
+void emod_UART_ErrorCallback(UART_HandleTypeDef *huart);
+void emod_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 /*-----------------------------------------local function-------------------------------------*/
 void SetValue (uint8_t * pdata, uint8_t data, uint16_t size);
 #endif /* INC_EMOD_UART_H_ */

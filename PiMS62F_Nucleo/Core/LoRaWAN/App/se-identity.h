@@ -85,6 +85,11 @@ extern "C" {
  ******************************************************************************
  ******************************************************************************
  */
+/*!
+ * IEEE Organizationally Unique Identifier ( OUI ) (big endian)
+ * \remark This is unique to a company or organization
+ */
+#define IEEE_OUI                                           0xCA, 0x7D, 0xDD //EmOne CID:CA7DDD
 
 /*!
  * When set to 1 DevEui is LORAWAN_DEVICE_EUI
@@ -95,7 +100,7 @@ extern "C" {
 /*!
  * end-device IEEE EUI (big endian)
  */
-#define LORAWAN_DEVICE_EUI                                 { 0x00, 0x80, 0xE1, 0x01, 0x01, 0x01, 0x01, 0x01 }
+#define LORAWAN_DEVICE_EUI                                 { IEEE_OUI, 0x01, 0x01, 0x01, 0x01, 0x01 }
 
 /*!
  * App/Join server IEEE EUI (big endian)

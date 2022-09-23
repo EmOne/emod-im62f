@@ -23,7 +23,7 @@
 #include "usart_if.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "emod_uart.h"
 /* USER CODE END Includes */
 
 /* External variables ---------------------------------------------------------*/
@@ -197,33 +197,50 @@ void vcom_Resume(void)
   /* USER CODE END vcom_Resume_2 */
 }
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart2)
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
-  /* USER CODE BEGIN HAL_UART_TxCpltCallback_1 */
+	if (huart->Instance == huart1.Instance) {
+		/* USER CODE BEGIN HAL_UART_TxCpltCallback_1 */
 
-  /* USER CODE END HAL_UART_TxCpltCallback_1 */
-  /* buffer transmission complete*/
-  TxCpltCallback(NULL);
-  /* USER CODE BEGIN HAL_UART_TxCpltCallback_2 */
+		/* USER CODE END HAL_UART_TxCpltCallback_1 */
+	} else if (huart->Instance == huart2.Instance) {
+		/* buffer transmission complete*/
+		TxCpltCallback(NULL);
+		/* USER CODE BEGIN HAL_UART_TxCpltCallback_2 */
 
-  /* USER CODE END HAL_UART_TxCpltCallback_2 */
+		/* USER CODE END HAL_UART_TxCpltCallback_2 */
+	}
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart2)
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  /* USER CODE BEGIN HAL_UART_RxCpltCallback_1 */
-
-  /* USER CODE END HAL_UART_RxCpltCallback_1 */
-  if ((NULL != RxCpltCallback) && (HAL_UART_ERROR_NONE == huart2->ErrorCode))
-  {
-    RxCpltCallback(&charRx, 1, 0);
-  }
-  HAL_UART_Receive_IT(huart2, &charRx, 1);
+	if (huart->Instance == huart1.Instance) {
+		/* USER CODE BEGIN HAL_UART_RxCpltCallback_1 */
+		emod_UART_RxCpltCallback(huart);
+		/* USER CODE END HAL_UART_RxCpltCallback_1 */
+	} else if(huart->Instance == huart2.Instance){
+		if ((NULL != RxCpltCallback)
+				&& (HAL_UART_ERROR_NONE == huart->ErrorCode)) {
+			RxCpltCallback(&charRx, 1, 0);
+		}
+		HAL_UART_Receive_IT(huart, &charRx, 1);
+	}
   /* USER CODE BEGIN HAL_UART_RxCpltCallback_2 */
 
   /* USER CODE END HAL_UART_RxCpltCallback_2 */
 }
 
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+	if (huart->Instance == huart1.Instance) {
+		/* USER CODE BEGIN HAL_UART_ErrorCpltCallback_1 */
+		emod_UART_ErrorCallback(huart);
+		/* USER CODE END HAL_UART_ErrorCpltCallback_1 */
+	} else if (huart->Instance == huart2.Instance) {
+
+	}
+
+}
 /* USER CODE BEGIN EF */
 
 /* USER CODE END EF */

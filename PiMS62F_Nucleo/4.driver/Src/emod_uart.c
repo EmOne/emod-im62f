@@ -87,7 +87,7 @@ uint8_t CmdFrmUserIsReceived(Ci * pData)
 
 /* ----------------------UART RX Complete and Error Callback----------------------*/
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+void emod_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
     if(huart == uartHandler) {
@@ -100,7 +100,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     }
 }
 
-void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+void emod_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 
     if(huart == uartHandler) {

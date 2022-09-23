@@ -291,17 +291,17 @@ void LoRaWAN_Init(void)
 }
 
 /* USER CODE BEGIN PB_Callbacks */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  switch (GPIO_Pin)
-  {
-//    case  USER_BUTTON_PIN:
-//      UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
+//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+//{
+//  switch (GPIO_Pin)
+//  {
+////    case  USER_BUTTON_PIN:
+////      UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
+////      break;
+//    default:
 //      break;
-    default:
-      break;
-  }
-}
+//  }
+//}
 
 /* USER CODE END PB_Callbacks */
 

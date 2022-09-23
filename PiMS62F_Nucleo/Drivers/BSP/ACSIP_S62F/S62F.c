@@ -60,6 +60,8 @@
 static void S62F_RADIO_SPI_IoInit(SPI_HandleTypeDef *spiHandle);
 static void S62F_RADIO_SPI_IoDeInit(void);
 /* Private function prototypes -----------------------------------------------*/
+static void S62F_RADIO_AntSwOn( void );
+static void S62F_RADIO_AntSwOff( void );
 /*!
  * \brief Writes new Tx debug pin state
  *
@@ -170,7 +172,7 @@ void S62F_RADIO_IRQHandler(RADIO_DIO_TypeDef DIO)
   HAL_EXTI_IRQHandler(&hRADIO_DIO_exti[DIO]);
 }
 
-uint32_t S62F_RADIO_GetWakeupTime( void )
+uint32_t S62F_RADIO_GetWakeUpTime(void)
 {
     return BOARD_TCXO_WAKEUP_TIME;
 }
@@ -210,7 +212,7 @@ void S62F_RADIO_WaitOnBusy( void )
 	  while (HAL_GPIO_ReadPin(RADIO_BUSY_PORT, RADIO_BUSY_PIN) == 1);
 }
 
-void S62F_RADIO_Wakeup( void )
+void S62F_RADIO_WakeUp(void)
 {
     //NSS = 0;
 	HAL_GPIO_WritePin(RADIO_NSS_PORT, RADIO_NSS_PIN, GPIO_PIN_RESET);
@@ -252,21 +254,24 @@ uint8_t S62F_RADIO_GetPaSelect( uint32_t channel )
     }
 }
 
-//void S62F_RADIO_SetAntSw(RfSw_TypeDef state)
-//{
-//  switch (state)
-//  {
-//    case RFSW_OFF:
+void S62F_RADIO_SetAntSw(RfSw_TypeDef state)
+{
+  switch (state)
+  {
+    case RFSW_OFF:
+    	S62F_RADIO_AntSwOff();
 //      HAL_GPIO_WritePin(RADIO_ANT_SWITCH_POWER_PORT, RADIO_ANT_SWITCH_POWER_PIN, GPIO_PIN_RESET);
-//      break;
-//    case RFSW_ON:
+      break;
+    case RFSW_ON:
+    	S62F_RADIO_AntSwOn();
 //      HAL_GPIO_WritePin(RADIO_ANT_SWITCH_POWER_PORT, RADIO_ANT_SWITCH_POWER_PIN, GPIO_PIN_SET);
-//      break;
-//    default:
+      break;
+    default:
+    	S62F_RADIO_AntSwOn();
 //      HAL_GPIO_WritePin(RADIO_ANT_SWITCH_POWER_PORT, RADIO_ANT_SWITCH_POWER_PIN, GPIO_PIN_SET);
-//      break;
-//  }
-//}
+      break;
+  }
+}
 
 bool S62F_RADIO_CheckRfFrequency( uint32_t frequency )
 {
@@ -549,14 +554,14 @@ void SX126xIoRfSwitchInit( void )
 //    SX126xWaitOnBusy( );
 //}
 
-void S62F_RADIO_AntSwOn( void )
+static void S62F_RADIO_AntSwOn( void )
 {
 	S62F_RADIO_DbgPinTxWrite(0);
 	S62F_RADIO_DbgPinRxWrite(1);
 //  HW_GPIO_Write( RADIO_ANT_SWITCH_POWER_PORT, RADIO_ANT_SWITCH_POWER_PIN, 1);
 }
 
-void S62F_RADIO_AntSwOff( void )
+static void S62F_RADIO_AntSwOff( void )
 {
 	S62F_RADIO_DbgPinTxWrite(0);
 	S62F_RADIO_DbgPinRxWrite(0);

@@ -21,7 +21,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <math.h>
-#include "main.h" /*for Mx generated RTC_N_PREDIV_S and RTC_N_PREDIV_A*/
+//#include "main.h" /*for Mx generated RTC_N_PREDIV_S and RTC_N_PREDIV_A*/
 #include "rtc.h"
 #include "rtc_if.h"
 #include "stm32_lpm.h"
