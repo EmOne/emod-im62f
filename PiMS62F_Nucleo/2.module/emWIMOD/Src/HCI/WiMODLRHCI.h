@@ -43,6 +43,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "ComSLIP.h"
+
 /*
  * C++11 supports a better way for function pointers / function objects
  * But C++11 mode is not supported by all platforms.

@@ -23,6 +23,7 @@
 #include "main.h"
 #include "utilities.h"
 #include "eeprom-board.h"
+#include "lorawan_conf.h"
 
 uint8_t EepromMcuWriteBuffer( uint16_t addr, uint8_t *buffer, uint16_t size )
 {

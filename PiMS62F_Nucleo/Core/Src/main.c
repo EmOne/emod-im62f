@@ -175,13 +175,16 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-__IO uint8_t Rx2_byte = 0x00;
+__IO uint8_t charRx = 0x00;
 
 const char NWKSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
 const char APPSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
+const char APPEUI[8] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
+const char APPKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
 
 // create a local variable
 TWiMODLORAWAN_ActivateDeviceData activationData;
+TWiMODLORAWAN_JoinParams joinData;
 
 /* load Main call backs structure*/
 //LoRaMainCallback_t LoRaMainCallbacks = { LORA_GetBatteryLevel,
@@ -271,10 +274,10 @@ int main(void)
   //TODO: Restore user setting
 
 #if defined (USE_EMOD_IMS62F)
-  HAL_UART_Receive_IT(&huart1, (uint8_t*) &Rx2_byte, 1);
+  HAL_UART_Receive_IT(&huart1, (uint8_t*) &charRx, 1);
   TWiMODLRHCI.begin(&huart1);
 #elif defined(STM32L4)
-  HAL_UART_Receive_IT(&huart2, (uint8_t*) &Rx2_byte, 1);
+  HAL_UART_Receive_IT(&huart2, (uint8_t*) &charRx, 1);
   TWiMODLRHCI.begin(&huart2);
 #else
 #error "Please define your MCU series"
@@ -287,6 +290,9 @@ int main(void)
   activationData.DeviceAddress = WIMOD_DEV_ADDR;
   memcpy(activationData.NwkSKey, NWKSKEY, 16);
   memcpy(activationData.AppSKey, APPSKEY, 16);
+
+  memcpy( joinData.AppEUI, APPEUI, 8);
+  memcpy( joinData.AppKey, APPKEY, 16);
 
   HAL_TIM_Base_Start_IT(&htim2);
   HAL_TIM_Base_Start_IT(&htim4);

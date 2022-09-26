@@ -246,6 +246,7 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         	//*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
         }
 #else
+        LoRaWAN_Init();
         //copy response status
         if (result == WiMODLR_RESULT_OK) {
         			TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
@@ -255,7 +256,7 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         					LORAWAN_MSG_ACTIVATE_DEVICE_RSP,
         					&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
         		}
-        #endif
+#endif
     }
 
     return result;
@@ -304,6 +305,8 @@ TWiMODLRResultCodes reactivateDevice(UINT32* devAdr, UINT8* statusRsp)
     	 *devAdr = 0xFFFFFFFF;
  	   result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
+
+    LoRaWAN_Init();
 
     *statusRsp = WiMODLR_RESULT_OK;
 
@@ -427,6 +430,7 @@ TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data *data,
 		//START TODO: Register send unreliable data to LORA message queue and expected air-time calculation
 		u32CreditTime = 0xFFFFFFFF;
 		result = WiMODLR_RESULT_OK;
+		UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
 		//END  TODO
 	} else {
 		result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -481,6 +485,7 @@ TWiMODLRResultCodes sendCData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
 //START TODO: Register send unreliable data to LORA message queue and expected air-time calculation
 		u32CreditTime = 0xFFFFFFFF;
 		result = WiMODLR_RESULT_OK;
+		UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
 //END  TODO
 	} else {
 		//TODO: Something

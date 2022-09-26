@@ -52,6 +52,8 @@
 
 #include "WiMOD_SAP_LORAWAN_IDs.h"
 #include "../HCI/WiMODLRHCI.h"
+#include "lora_app.h"
+#include "utilities_def.h"
 
 /*
  * C++11 supports a better way for function pointers / function objects

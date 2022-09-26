@@ -198,7 +198,7 @@ TWiMODLRResultCodes sendHCIMessageWithoutRx(UINT8 dstSapID, UINT8 msgID,  UINT8*
 
 //-----------------------------------------------------------------------------
 /**
- * @brief Handle the receiver path; process all incomming bytes from the WiMOD
+ * @brief Handle the receiver path; process all incoming bytes from the WiMOD
  *
  * This function checks if there are any bytes from the WiMOD available and
  * tries to start decoding the received data.
