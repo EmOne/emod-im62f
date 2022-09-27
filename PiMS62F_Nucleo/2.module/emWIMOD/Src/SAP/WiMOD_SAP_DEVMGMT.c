@@ -102,7 +102,7 @@ TWiMODLR_DevMgmt_FwInfo firmwareInfo = {
 		0x01,
 		0x0000,
 		"14 Jan 22",
-		"WIMOD Module by EmOne",
+		"eMOD Module by EmOne",
 };
 
 TWiMODLR_DevMgmt_SystemStatus SystemInfo = {
@@ -186,7 +186,7 @@ TWiMODLRResultCodes ping(UINT8* statusRsp)
             TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
             // put data to tx
-            tx->Payload[0] = 0x55;
+            tx->Payload[0] = DeviceInfo.Status;
 
             *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,DEVMGMT_MSG_PING_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
             result = WiMODLR_RESULT_OK;
@@ -213,11 +213,15 @@ TWiMODLRResultCodes reset(UINT8* statusRsp)
 
 			TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
+
 			// put data to tx
-			tx->Payload[0] = 0x55;
+			tx->Payload[0] = DeviceInfo.Status;
 
 			*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_RESET_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
 			result = WiMODLR_RESULT_OK;
+
+			HAL_Delay(200)
+			__NVIC_SystemReset();
 	}
     return result;
 }
@@ -242,17 +246,17 @@ TWiMODLRResultCodes getDeviceInfo (TWiMODLR_DevMgmt_DevInfo* info, UINT8* status
             TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
             // put data to tx
-            tx->Payload[WiMODLR_HCI_RSP_STATUS_POS] = info->Status;
+            tx->Payload[WiMODLR_HCI_RSP_STATUS_POS] = DEVMGMT_STATUS_OK; info->Status;
             tx->Payload[offset++]					= info->ModuleType;
-            tx->Payload[offset]					    = info->DevAdr;
-            offset += 0x02;
-            tx->Payload[offset++]					= info->GroupAdr;
+            memcpy(&tx->Payload[offset], &info->DevAdr, 4);
+            offset += 0x04;
+//            tx->Payload[offset++]					= info->GroupAdr;
             // reserved field
-            offset++;
-            tx->Payload[offset]					    = info->DevID;
+  //          offset++;
+            memcpy(&tx->Payload[offset], &info->DevID, 4);
             offset += 0x04;
 
-            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,DEVMGMT_MSG_GET_DEVICEINFO_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], sizeof(TWiMODLR_DevMgmt_DevInfo));
+            *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID,DEVMGMT_MSG_GET_DEVICEINFO_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 10);
             result = WiMODLR_RESULT_OK;
 
     }
@@ -395,7 +399,8 @@ TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp)
 
     	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
         RTCTime = rtcTime;
-        *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 4);
+        tx->Payload[0] = DEVMGMT_STATUS_OK;
+        *statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
         result = WiMODLR_RESULT_OK;
     }
     return result;
@@ -578,9 +583,9 @@ TWiMODLRResultCodes getOperationMode(TWiMOD_OperationMode* opMode, UINT8* status
 			TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
 			// put data to tx
-			tx->Payload[0] = *opMode;
-
-			*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_GET_OPMODE_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+			tx->Payload[0] = DEVMGMT_STATUS_OK;
+			tx->Payload[1] = *opMode;
+			*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_GET_OPMODE_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 2);
 			result = WiMODLR_RESULT_OK;
 	}
     return result;
@@ -730,13 +735,13 @@ TWiMODLRResultCodes setRtcAlarm(const TWiMODLR_DevMgmt_RtcAlarm* rtcAlarm, UINT8
     if (statusRsp && rtcAlarm && (WiMOD_SAP_DevMgmt.HciParser->Rx.ExpectedRsponseMsg.Length >= 0x04)) {
 
     	TWiMODLR_HCIMessage* tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
+    	tx->Payload[offset++] = DEVMGMT_STATUS_OK;
+//    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Options;
+//    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Hour;
+//    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Minutes;
+//    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Seconds;
 
-    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Options;
-    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Hour;
-    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Minutes;
-    	tx->Payload[offset++] =  (UINT8) rtcAlarm->Seconds;
-
-		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_ALARM_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], sizeof(TWiMODLR_DevMgmt_RtcAlarm));
+		*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(DEVMGMT_SAP_ID, DEVMGMT_MSG_SET_RTC_ALARM_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
 		result = WiMODLR_RESULT_OK;
     }
     else {

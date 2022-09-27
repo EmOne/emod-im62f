@@ -159,7 +159,7 @@ WiMOD_SAP_LoRaWAN_t WiMOD_SAP_LoRaWAN = {
 		NULL,
 		0x00,
 		NULL,
-		LoRaWAN_Region_EU868, // default init
+		LoRaWAN_Region_AS923, // default init
 };
 
 /*******************************************************************************/
@@ -292,27 +292,28 @@ TWiMODLRResultCodes reactivateDevice(UINT32* devAdr, UINT8* statusRsp)
 //            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
 
     		//TODO: Reactivate in LoRa stack
-            *devAdr = 0x0; //NTOH32(&rx->Payload[WiMODLR_HCI_RSP_CMD_PAYLOAD_POS]);
-
+        *devAdr = 0x0; //NTOH32(&rx->Payload[WiMODLR_HCI_RSP_CMD_PAYLOAD_POS]);
+		LoRaWAN_Init();
             // copy response status
 //            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //       }  else {
 //    	   result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
 //       }
 
-            result = WiMODLR_RESULT_OK;
+        result = WiMODLR_RESULT_OK;
     } else {
-    	 *devAdr = 0xFFFFFFFF;
- 	   result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*devAdr = 0xFFFFFFFF;
+ 	   	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
-
-    LoRaWAN_Init();
 
     *statusRsp = WiMODLR_RESULT_OK;
 
     TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
 	tx->Payload[0] = result; //DeviceInfo.Status;
+	
+	//32-Bit Device Address(LSB first)
 	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+	
 	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
 	LORAWAN_SAP_ID,	LORAWAN_MSG_REACTIVATE_DEVICE_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1 + 4);
@@ -340,21 +341,33 @@ TWiMODLRResultCodes setJoinParameter(TWiMODLORAWAN_JoinParams* joinParams, UINT8
     UINT8              offset = 0;
 
     if ( statusRsp && (WiMOD_SAP_LoRaWAN.txPayloadSize >= WiMODLORAWAN_APP_EUI_LEN + WiMODLORAWAN_APP_KEY_LEN)) {
+		*devAdr = 0xFFFFFFFF;
+ 	   	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
 
-        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], joinParams->AppEUI, WiMODLORAWAN_APP_EUI_LEN);
-        offset += WiMODLORAWAN_APP_EUI_LEN;
-        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], joinParams->AppKey, WiMODLORAWAN_APP_KEY_LEN);
-        offset += WiMODLORAWAN_APP_KEY_LEN;
-
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_SET_JOIN_PARAM_REQ,
-                                           LORAWAN_MSG_SET_JOIN_PARAM_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, offset);
-        // copy response status
-        if (result == WiMODLR_RESULT_OK) {
-            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-        }
+//        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], joinParams->AppEUI, WiMODLORAWAN_APP_EUI_LEN);
+//        offset += WiMODLORAWAN_APP_EUI_LEN;
+//        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], joinParams->AppKey, WiMODLORAWAN_APP_KEY_LEN);
+//        offset += WiMODLORAWAN_APP_KEY_LEN;
+//
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_SET_JOIN_PARAM_REQ,
+//                                           LORAWAN_MSG_SET_JOIN_PARAM_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, offset);
+//        // copy response status
+//        if (result == WiMODLR_RESULT_OK) {
+//            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//        }
     }
+    
+    TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    tx->Payload[0] = result; //DeviceInfo.Status;
+    memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	LORAWAN_SAP_ID,	
+    	LORAWAN_MSG_SET_JOIN_PARAM_RSP, 
+    	&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 
+    	1);
+    
     return result;
 }
 
@@ -377,14 +390,28 @@ TWiMODLRResultCodes joinNetwork(UINT8* statusRsp)
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
 
     if ( statusRsp) {
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_JOIN_NETWORK_REQ,
-                                           LORAWAN_MSG_JOIN_NETWORK_RSP,
-                                           NULL, 0);
-        // copy response status
-        if (result == WiMODLR_RESULT_OK) {
-            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-        }
+        	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+
+    	*statusRsp = WiMODLR_RESULT_OK;
+
+        //TODO: set join parameter
+        LoRaWAN_Init();
+        
+    	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    	tx->Payload[0] = result; //DeviceInfo.Status;
+    	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	LORAWAN_SAP_ID,	LORAWAN_MSG_JOIN_NETWORK_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+    
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_JOIN_NETWORK_REQ,
+//                                           LORAWAN_MSG_JOIN_NETWORK_RSP,
+//                                           NULL, 0);
+    
+//        if (result == WiMODLR_RESULT_OK) {
+//            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//        }
     }
     return result;
 }
@@ -427,16 +454,19 @@ TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data *data,
 //            result = WiMODLR_RESULT_PAYLOAD_LENGTH_ERROR;
 //        }
 
-		//START TODO: Register send unreliable data to LORA message queue and expected air-time calculation
+		//TODO: (LSB first) Register send unreliable data to LORA message queue and expected air-time calculation
 		u32CreditTime = 0xFFFFFFFF;
-		result = WiMODLR_RESULT_OK;
+
 		UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
-		//END  TODO
+
+		result = WiMODLR_RESULT_OK;
+
 	} else {
 		result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
 	}
+
 	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
-	tx->Payload[0] = result; //DeviceInfo.Status;
+	tx->Payload[0] = DeviceInfo.Status;
 	memcpy(&tx->Payload[1], &u32CreditTime, sizeof(UINT32));
 	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
 	LORAWAN_SAP_ID,
@@ -463,8 +493,9 @@ TWiMODLRResultCodes sendCData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
 {
 	TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
 	UINT8 offset = 0;
-	UINT32 u32CreditTime;
-	if (data && (data->Length > 0)) {
+	UINT32 u32CreditTime = 0;
+
+    if ( data && (data->Length > 0) && statusRsp) {
 
 //    	WiMOD_SAP_LoRaWAN.txPayload[offset++] = data->Port;
 //        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], data->Payload, MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), data->Length));
@@ -482,11 +513,11 @@ TWiMODLRResultCodes sendCData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
 //        result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
 //    }
 
-//START TODO: Register send unreliable data to LORA message queue and expected air-time calculation
+		//TODO: Register send unreliable data to LORA message queue and expected air-time calculation
 		u32CreditTime = 0xFFFFFFFF;
 		result = WiMODLR_RESULT_OK;
 		UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
-//END  TODO
+
 	} else {
 		//TODO: Something
 		result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -497,8 +528,9 @@ TWiMODLRResultCodes sendCData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
 	memcpy(&tx->Payload[1], &u32CreditTime, sizeof(UINT32));
 	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
 	LORAWAN_SAP_ID,
-	LORAWAN_MSG_SEND_CDATA_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
-			1 + 4);
+	LORAWAN_MSG_SEND_CDATA_RSP, 
+	&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+	1 + 4);
 
     return result;
 
@@ -1015,7 +1047,6 @@ TWiMODLRResultCodes setRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 //                                           LORAWAN_MSG_SET_RSTACK_CONFIG_RSP,
 //										   WiMOD_SAP_LoRaWAN.txPayload, offset);
 
-
         // clear RX field
         data->WrongParamErrCode = 0x00;
 
@@ -1033,30 +1064,27 @@ TWiMODLRResultCodes setRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 //    } else {
 //        result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
 //    }    return result;
-//START TODO: Register send unreliable data to LORA message queue and expected air-time calculation
-       UINT32 u32CreditTime = 0xFFFFFFFF;
-       result = WiMODLR_RESULT_OK;
-//END  TODO
 
-       if (result == WiMODLR_RESULT_OK)
-       {
-         TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
-         tx->Payload[0] = result; //DeviceInfo.Status;
-         memcpy(&tx->Payload[1], &u32CreditTime, sizeof(UINT32));
-         *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
-         LORAWAN_SAP_ID,
-         LORAWAN_MSG_SET_RSTACK_CONFIG_RSP,
-         &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 4);
-        }
+       	result = WiMODLR_RESULT_OK;
 
-        else
-           {
-        	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
-           }
-        } else {
-            	//TODO: Something
-            }
-            return result;
+		if (result == WiMODLR_RESULT_OK) {
+
+		} else {
+			result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+		}
+    }
+
+    TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+	tx->Payload[0] = DeviceInfo.Status;
+	tx->Payload[1] = data->WrongParamErrCode;
+
+	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+			LORAWAN_SAP_ID,
+			LORAWAN_MSG_SET_RSTACK_CONFIG_RSP,
+			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+			1 + 4);
+
+	return result;
 }
 
 
@@ -1079,38 +1107,47 @@ TWiMODLRResultCodes getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
     UINT8              offset = WiMODLR_HCI_RSP_STATUS_POS + 1;
 
     if ( data && statusRsp) {
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_GET_RSTACK_CONFIG_REQ,
-                                           LORAWAN_MSG_GET_RSTACK_CONFIG_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
-        if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
+    	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    	tx->Payload[0] = result; //DeviceInfo.Status;
+    	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	LORAWAN_SAP_ID,	LORAWAN_MSG_GET_RSTACK_CONFIG_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 8);
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_GET_RSTACK_CONFIG_REQ,
+//                                           LORAWAN_MSG_GET_RSTACK_CONFIG_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+//
+//        if (result == WiMODLR_RESULT_OK) {
+//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
+//
+//            data->DataRateIndex   		= rx->Payload[offset++];
+//            data->TXPowerLevel    		= rx->Payload[offset++];
+//            data->Options         		= rx->Payload[offset++];
+//            data->PowerSavingMode 		= rx->Payload[offset++];
+//            data->Retransmissions 		= rx->Payload[offset++];
+//            data->BandIndex       		= rx->Payload[offset++];
+//            data->HeaderMacCmdCapacity 	= rx->Payload[offset++];
+//
+//            if (WiMOD_SAP_LoRaWAN.region == LoRaWAN_Region_US915) {
+//				if (rx->Length > offset) {
+//					data->SubBandMask1 = rx->Payload[offset++];
+//				}
+//				if (rx->Length > offset) {
+//					data->SubBandMask2 = rx->Payload[offset++];
+//				}
+//            }
+//
+//            // copy response status
+//            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//        }
+    } else {
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    }
 
-            data->DataRateIndex   		= rx->Payload[offset++];
-            data->TXPowerLevel    		= rx->Payload[offset++];
-            data->Options         		= rx->Payload[offset++];
-            data->PowerSavingMode 		= rx->Payload[offset++];
-            data->Retransmissions 		= rx->Payload[offset++];
-            data->BandIndex       		= rx->Payload[offset++];
-            data->HeaderMacCmdCapacity 	= rx->Payload[offset++];
-
-            if (WiMOD_SAP_LoRaWAN.region == LoRaWAN_Region_US915) {
-				if (rx->Length > offset) {
-					data->SubBandMask1 = rx->Payload[offset++];
-				}
-				if (rx->Length > offset) {
-					data->SubBandMask2 = rx->Payload[offset++];
-				}
-            }
-
-            // copy response status
-            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-        }
-            else{
-            	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
-            	}
-   }
     return result;
 }
 
@@ -1128,15 +1165,24 @@ TWiMODLRResultCodes deactivateDevice(UINT8* statusRsp)
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
 
     if ( statusRsp) {
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_DEACTIVATE_DEVICE_REQ,
-                                           LORAWAN_MSG_DEACTIVATE_DEVICE_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
-        // copy response status
-        if (result == WiMODLR_RESULT_OK) {
-            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-        }
+    	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    	tx->Payload[0] = result; //DeviceInfo.Status;
+    	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	 LORAWAN_SAP_ID,	LORAWAN_MSG_DEACTIVATE_DEVICE_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_DEACTIVATE_DEVICE_REQ,
+//                                           LORAWAN_MSG_DEACTIVATE_DEVICE_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+//        // copy response status
+//        if (result == WiMODLR_RESULT_OK) {
+//            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//        }
     }
     return result;
 
@@ -1156,15 +1202,24 @@ TWiMODLRResultCodes factoryReset(UINT8* statusRsp)
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
 
     if ( statusRsp) {
+    	*devAdr = 0xFFFFFFFF;
+    	 result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	 *statusRsp = WiMODLR_RESULT_OK;
 
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_FACTORY_RESET_REQ,
-                                           LORAWAN_MSG_FACTORY_RESET_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
-        // copy response status
-        if (result == WiMODLR_RESULT_OK) {
-            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-        }
+    	 TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    	 tx->Payload[0] = result; //DeviceInfo.Status;
+    	 memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    	 *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	 LORAWAN_SAP_ID,	LORAWAN_MSG_FACTORY_RESET_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
+
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_FACTORY_RESET_REQ,
+//                                           LORAWAN_MSG_FACTORY_RESET_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+//        // copy response status
+//        if (result == WiMODLR_RESULT_OK) {
+//            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//        }
     }
     return result;
 
@@ -1189,21 +1244,34 @@ TWiMODLRResultCodes setDeviceEUI(const UINT8* deviceEUI, UINT8* statusRsp)
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
 
     if ( deviceEUI && statusRsp) {
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
         // copy 64 bit DeviceEUI information into tx buffer
-        memcpy(WiMOD_SAP_LoRaWAN.txPayload, deviceEUI, WiMODLORAWAN_DEV_EUI_LEN);
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_SET_DEVICE_EUI_REQ,
-                                           LORAWAN_MSG_SET_DEVICE_EUI_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, WiMODLORAWAN_DEV_EUI_LEN);
-
-        // copy response status
-        if (result == WiMODLR_RESULT_OK) {
-            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-        }
+//        memcpy(WiMOD_SAP_LoRaWAN.txPayload, deviceEUI, WiMODLORAWAN_DEV_EUI_LEN);
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_SET_DEVICE_EUI_REQ,
+//                                           LORAWAN_MSG_SET_DEVICE_EUI_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, WiMODLORAWAN_DEV_EUI_LEN);
+//
+//        // copy response status
+//        if (result == WiMODLR_RESULT_OK) {
+//            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//        }
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
+    
+    TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    tx->Payload[0] = DeviceInfo.Status;
+    memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+		LORAWAN_SAP_ID,	
+		LORAWAN_MSG_SET_DEVICE_EUI_RSP, 
+		&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 
+		1);
+    
     return result;
 
 }
@@ -1226,21 +1294,30 @@ TWiMODLRResultCodes getDeviceEUI (UINT8* deviceEUI, UINT8* statusRsp)
     UINT8              offset = WiMODLR_HCI_RSP_STATUS_POS + 1;
 
     if ( deviceEUI && statusRsp) {
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_GET_DEVICE_EUI_REQ,
-                                           LORAWAN_MSG_GET_DEVICE_EUI_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
-        if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
-
-            // just copy the 8 EUI bytes as octet stream
-            memcpy(deviceEUI, &rx->Payload[offset], WiMODLORAWAN_DEV_EUI_LEN);
-            offset += WiMODLORAWAN_DEV_EUI_LEN;
-
-            // copy response status
-            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-       }
+    	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    	tx->Payload[0] = result; //DeviceInfo.Status;
+    	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	 LORAWAN_SAP_ID,	LORAWAN_MSG_GET_DEVICE_EUI_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 9);
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_GET_DEVICE_EUI_REQ,
+//                                           LORAWAN_MSG_GET_DEVICE_EUI_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+//
+//        if (result == WiMODLR_RESULT_OK) {
+//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
+//
+//            // just copy the 8 EUI bytes as octet stream
+//            memcpy(deviceEUI, &rx->Payload[offset], WiMODLORAWAN_DEV_EUI_LEN);
+//            offset += WiMODLORAWAN_DEV_EUI_LEN;
+//
+//            // copy response status
+//            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//       }
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
@@ -1299,34 +1376,43 @@ TWiMODLRResultCodes getNwkStatus(TWiMODLORAWAN_NwkStatus_Data* nwkStatus, UINT8*
     UINT8              offset = WiMODLR_HCI_RSP_STATUS_POS + 1;
 
     if ( nwkStatus && statusRsp) {
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_GET_NWK_STATUS_REQ,
-                                           LORAWAN_MSG_GET_NWK_STATUS_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
-        if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
-
-            nwkStatus->NetworkStatus = rx->Payload[offset++];					// @see TLoRaWAN_NwkStatus for meaning
-
-            // set dummy values
-            nwkStatus->DeviceAddress  = 0;
-            nwkStatus->DataRateIndex  = 0;
-            nwkStatus->PowerLevel     = 0;
-            nwkStatus->MaxPayloadSize = 0;
-            // check if optional fields are present
-            if (rx->Length > offset) {
-            	nwkStatus->DeviceAddress = NTOH32(&rx->Payload[offset]);
-            	offset += 0x04;
-            	nwkStatus->DataRateIndex = rx->Payload[offset++];
-            	nwkStatus->PowerLevel    = rx->Payload[offset++];
-            	nwkStatus->MaxPayloadSize= rx->Payload[offset++];
-            }
-
-
-            // copy response status
-            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-       }
+    	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    	tx->Payload[0] = result; //DeviceInfo.Status;
+    	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	 LORAWAN_SAP_ID,	LORAWAN_MSG_GET_NWK_STATUS_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 2 + 7);
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_GET_NWK_STATUS_REQ,
+//                                           LORAWAN_MSG_GET_NWK_STATUS_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+//
+//        if (result == WiMODLR_RESULT_OK) {
+//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
+//
+//            nwkStatus->NetworkStatus = rx->Payload[offset++];					// @see TLoRaWAN_NwkStatus for meaning
+//
+//            // set dummy values
+//            nwkStatus->DeviceAddress  = 0;
+//            nwkStatus->DataRateIndex  = 0;
+//            nwkStatus->PowerLevel     = 0;
+//            nwkStatus->MaxPayloadSize = 0;
+//            // check if optional fields are present
+//            if (rx->Length > offset) {
+//            	nwkStatus->DeviceAddress = NTOH32(&rx->Payload[offset]);
+//            	offset += 0x04;
+//            	nwkStatus->DataRateIndex = rx->Payload[offset++];
+//            	nwkStatus->PowerLevel    = rx->Payload[offset++];
+//            	nwkStatus->MaxPayloadSize= rx->Payload[offset++];
+//            }
+//
+//
+//            // copy response status
+//            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//       }
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
@@ -1351,23 +1437,29 @@ TWiMODLRResultCodes sendMacCmd(const TWiMODLORAWAN_MacCmd* cmd, UINT8* statusRsp
     UINT8              i      = 0;
 
     if ( cmd && statusRsp && (cmd->Length <= WiMODLORAWAN_MAC_CMD_PAYLOAD_LENGTH)) {
-    	WiMOD_SAP_LoRaWAN.txPayload[offset++] = cmd->DataServiceType;
-    	WiMOD_SAP_LoRaWAN.txPayload[offset++] = cmd->MacCmdID;
-        // copy payload / parameters of MAC command
-        while (i < cmd->Length) {
-        	WiMOD_SAP_LoRaWAN.txPayload[offset++] = cmd->Payload[i];
-            i++;
-        }
-
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_SEND_MAC_CMD_REQ,
-                                           LORAWAN_MSG_SEND_MAC_CMD_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, offset);
-
-        if (result == WiMODLR_RESULT_OK) {
-            // copy response status
-            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-        }
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
+    	
+    	UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
+    	
+//    	WiMOD_SAP_LoRaWAN.txPayload[offset++] = cmd->DataServiceType;
+//    	WiMOD_SAP_LoRaWAN.txPayload[offset++] = cmd->MacCmdID;
+//        // copy payload / parameters of MAC command
+//        while (i < cmd->Length) {
+//        	WiMOD_SAP_LoRaWAN.txPayload[offset++] = cmd->Payload[i];
+//            i++;
+//        }
+//
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_SEND_MAC_CMD_REQ,
+//                                           LORAWAN_MSG_SEND_MAC_CMD_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, offset);
+//
+//        if (result == WiMODLR_RESULT_OK) {
+//            // copy response status
+//            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//        }
     } else {
         if (cmd == NULL || statusRsp == NULL) {
             result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -1377,11 +1469,12 @@ TWiMODLRResultCodes sendMacCmd(const TWiMODLORAWAN_MacCmd* cmd, UINT8* statusRsp
     }
 
     TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
-	tx->Payload[0] = result; //DeviceInfo.Status;
+	tx->Payload[0] = DeviceInfo.Status;
 	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
 	LORAWAN_SAP_ID,
-	LORAWAN_MSG_SEND_MAC_CMD_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
-			1 + 4);
+	LORAWAN_MSG_SEND_MAC_CMD_RSP, 
+	&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+	1);
 
     return result;
 }
@@ -1405,17 +1498,25 @@ TWiMODLRResultCodes setCustomConfig(const INT8 rfGain, UINT8* statusRsp)
 
     if ( statusRsp) {
     	WiMOD_SAP_LoRaWAN.txPayload[offset++] = (UINT8) rfGain;
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_SET_CUSTOM_CFG_REQ,
-                                           LORAWAN_MSG_SET_CUSTOM_CFG_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, offset);
-
-        if (result == WiMODLR_RESULT_OK) {
-            // copy response status
-            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-        }
+//        if (result == WiMODLR_RESULT_OK) {
+//            // copy response status
+//            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//        }
     }
+    
+    TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    tx->Payload[0] = DeviceInfo.Status;
+    memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	LORAWAN_SAP_ID,
+    	LORAWAN_MSG_SET_CUSTOM_CFG_RSP, 
+    	&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 
+    	1);
+    
     return result;
 
 }
@@ -1436,19 +1537,28 @@ TWiMODLRResultCodes getCustomConfig(INT8* rfGain, UINT8* statusRsp)
     UINT8              offset = WiMODLR_HCI_RSP_STATUS_POS + 1;
 
     if ( rfGain && statusRsp) {
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_GET_CUSTOM_CFG_REQ,
-                                           LORAWAN_MSG_GET_CUSTOM_CFG_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
-        if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
-
-            *rfGain = (INT8) rx->Payload[offset++];
-
-            // copy response status
-            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-       }
+    	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    	tx->Payload[0] = result; //DeviceInfo.Status;
+    	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	 LORAWAN_SAP_ID,	LORAWAN_MSG_GET_CUSTOM_CFG_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 2);
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_GET_CUSTOM_CFG_REQ,
+//                                           LORAWAN_MSG_GET_CUSTOM_CFG_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+//
+//        if (result == WiMODLR_RESULT_OK) {
+//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
+//
+//            *rfGain = (INT8) rx->Payload[offset++];
+//
+//            // copy response status
+//            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//       }
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
@@ -1472,27 +1582,36 @@ TWiMODLRResultCodes getSupportedBands(TWiMODLORAWAN_SupportedBands* supportedBan
     UINT8              offset = WiMODLR_HCI_RSP_STATUS_POS + 1;
 
     if ( supportedBands && statusRsp) {
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-                                           LORAWAN_MSG_GET_SUPPORTED_BANDS_REQ,
-										   LORAWAN_MSG_GET_SUPPORTED_BANDS_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
-        supportedBands->NumOfEntries = 0;
-
-        if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
-
-            // copy response status
-            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-
-            // get the band infos
-            while (offset < rx->Length  && (supportedBands->NumOfEntries < (WiMODLORAWAN_APP_PAYLOAD_LEN / 2) ) ) {
-            	supportedBands->BandIndex[supportedBands->NumOfEntries] = rx->Payload[offset++];
-            	supportedBands->MaxEIRP[supportedBands->NumOfEntries] = rx->Payload[offset++];
-            	supportedBands->NumOfEntries++;
-            }
-
-       }
+    	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    	tx->Payload[0] = result; //DeviceInfo.Status;
+    	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	 LORAWAN_SAP_ID,	LORAWAN_MSG_GET_SUPPORTED_BANDS_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 2 + 2);
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//                                           LORAWAN_MSG_GET_SUPPORTED_BANDS_REQ,
+//										   LORAWAN_MSG_GET_SUPPORTED_BANDS_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+//
+//        supportedBands->NumOfEntries = 0;
+//
+//        if (result == WiMODLR_RESULT_OK) {
+//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
+//
+//            // copy response status
+//            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//
+//            // get the band infos
+//            while (offset < rx->Length  && (supportedBands->NumOfEntries < (WiMODLORAWAN_APP_PAYLOAD_LEN / 2) ) ) {
+//            	supportedBands->BandIndex[supportedBands->NumOfEntries] = rx->Payload[offset++];
+//            	supportedBands->MaxEIRP[supportedBands->NumOfEntries] = rx->Payload[offset++];
+//            	supportedBands->NumOfEntries++;
+//            }
+//
+//       }
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
@@ -1623,22 +1742,31 @@ TWiMODLRResultCodes getLinkAdrReqConfig(TWiMODLORAWAN_LinkAdrReqConfig* linkAdrR
     UINT8              offset = WiMODLR_HCI_RSP_STATUS_POS + 1;
 
     if ( linkAdrReqCfg && statusRsp) {
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-        								   LORAWAN_MSG_GET_LINKADRREQ_CONFIG_REQ,
-										   LORAWAN_MSG_GET_LINKADRREQ_CONFIG_RSP,
-										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
-
-        if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
-
-            // copy response status
-            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-
-            // get the configured option
-            *linkAdrReqCfg = (TWiMODLORAWAN_LinkAdrReqConfig) rx->Payload[offset++];
-
-       }
+    	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    	tx->Payload[0] = result; //DeviceInfo.Status;
+    	memcpy(&tx->Payload[1], devAdr, sizeof(UINT32));
+    	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	 LORAWAN_SAP_ID,	LORAWAN_MSG_GET_LINKADRREQ_CONFIG_RSP, &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 1);
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//        								   LORAWAN_MSG_GET_LINKADRREQ_CONFIG_REQ,
+//										   LORAWAN_MSG_GET_LINKADRREQ_CONFIG_RSP,
+//										   WiMOD_SAP_LoRaWAN.txPayload, 0x00);
+//
+//
+//        if (result == WiMODLR_RESULT_OK) {
+//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
+//
+//            // copy response status
+//            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//
+//            // get the configured option
+//            *linkAdrReqCfg = (TWiMODLORAWAN_LinkAdrReqConfig) rx->Payload[offset++];
+//
+//       }
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
@@ -1662,27 +1790,35 @@ TWiMODLRResultCodes setLinkAdrReqConfig(TWiMODLORAWAN_LinkAdrReqConfig* linkAdrR
     UINT8              offset = 0;
 
     if (statusRsp) {
-    	WiMOD_SAP_LoRaWAN.txPayload[offset++] = (UINT8) *linkAdrReqCfg;
+    	*devAdr = 0xFFFFFFFF;
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
+    	*statusRsp = WiMODLR_RESULT_OK;
 
-
-        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
-											LORAWAN_MSG_SET_LINKADRREQ_CONFIG_REQ,
-											LORAWAN_MSG_SET_LINKADRREQ_CONFIG_RSP,
-											WiMOD_SAP_LoRaWAN.txPayload, offset);
-
-
-        offset = WiMODLR_HCI_RSP_STATUS_POS + 1;
-
-        if (result == WiMODLR_RESULT_OK) {
-            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
-
-            // copy response status
-            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-
-       }
+//        result = WiMOD_SAP_LoRaWAN.HciParser->SendHCIMessage(LORAWAN_SAP_ID,
+//											LORAWAN_MSG_SET_LINKADRREQ_CONFIG_REQ,
+//											LORAWAN_MSG_SET_LINKADRREQ_CONFIG_RSP,
+//											WiMOD_SAP_LoRaWAN.txPayload, offset);
+//
+//        offset = WiMODLR_HCI_RSP_STATUS_POS + 1;
+//
+//        if (result == WiMODLR_RESULT_OK) {
+//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
+//
+//            // copy response status
+//            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
+//       }
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
+    
+    TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
+    tx->Payload[0] = DeviceInfo.Status;
+    *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+    	LORAWAN_SAP_ID,	
+    	LORAWAN_MSG_SET_LINKADRREQ_CONFIG_RSP, 
+    	&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+    	1);
+    
     return result;
 }
 
