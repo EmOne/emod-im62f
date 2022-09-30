@@ -213,4 +213,5 @@ typedef struct {
 
 extern WiMODLoRaWAN_t WiMODLoRaWAN;
 
+
 #endif /* ARDUINO_WIMODLORAWAN_H_ */

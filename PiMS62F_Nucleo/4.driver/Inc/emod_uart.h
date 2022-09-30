@@ -1,12 +1,12 @@
 /*
- * uart.h
+ * emod_uart.h
  *
  *  Created on: Dec 19, 2021
  *      Author: HP
  */
 
-#ifndef INC_UART_H_
-#define INC_UART_H_
+#ifndef INC_EMOD_UART_H_
+#define INC_EMOD_UART_H_
 
 //------------------------------------------------------------------------------
 //
@@ -66,4 +66,4 @@ uint8_t CmdFrmUserIsReceived(Ci * pData);
 UINT8* ProcessRxMessage(UINT8* rxBuffer, UINT16 rxLength);
 /*-----------------------------------------local function-------------------------------------*/
 void SetValue (uint8_t * pdata, uint8_t data, uint16_t size);
-#endif /* INC_UART_H_ */
+#endif /* INC_EMOD_UART_H_ */

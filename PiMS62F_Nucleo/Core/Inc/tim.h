@@ -32,8 +32,16 @@ extern "C" {
 
 /* USER CODE END Includes */
 
+extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
-
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim6;
+#ifdef STM32L1
+//extern TIM_HandleTypeDef htim5;
+extern TIM_HandleTypeDef htim9;
+#else
+extern TIM_HandleTypeDef htim8;
+#endif
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
@@ -41,7 +49,14 @@ extern TIM_HandleTypeDef htim3;
 void MX_TIM3_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+void MX_TIM2_Init(void);
+void MX_TIM4_Init(void);
+#ifdef STM32L1
+//void MX_TIM5_Init(void);
+void MX_TIM9_Init(void);
+#else
+void MX_TIM8_Init(void);
+#endif
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

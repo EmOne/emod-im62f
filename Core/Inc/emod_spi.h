@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    iwdg.h
+  * @file    emod_spi.h
   * @brief   This file contains all the function prototypes for
-  *          the iwdg.c file
+  *          the emod_spi.c file
   ******************************************************************************
   * @attention
   *
@@ -18,8 +18,8 @@
   */
 /* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __IWDG_H__
-#define __IWDG_H__
+#ifndef __EMOD_SPI_H__
+#define __EMOD_SPI_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,13 +32,17 @@ extern "C" {
 
 /* USER CODE END Includes */
 
-extern IWDG_HandleTypeDef hiwdg;
+extern SPI_HandleTypeDef hspi1;
+extern SPI_HandleTypeDef hspi2;
+extern SPI_HandleTypeDef hspi3;
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-void MX_IWDG_Init(void);
+void MX_SPI1_Init(void);
+void MX_SPI2_Init(void);
+void MX_SPI3_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 
@@ -48,5 +52,5 @@ void MX_IWDG_Init(void);
 }
 #endif
 
-#endif /* __IWDG_H__ */
+#endif /* __EMOD_SPI_H__ */
 

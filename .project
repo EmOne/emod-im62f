@@ -29,4 +29,31 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>boards</name>
+			<type>2</type>
+			<location>F:/emod-ims62f/LoRaMac-node/src/boards</location>
+		</link>
+		<link>
+			<name>mac</name>
+			<type>2</type>
+			<location>F:/emod-ims62f/LoRaMac-node/src/mac</location>
+		</link>
+		<link>
+			<name>radio</name>
+			<type>2</type>
+			<location>F:/emod-ims62f/LoRaMac-node/src/radio</location>
+		</link>
+		<link>
+			<name>soft-se</name>
+			<type>2</type>
+			<location>F:/emod-ims62f/LoRaMac-node/src/peripherals/soft-se</location>
+		</link>
+		<link>
+			<name>system</name>
+			<type>2</type>
+			<location>F:/emod-ims62f/LoRaMac-node/src/system</location>
+		</link>
+	</linkedResources>
 </projectDescription>

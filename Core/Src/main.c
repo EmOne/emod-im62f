@@ -17,24 +17,21 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <emod_adc.h>
+#include <emod_crc.h>
+#include <emod_gpio.h>
+#include <emod_i2c.h>
+#include <emod_iwdg.h>
+#include <emod_rtc.h>
+#include <emod_spi.h>
+#include <emod_tim.h>
+#include <emod_uart.h>
+#include <emod_usart.h>
+#include <emod_wwdg.h>
 #include "main.h"
-#include "adc.h"
-#include "crc.h"
-#include "i2c.h"
-#include "iwdg.h"
-#include "rtc.h"
-#include "spi.h"
-#include "tim.h"
-#include "usart.h"
 #include "usb_device.h"
-#include "wwdg.h"
-#include "gpio.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include "WiMODLRHCI.h"
 #include "WiMODLoRaWAN.h"
-#include "uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

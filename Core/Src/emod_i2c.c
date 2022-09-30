@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    i2c.c
+  * @file    emod_i2c.c
   * @brief   This file provides code for the configuration
   *          of the I2C instances.
   ******************************************************************************
@@ -18,7 +18,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "i2c.h"
+#include <emod_i2c.h>
 
 /* USER CODE BEGIN 0 */
 

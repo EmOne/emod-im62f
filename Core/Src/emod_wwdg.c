@@ -18,7 +18,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "wwdg.h"
+#include <emod_wwdg.h>
 
 /* USER CODE BEGIN 0 */
 

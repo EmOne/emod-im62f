@@ -255,4 +255,6 @@ typedef struct {
 
 extern WiMOD_SAP_LoRaWAN_t WiMOD_SAP_LoRaWAN;
 
+extern TWiMODLORAWAN_ActivateDeviceData activationData;
+
 #endif /* ARDUINO_WIMOD_SAP_LORAWAN_H_ */

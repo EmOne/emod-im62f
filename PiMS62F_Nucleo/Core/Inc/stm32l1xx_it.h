@@ -55,18 +55,30 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-void WWDG_IRQHandler(void);
-void ADC1_IRQHandler(void);
-void USB_HP_IRQHandler(void);
-void USB_LP_IRQHandler(void);
-void TIM3_IRQHandler(void);
-void I2C1_EV_IRQHandler(void);
-void I2C1_ER_IRQHandler(void);
-void SPI1_IRQHandler(void);
-void SPI2_IRQHandler(void);
+//void WWDG_IRQHandler(void);
+//void ADC1_IRQHandler(void);
+//void USB_HP_IRQHandler(void);
+//void USB_LP_IRQHandler(void);
+//void I2C1_EV_IRQHandler(void);
+//void I2C1_ER_IRQHandler(void);
+//void SPI1_IRQHandler(void);
+//void SPI2_IRQHandler(void);
+//void SPI3_IRQHandler(void);
+#ifdef STM32L1
 void USART1_IRQHandler(void);
+#else
+void USART2_IRQHandler(void);
+#endif
+void TIM2_IRQHandler(void);
+void TIM3_IRQHandler(void);
+void TIM4_IRQHandler(void);
 void TIM6_IRQHandler(void);
-void SPI3_IRQHandler(void);
+#ifdef STM32L1
+//void TIM5_IRQHandler(void);
+void TIM9_IRQHandler(void);
+#else
+void TIM8_IRQHandler(void);
+#endif
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
