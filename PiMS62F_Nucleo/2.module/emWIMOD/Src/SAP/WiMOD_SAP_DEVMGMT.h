@@ -175,5 +175,6 @@ typedef struct {
 }WiMOD_SAP_DevMgmt_t;
 
 extern WiMOD_SAP_DevMgmt_t WiMOD_SAP_DevMgmt;
+extern TWiMODLR_DevMgmt_DevInfo DeviceInfo;
 
 #endif /* ARDUINO_WIMOD_SAP_DEVMGMT_H_ */
