@@ -91,7 +91,7 @@ static void SendTxData(void);
   * @brief  TX timer callback function
   * @param  context ptr of timer context
   */
-static void OnTxTimerEvent(void *context);
+//static void OnTxTimerEvent(void *context);
 
 /**
   * @brief  join event callback function
@@ -180,7 +180,7 @@ static LmHandlerMsgTypes_t MsgType = LORAWAN_DEFAULT_CONFIRMED_MSG_STATE;
 /**
   * @brief Timer to handle the application Tx
   */
-static UTIL_TIMER_Object_t TxTimer;
+//static UTIL_TIMER_Object_t TxTimer;
 
 /* USER CODE BEGIN PV */
 /**
@@ -425,7 +425,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 			//TODO: WiMOD response
 			if (params->LinkCheck == false) {
 				//Devaddress
-				LmHandlerGetDevAddr(&tx->Payload[1]);
+				LmHandlerGetDevAddr((uint32_t *) &tx->Payload[1]);
 				//Channel idx
 				tx->Payload[5] = params->Channel;
 				//DR idx
