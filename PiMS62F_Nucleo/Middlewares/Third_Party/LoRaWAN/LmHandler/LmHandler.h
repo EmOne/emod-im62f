@@ -80,6 +80,7 @@ typedef struct LmHandlerRxParams_s
 {
     uint8_t IsMcpsIndication;
     LoRaMacEventInfoStatus_t Status;
+    uint8_t Channel;
     int8_t Datarate;
     int8_t Rssi;
     int8_t Snr;

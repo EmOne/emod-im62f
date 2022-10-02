@@ -30,6 +30,7 @@
 //! </PRE>
 //------------------------------------------------------------------------------
 
+#include "FreqCalc.h"
 #include "FreqCalc_SX127x.h"
 
 /**
@@ -42,16 +43,17 @@
  * @param mid	pointer where to store the MID register value
  * @param lsb	pointer where to store the LSB register value
  */
-void FreqCalc_calcFreqToRegister(uint32_t freq, uint8_t* msb, uint8_t* mid, uint8_t* lsb)
+void FreqCalcSX127x_calcFreqToRegister(uint32_t freq, uint8_t* msb, uint8_t* mid, uint8_t* lsb)
 {
-	uint64_t frf;
-
-	if (msb && mid && lsb) {
-		frf = ((uint64_t) freq << 19) / 32000000;
-		*msb = (uint8_t)(frf>>16);
-		*mid = (uint8_t)(frf>> 8);
-		*lsb = (uint8_t)(frf>> 0);
-	}
+//	uint64_t frf;
+//
+//	if (msb && mid && lsb) {
+//		frf = ((uint64_t) freq << 19) / 32000000;
+//		*msb = (uint8_t)(frf>>16);
+//		*mid = (uint8_t)(frf>> 8);
+//		*lsb = (uint8_t)(frf>> 0);
+//	}
+	FreqCalc_calcFreqToRegister(freq, msb, mid, lsb);
 }
 
 /**
@@ -65,14 +67,15 @@ void FreqCalc_calcFreqToRegister(uint32_t freq, uint8_t* msb, uint8_t* mid, uint
  *
  * @retval the corresponding frequency in Hz
  */
-uint32_t FreqCalc_calcRegisterToFreq(uint8_t msb, uint8_t mid, uint8_t lsb) {
+uint32_t FreqCalcSX127x_calcRegisterToFreq(uint8_t msb, uint8_t mid, uint8_t lsb) {
 	uint64_t frf;
 
-	frf = 0;
-	frf =  lsb;
-	frf |= ((uint64_t) mid << 8);
-	frf |= ((uint64_t) msb << 16);
-	frf *= 32000000U;
-	frf >>= 19;
+	frf = FreqCalcSX127x_calcRegisterToFreq(msb, mid, lsb);//0;
+//	frf =  lsb;
+//	frf |= ((uint64_t) mid << 8);
+//	frf |= ((uint64_t) msb << 16);
+//	frf *= 32000000U;
+//	frf >>= 19;
+
 	return (uint32_t) frf;
 }

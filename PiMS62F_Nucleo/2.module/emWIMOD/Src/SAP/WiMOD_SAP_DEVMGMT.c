@@ -43,7 +43,6 @@
 
 #include "WiMOD_SAP_DEVMGMT.h"
 #include <string.h>
-#include "platform.h"
 
 //------------------------------------------------------------------------------
 //
@@ -105,14 +104,14 @@ TWiMODLR_DevMgmt_FwInfo firmwareInfo = {
 		0x00,
 		0x01,
 		0x0000,
-		"14 Jan 22",
+		"14 JAN 2022",
 		"eMOD Module by EmOne",
 };
 
 TWiMODLR_DevMgmt_SystemStatus SystemInfo = {
 		WiMODLR_RESULT_OK,
 		HAL_TICK_FREQ_DEFAULT,
-		HAL_GetTick,
+		(UINT32) HAL_GetTick,
 		0x00000000,
 	    0x0000,
 	    0x0000,
@@ -235,10 +234,8 @@ TWiMODLRResultCodes reset(UINT8* statusRsp)
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
 
+	UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_Reset), CFG_SEQ_Prio_0);
     return result;
-
-    HAL_Delay(200);
-    __NVIC_SystemReset();
 }
 
 //-----------------------------------------------------------------------------

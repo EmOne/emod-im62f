@@ -40,8 +40,8 @@
 extern "C" {
 #endif
 
-void     FreqCalc_calcFreqToRegister(uint32_t freq, uint8_t* msb, uint8_t* mid, uint8_t* lsb);
-uint32_t FreqCalc_calcRegisterToFreq(uint8_t msb, uint8_t mid, uint8_t lsb);
+void     FreqCalcSX127x_calcFreqToRegister(uint32_t freq, uint8_t* msb, uint8_t* mid, uint8_t* lsb);
+uint32_t FreqCalcSX127x_calcRegisterToFreq(uint8_t msb, uint8_t mid, uint8_t lsb);
 
 #ifdef __cplusplus
 }

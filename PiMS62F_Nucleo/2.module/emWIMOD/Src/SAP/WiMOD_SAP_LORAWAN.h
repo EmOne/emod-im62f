@@ -55,6 +55,7 @@
 #include "lora_app.h"
 #include "utilities_def.h"
 #include "stm32_seq.h"
+#include "LmHandlerTypes.h"
 
 /*
  * C++11 supports a better way for function pointers / function objects
@@ -257,7 +258,6 @@ typedef struct {
 }WiMOD_SAP_LoRaWAN_t;
 
 extern WiMOD_SAP_LoRaWAN_t WiMOD_SAP_LoRaWAN;
-
 extern TWiMODLORAWAN_ActivateDeviceData activationData;
 extern TWiMODLORAWAN_JoinParams joinData;
 

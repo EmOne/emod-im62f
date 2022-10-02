@@ -161,7 +161,8 @@ static LmHandlerRxParams_t RxParams =
     .RxSlot = -1,
     .LinkCheck = false,
     .DemodMargin = 0,
-    .NbGateways = 0
+    .NbGateways = 0,
+	.Channel = 0
 };
 
 #if ( LORAMAC_CLASSB_ENABLED == 1 )
@@ -952,6 +953,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication, LoRaMacRxStatus_t 
     RxParams.Snr = RxStatus->Snr;
     RxParams.RxSlot = RxStatus->RxSlot;
     RxParams.DownlinkCounter = mcpsIndication->DownLinkCounter;
+    RxParams.Channel = TxParams.Channel;
 
     appData.Port = mcpsIndication->Port;
     appData.BufferSize = mcpsIndication->BufferSize;
