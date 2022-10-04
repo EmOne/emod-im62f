@@ -44,10 +44,11 @@
 #include <stdbool.h>
 #include "S62F.h"
 #include "sx126x.h"
+#include "spi.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define BOARD_TCXO_WAKEUP_TIME  0 // no TCXO
+#define BOARD_TCXO_WAKEUP_TIME  5 // no TCXO
 
 #if !defined (USE_EMOD_IMS62F)
 	#error "Please define USE_EMOD_IMS62F"
@@ -62,19 +63,7 @@ static void S62F_RADIO_SPI_IoDeInit(void);
 /* Private function prototypes -----------------------------------------------*/
 static void S62F_RADIO_AntSwOn( void );
 static void S62F_RADIO_AntSwOff( void );
-/*!
- * \brief Writes new Tx debug pin state
- *
- * \param [IN] state Debug pin state
- */
-static void S62F_RADIO_DbgPinTxWrite( uint8_t state );
 
-/*!
- * \brief Writes new Rx debug pin state
- *
- * \param [IN] state Debug pin state
- */
-static void S62F_RADIO_DbgPinRxWrite( uint8_t state );
 /* Exported functions --------------------------------------------------------*/
 
 void S62F_RADIO_IoInit( void )
@@ -85,20 +74,29 @@ void S62F_RADIO_IoInit( void )
 //   Set DioIrqHandler port in IT_RISING mode
   RADIO_DIO_1_GPIO_CLK_ENABLE();
   initStruct.Mode = GPIO_MODE_IT_RISING;
-  initStruct.Pull = GPIO_NOPULL;
+  initStruct.Pull = GPIO_PULLDOWN;
   initStruct.Speed = GPIO_SPEED_HIGH;
   initStruct.Pin = RADIO_DIO_1_PIN;
   HAL_GPIO_Init(RADIO_DIO_1_PORT, &initStruct);
 
   /* Radio IO Init */
-	RADIO_DEV_SEL_CLK_ENABLE();
-	RADIO_BUSY_CLK_ENABLE();
+  RADIO_DEV_SEL_CLK_ENABLE();
   initStruct.Mode = GPIO_MODE_INPUT;
   initStruct.Pull = GPIO_NOPULL;
   initStruct.Pin = DEVICE_SEL_PIN;
   HAL_GPIO_Init( DEVICE_SEL_PORT, &initStruct);
+
+  RADIO_BUSY_CLK_ENABLE();
+  initStruct.Mode = GPIO_MODE_INPUT;
+  initStruct.Pull = GPIO_NOPULL;
   initStruct.Pin = RADIO_BUSY_PIN;
   HAL_GPIO_Init( RADIO_BUSY_PORT, &initStruct);
+
+  RADIO_DIO_2_GPIO_CLK_ENABLE();
+  initStruct.Mode = GPIO_MODE_INPUT;
+  initStruct.Pull = GPIO_NOPULL;
+  initStruct.Pin = RADIO_DIO_2_PIN;
+  HAL_GPIO_Init(RADIO_DIO_2_PORT, &initStruct);
   
   /* Antenna IO Init */
 //    RADIO_ANT_SWITCH_POWER_CLK_ENABLE();
@@ -114,13 +112,14 @@ void S62F_RADIO_IoInit( void )
 
   /* NSS initialization */
   RADIO_NSS_CLK_ENABLE();
-  initStruct.Pull = GPIO_NOPULL;
   initStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  initStruct.Pull = GPIO_PULLUP;
   initStruct.Pin = RADIO_NSS_PIN;
   HAL_GPIO_Init( RADIO_NSS_PORT, &initStruct );
   HAL_GPIO_WritePin(RADIO_NSS_PORT, RADIO_NSS_PIN, GPIO_PIN_SET);
 
   initStruct.Pin = RADIO_LEDTX_PIN;
+  initStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init( RADIO_LEDTX_PORT, &initStruct );
   HAL_GPIO_WritePin( RADIO_LEDTX_PORT, RADIO_LEDTX_PIN,  GPIO_PIN_RESET );
   
@@ -184,48 +183,68 @@ void S62F_RADIO_Reset( void )
   RADIO_RESET_CLK_ENABLE();
 
   initStruct.Mode =GPIO_MODE_OUTPUT_PP;
-  initStruct.Pull = GPIO_NOPULL;
+  initStruct.Pull = GPIO_PULLUP;
   initStruct.Speed = GPIO_SPEED_HIGH;
+  initStruct.Pin = RADIO_RESET_PIN;
+  HAL_GPIO_Init(RADIO_RESET_PORT, &initStruct);
+  HAL_GPIO_WritePin(RADIO_RESET_PORT, RADIO_RESET_PIN, GPIO_PIN_SET);
 
   // Wait 10 ms
   HAL_Delay( 10 );
   
   // Set RESET pin to 0
-  initStruct.Pin = RADIO_RESET_PIN;
-  HAL_GPIO_Init(RADIO_RESET_PORT, &initStruct);
   HAL_GPIO_WritePin(RADIO_RESET_PORT, RADIO_RESET_PIN, GPIO_PIN_RESET);
   
   // Wait 20 ms
   HAL_Delay( 20 );
+//  HAL_GPIO_WritePin(RADIO_RESET_PORT, RADIO_RESET_PIN, GPIO_PIN_SET);
+
   // Configure RESET as input
   initStruct.Mode = GPIO_MODE_ANALOG;
   initStruct.Pin = RADIO_RESET_PIN;
   HAL_GPIO_Init(RADIO_RESET_PORT, &initStruct);
-  HAL_GPIO_WritePin(RADIO_RESET_PORT, RADIO_RESET_PIN, GPIO_PIN_RESET);  // internal pull-up
+  HAL_GPIO_WritePin(RADIO_RESET_PORT, RADIO_RESET_PIN, GPIO_PIN_SET);  // internal pull-up
   
   // Wait 10 ms
   HAL_Delay( 10 );
+
 }
 
 void S62F_RADIO_WaitOnBusy( void )
 {
-	  while (HAL_GPIO_ReadPin(RADIO_BUSY_PORT, RADIO_BUSY_PIN) == 1);
+	  while (HAL_GPIO_ReadPin(RADIO_BUSY_PORT, RADIO_BUSY_PIN) == GPIO_PIN_SET);
 }
 
 void S62F_RADIO_WakeUp(void)
 {
-    //NSS = 0;
-	HAL_GPIO_WritePin(RADIO_NSS_PORT, RADIO_NSS_PIN, GPIO_PIN_RESET);
+//	GPIO_InitTypeDef initStruct = { 0 };
+//	RADIO_BUSY_CLK_ENABLE();
+//
+//	initStruct.Mode = GPIO_MODE_INPUT;
+//	initStruct.Pull = GPIO_NOPULL;
+//	initStruct.Pin = RADIO_BUSY_PIN;
+//	HAL_GPIO_Init( RADIO_BUSY_PORT, &initStruct);
 
-//    HW_SPI_InOut(RADIO_GET_STATUS);
-//    HW_SPI_InOut(0);
+//	while (HAL_GPIO_ReadPin(RADIO_BUSY_PORT, RADIO_BUSY_PIN) == GPIO_PIN_SET) {
+		//NSS = 0;
+		S62F_RADIO_ChipSelect(0);
 
-    S62F_RADIO_SendRecv(RADIO_GET_STATUS);
-    S62F_RADIO_SendRecv(0);
+		HAL_Delay(100);
+	//    HW_SPI_InOut(RADIO_GET_STATUS);
+	//    HW_SPI_InOut(0);
 
-    //NSS = 1;
-    HAL_GPIO_WritePin(RADIO_NSS_PORT, RADIO_NSS_PIN, GPIO_PIN_SET);
+		S62F_RADIO_SendRecv(RADIO_GET_STATUS);
+		S62F_RADIO_SendRecv(0);
 
+		//NSS = 1;
+		S62F_RADIO_ChipSelect(1);
+
+		HAL_Delay(350);
+
+//		if (ret != 0) {
+//			break;
+//		}
+//	}
     // Wait for chip to be ready.
     S62F_RADIO_WaitOnBusy();
 }
@@ -282,7 +301,7 @@ bool S62F_RADIO_CheckRfFrequency( uint32_t frequency )
 
 bool S62F_RADIO_BoardIsTcxo(void)
 { /*no TCXO on board*/
-  return false;
+  return true;
 }
 
 void S62F_RADIO_BoardSetLedTx( bool state )
@@ -306,7 +325,8 @@ void S62F_RADIO_BoardSetLedRx( bool state )
 /* Bus mapping to SPI */
 void S62F_RADIO_Bus_Init(void)
 {
-  RADIO_SPI_Init();
+//  RADIO_SPI_Init();
+	MX_SPI1_Init();
 }
 
 void S62F_RADIO_Bus_deInit(void)
@@ -353,7 +373,7 @@ static void S62F_RADIO_SPI_IoInit(SPI_HandleTypeDef *spiHandle)
   PA7     ------> SPI1_MOSI
     */
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
 
   GPIO_InitStruct.Alternate = RADIO_SPI_MOSI_GPIO_AF;
@@ -556,29 +576,34 @@ void SX126xIoRfSwitchInit( void )
 
 static void S62F_RADIO_AntSwOn( void )
 {
-	S62F_RADIO_DbgPinTxWrite(0);
-	S62F_RADIO_DbgPinRxWrite(1);
+	S62F_RADIO_DbgPinTxWrite(1);
+	S62F_RADIO_DbgPinRxWrite(0);
 //  HW_GPIO_Write( RADIO_ANT_SWITCH_POWER_PORT, RADIO_ANT_SWITCH_POWER_PIN, 1);
 }
 
 static void S62F_RADIO_AntSwOff( void )
 {
 	S62F_RADIO_DbgPinTxWrite(0);
-	S62F_RADIO_DbgPinRxWrite(0);
+	S62F_RADIO_DbgPinRxWrite(1);
 //  HW_GPIO_Write( RADIO_ANT_SWITCH_POWER_PORT, RADIO_ANT_SWITCH_POWER_PIN, 0);
 }
 
 
-static void S62F_RADIO_DbgPinTxWrite( uint8_t state )
+void S62F_RADIO_DbgPinTxWrite( uint8_t state )
 {
 //    GpioWrite( &DbgPinTx, state );
     HAL_GPIO_WritePin( RADIO_TX_SWITCH_POWER_PORT, RADIO_TX_SWITCH_POWER_PIN, state);
 }
 
-static void S62F_RADIO_DbgPinRxWrite( uint8_t state )
+void S62F_RADIO_DbgPinRxWrite( uint8_t state )
 {
 //    GpioWrite( &DbgPinRx, state );
     HAL_GPIO_WritePin( RADIO_RX_SWITCH_POWER_PORT, RADIO_RX_SWITCH_POWER_PIN, state);
+
+}
+
+void S62F_RADIO_SetOX( FlagStatus flag )
+{
 
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

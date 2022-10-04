@@ -34,7 +34,36 @@
 #include "sys_sensors.h"
 
 /* USER CODE BEGIN Includes */
+#include "WiMODLRHCI.h"
+#include "WiMODLoRaWAN.h"
 
+
+
+#if defined (USE_EMOD_IMS62F)
+//#include "adc.h"
+//#include "crc.h"
+//#include "i2c.h"
+//#include "iwdg.h"
+//#include "rtc.h"
+//#include "spi.h"
+#include "tim.h"
+#include "usart.h"
+//#include "usb_device.h"
+//#include "wwdg.h"
+#include "gpio.h"
+#elif defined (STM32L4)
+#include "uart.h"
+#else
+#error "Please define platform marco"
+#endif
+
+//#include "hw.h"
+//#include "low_power_manager.h"
+//#include "lora.h"
+//#include "bsp.h"
+//#include "timeServer.h"
+//#include "vcom.h"
+//#include "version.h"
 /* USER CODE END Includes */
 
 /* External variables ---------------------------------------------------------*/
@@ -65,6 +94,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
+__IO uint8_t charRx = 0x00;
 
 /* USER CODE END PV */
 
@@ -103,6 +133,8 @@ void SystemApp_Init(void)
 
   Gpio_PreInit();
 
+//  MX_GPIO_Init();
+
   /* Debug config : disable serial wires and DbgMcu pins settings */
   DBG_Disable();
 
@@ -139,6 +171,39 @@ void SystemApp_Init(void)
 #endif /* LOW_POWER_DISABLE */
 
   /* USER CODE BEGIN SystemApp_Init_2 */
+  MX_TIM2_Init();
+  MX_TIM3_Init();
+  MX_TIM4_Init();
+#if defined (USE_EMOD_IMS62F)
+	//  MX_TIM5_Init();
+  MX_TIM9_Init();
+#else
+    MX_TIM8_Init();
+#endif
+
+    //TODO: Restore user setting
+
+
+
+#if defined (USE_EMOD_IMS62F)
+	UTIL_ADV_TRACE_StartRxProcess(NULL); //	HAL_UART_Receive_IT(&huart1, (uint8_t*) &charRx, 1);
+	TWiMODLRHCI.begin(&huart1);
+#elif defined(STM32L4)
+      HAL_UART_Receive_IT(&huart2, (uint8_t*) &charRx, 1);
+      TWiMODLRHCI.begin(&huart2);
+#else
+    #error "Please define your MCU series"
+#endif
+
+	HAL_TIM_Base_Start_IT(&htim2);
+	HAL_TIM_Base_Start_IT(&htim4);
+#if defined (USE_EMOD_IMS62F)
+	//  HAL_TIM_Base_Start_IT(&htim5);
+	HAL_TIM_Base_Start_IT(&htim9);
+#else
+      HAL_TIM_Base_Start_IT(&htim8);
+#endif
+
 
   /* USER CODE END SystemApp_Init_2 */
 }
@@ -151,7 +216,7 @@ void UTIL_SEQ_Idle(void)
   /* USER CODE BEGIN UTIL_SEQ_Idle_1 */
 
   /* USER CODE END UTIL_SEQ_Idle_1 */
-  UTIL_LPM_EnterLowPower();
+//  UTIL_LPM_EnterLowPower();
   /* USER CODE BEGIN UTIL_SEQ_Idle_2 */
 
   /* USER CODE END UTIL_SEQ_Idle_2 */

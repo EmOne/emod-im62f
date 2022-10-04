@@ -37,12 +37,12 @@ extern "C" {
 #define RADIO_SPI_BAUDRATE                  10000000U /* 16M Sigfox, 10M Lora */
 
 /* Ticket https://intbugzilla.st.com/show_bug.cgi?id=54043 */
-#define BUS_SPI1_SCK_GPIO_PIN            GPIO_PIN_5
-#define BUS_SPI1_MISO_GPIO_PIN           GPIO_PIN_6
-#define BUS_SPI1_MOSI_GPIO_PIN           GPIO_PIN_7
-#define BUS_SPI1_SCK_GPIO_PORT           GPIOA
-#define BUS_SPI1_MISO_GPIO_PORT          GPIOA
-#define BUS_SPI1_MOSI_GPIO_PORT          GPIOA
+#define BUS_SPI1_SCK_GPIO_PIN            RF_SCk_Pin //GPIO_PIN_5
+#define BUS_SPI1_MISO_GPIO_PIN           RF_MISO_Pin //GPIO_PIN_6
+#define BUS_SPI1_MOSI_GPIO_PIN           RF_MOSI_Pin //GPIO_PIN_7
+#define BUS_SPI1_SCK_GPIO_PORT           RF_SCk_GPIO_Port //GPIOA
+#define BUS_SPI1_MISO_GPIO_PORT          RF_MISO_GPIO_Port //GPIOA
+#define BUS_SPI1_MOSI_GPIO_PORT          RF_MOSI_GPIO_Port //GPIOA
 #define BUS_SPI1_SCK_GPIO_AF             GPIO_AF5_SPI1
 #define BUS_SPI1_MOSI_GPIO_AF            GPIO_AF5_SPI1
 #define BUS_SPI1_MISO_GPIO_AF            GPIO_AF5_SPI1

@@ -155,7 +155,8 @@ void SX126xInit( DioIrqHandler dioIrq )
     Sx_Board_IoIrqInit( &dioIrq );
 
     Sx_Board_WakeUp( );
-    SX126xSetStandby( STDBY_RC );
+
+    SX126xSetStandby( STDBY_XOSC );
 
     // Initialize TCXO control
     if (Sx_Board_IsTcxo()  == true )
@@ -173,7 +174,7 @@ void SX126xInit( DioIrqHandler dioIrq )
     // Force image calibration
     ImageCalibrated = false;
 
-    SX126xSetOperatingMode( MODE_STDBY_RC );
+    SX126xSetOperatingMode( MODE_STDBY_XOSC );
 }
 
 RadioOperatingModes_t SX126xGetOperatingMode( void )
@@ -184,6 +185,23 @@ RadioOperatingModes_t SX126xGetOperatingMode( void )
 void SX126xSetOperatingMode( RadioOperatingModes_t mode )
 {
     OperatingMode = mode;
+
+    switch (mode) {
+		case MODE_TX:
+			Sx_Board_TxWrite(1);
+			Sx_Board_RxWrite(0);
+			break;
+		case MODE_SLEEP:
+			Sx_Board_TxWrite(0);
+			Sx_Board_RxWrite(0);
+			break;
+		case MODE_RX:
+		case MODE_RX_DC:
+		default:
+			Sx_Board_TxWrite(0);
+			Sx_Board_RxWrite(1);
+			break;
+	}
 }
 
 void SX126xCheckDeviceReady( void )

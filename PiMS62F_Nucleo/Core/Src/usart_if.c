@@ -30,9 +30,11 @@
 /**
   * @brief DMA handle
   */
+#if defined ( USE_EMOD_IMS62F )
 extern DMA_HandleTypeDef hdma_usart1_tx;
+#else
 extern DMA_HandleTypeDef hdma_usart2_tx;
-
+#endif
 /**
   * @brief UART handle
   */

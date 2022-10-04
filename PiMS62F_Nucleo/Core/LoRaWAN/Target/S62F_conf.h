@@ -55,24 +55,24 @@ extern "C" {
 #endif
 
 #define RADIO_NSS_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
-#define RADIO_NSS_PORT              GPIOB
-#define RADIO_NSS_PIN               GPIO_PIN_0
+#define RADIO_NSS_PORT              RF_NSS_GPIO_Port //GPIOB
+#define RADIO_NSS_PIN               RF_NSS_Pin //GPIO_PIN_0
 
 /*  Radio Pins */
 
 #define RADIO_RESET_CLK_ENABLE()    __HAL_RCC_GPIOA_CLK_ENABLE()
-#define RADIO_RESET_PORT            GPIOA
-#define RADIO_RESET_PIN             GPIO_PIN_2
+#define RADIO_RESET_PORT            RF_NRST_GPIO_Port //GPIOA
+#define RADIO_RESET_PIN             RF_NRST_Pin //GPIO_PIN_2
 
 #define RADIO_BUSY_CLK_ENABLE()                  __HAL_RCC_GPIOB_CLK_ENABLE()
-#define RADIO_BUSY_PORT                           GPIOB
-#define RADIO_BUSY_PIN                            GPIO_PIN_1
+#define RADIO_BUSY_PORT                           RF_BUSY_GPIO_Port //GPIOB
+#define RADIO_BUSY_PIN                            RF_BUSY_Pin //GPIO_PIN_1
 
 #define RADIO_DIOn                               1U
 
 #define RADIO_DIO_1_IT_PRIO                        0
-#define RADIO_DIO_1_PORT                  GPIOB
-#define RADIO_DIO_1_PIN                   GPIO_PIN_10
+#define RADIO_DIO_1_PORT                  RF_DIO1_GPIO_Port //GPIOB
+#define RADIO_DIO_1_PIN                   RF_DIO1_Pin //GPIO_PIN_10
 #define RADIO_DIO_1_GPIO_CLK_ENABLE()     __HAL_RCC_GPIOB_CLK_ENABLE()
 #define RADIO_DIO_1_EXTI_LINE             EXTI_LINE_10
 #define RADIO_DIO_1_IRQn                  EXTI15_10_IRQn
@@ -87,8 +87,8 @@ extern "C" {
 #define RADIO_LEDRX_PORT                                GPIOB
 #define RADIO_LEDRX_PIN                                 GPIO_PIN_7
 
-#define DEVICE_SEL_PORT                           GPIOB
-#define DEVICE_SEL_PIN                            GPIO_PIN_2
+#define DEVICE_SEL_PORT                           BOOT1_GPIO_Port //GPIOB
+#define DEVICE_SEL_PIN                            BOOT1_Pin //GPIO_PIN_2
 #define RADIO_DEV_SEL_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
 
 
@@ -117,8 +117,9 @@ extern "C" {
 //#define RADIO_DIO_1_PORT                          GPIOB
 //#define RADIO_DIO_1_PIN                           GPIO_PIN_10
 
-#define RADIO_DIO_2_PORT                          GPIOB
-#define RADIO_DIO_2_PIN                           GPIO_PIN_11
+#define RADIO_DIO_2_PORT                          RF_DIO2_GPIO_Port //GPIOB
+#define RADIO_DIO_2_PIN                           RF_DIO2_Pin //GPIO_PIN_11
+#define RADIO_DIO_2_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
 
 //#define RADIO_DIO_3_PORT                          GPIOB
 //#define RADIO_DIO_3_PIN                           GPIO_PIN_4
@@ -126,11 +127,11 @@ extern "C" {
 //#define RADIO_ANT_SWITCH_POWER_PORT               GPIOA
 //#define RADIO_ANT_SWITCH_POWER_PIN                GPIO_PIN_9
 
-#define RADIO_RX_SWITCH_POWER_PORT               GPIOC
-#define RADIO_RX_SWITCH_POWER_PIN                GPIO_PIN_13
+#define RADIO_RX_SWITCH_POWER_PORT               RF_RX_SW_GPIO_Port //GPIOC
+#define RADIO_RX_SWITCH_POWER_PIN                RF_RX_SW_Pin //GPIO_PIN_13
 
-#define RADIO_TX_SWITCH_POWER_PORT               GPIOA
-#define RADIO_TX_SWITCH_POWER_PIN                GPIO_PIN_4
+#define RADIO_TX_SWITCH_POWER_PORT               RF_TX_SW_GPIO_Port //GPIOA
+#define RADIO_TX_SWITCH_POWER_PIN                RF_TX_SW_Pin //GPIO_PIN_4
 
 //#define DEVICE_SEL_PORT                           GPIOB
 //#define DEVICE_SEL_PIN                            GPIO_PIN_2

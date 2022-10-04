@@ -71,8 +71,9 @@ void MX_LoRaWAN_Init(void)
   /* USER CODE BEGIN MX_LoRaWAN_Init_2 */
 
   /* USER CODE END MX_LoRaWAN_Init_2 */
-//  LoRaWAN_Init(); //Use on WiMod activation and reactivation
+  LoRaWAN_Init(); //Use on WiMod activation and reactivation
   /* USER CODE BEGIN MX_LoRaWAN_Init_3 */
+
 
   /* USER CODE END MX_LoRaWAN_Init_3 */
 }

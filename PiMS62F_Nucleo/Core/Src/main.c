@@ -23,26 +23,25 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "WiMODLRHCI.h"
-#include "WiMODLoRaWAN.h"
 
-#if defined (USE_EMOD_IMS62F)
-//#include "adc.h"
-//#include "crc.h"
-//#include "i2c.h"
-//#include "iwdg.h"
-//#include "rtc.h"
-//#include "spi.h"
-#include "tim.h"
-#include "usart.h"
-//#include "usb_device.h"
-//#include "wwdg.h"
-#include "gpio.h"
-#elif defined (STM32L4)
-#include "uart.h"
-#else
-#error "Please define platform marco"
-#endif
+
+//#if defined (USE_EMOD_IMS62F)
+////#include "adc.h"
+////#include "crc.h"
+////#include "i2c.h"
+////#include "iwdg.h"
+////#include "rtc.h"
+////#include "spi.h"
+//#include "tim.h"
+//#include "usart.h"
+////#include "usb_device.h"
+////#include "wwdg.h"
+//#include "gpio.h"
+//#elif defined (STM32L4)
+//#include "uart.h"
+//#else
+//#error "Please define platform marco"
+//#endif
 
 //#include "hw.h"
 //#include "low_power_manager.h"
@@ -175,7 +174,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-__IO uint8_t charRx = 0x00;
+//__IO uint8_t charRx = 0x00;
 
 const char NWKSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
 const char APPSKEY[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0f, 0x10 };
@@ -240,28 +239,29 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  /* Initialize all configured peripherals */
+  MX_LoRaWAN_Init();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
+//  MX_GPIO_Init();
 //  MX_SPI1_Init();
 //  MX_SPI2_Init();
 //  MX_SPI3_Init();
-  MX_TIM2_Init();
-  MX_TIM3_Init();
-  MX_TIM4_Init();
-#if defined (USE_EMOD_IMS62F)
-//  MX_TIM5_Init();
-  MX_TIM9_Init();
-#else
-  MX_TIM8_Init();
-#endif
-#if defined (USE_EMOD_IMS62F)
-  MX_USART1_UART_Init();
-#else
-  MX_USART2_UART_Init();
-#endif
+//  MX_TIM2_Init();
+//  MX_TIM3_Init();
+//  MX_TIM4_Init();
+//#if defined (USE_EMOD_IMS62F)
+////  MX_TIM5_Init();
+//  MX_TIM9_Init();
+//#else
+//  MX_TIM8_Init();
+//#endif
+//#if defined (USE_EMOD_IMS62F)
+//  MX_USART1_UART_Init();
+//#else
+//  MX_USART2_UART_Init();
+//#endif
 //  MX_CRC_Init();
 //  MX_I2C1_Init();
 //  MX_RTC_Init();
@@ -273,18 +273,18 @@ int main(void)
 
   //TODO: Restore user setting
 
-#if defined (USE_EMOD_IMS62F)
-  HAL_UART_Receive_IT(&huart1, (uint8_t*) &charRx, 1);
-  TWiMODLRHCI.begin(&huart1);
-#elif defined(STM32L4)
-  HAL_UART_Receive_IT(&huart2, (uint8_t*) &charRx, 1);
-  TWiMODLRHCI.begin(&huart2);
-#else
-#error "Please define your MCU series"
-#endif
-  WiMODLoRaWAN.beginAndAutoSetup();
+//#if defined (USE_EMOD_IMS62F)
+//  HAL_UART_Receive_IT(&huart1, (uint8_t*) &charRx, 1);
+//  TWiMODLRHCI.begin(&huart1);
+//#elif defined(STM32L4)
+//  HAL_UART_Receive_IT(&huart2, (uint8_t*) &charRx, 1);
+//  TWiMODLRHCI.begin(&huart2);
+//#else
+//#error "Please define your MCU series"
+//#endif
+//  WiMODLoRaWAN.beginAndAutoSetup();
 
-  WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
+//  WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
 
   //setup data
 //  activationData.DeviceAddress = WIMOD_DEV_ADDR;
@@ -294,14 +294,14 @@ int main(void)
 //  memcpy( joinData.AppEUI, APPEUI, 8);
 //  memcpy( joinData.AppKey, APPKEY, 16);
 
-  HAL_TIM_Base_Start_IT(&htim2);
-  HAL_TIM_Base_Start_IT(&htim4);
-#if defined (USE_EMOD_IMS62F)
-//  HAL_TIM_Base_Start_IT(&htim5);
-  HAL_TIM_Base_Start_IT(&htim9);
-#else
-  HAL_TIM_Base_Start_IT(&htim8);
-#endif
+//  HAL_TIM_Base_Start_IT(&htim2);
+//  HAL_TIM_Base_Start_IT(&htim4);
+//#if defined (USE_EMOD_IMS62F)
+////  HAL_TIM_Base_Start_IT(&htim5);
+//  HAL_TIM_Base_Start_IT(&htim9);
+//#else
+//  HAL_TIM_Base_Start_IT(&htim8);
+//#endif
   /* Configure the debug mode*/
 //  DBG_Init();
 
@@ -322,8 +322,7 @@ int main(void)
 //  LORA_Join(&LoRaParamInit);
 //
 //  LoraStartTx(TX_ON_EVENT);
-  /* Initialize all configured peripherals */
-    MX_LoRaWAN_Init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -432,10 +431,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void UART2_ReInit (void)
-{
-	MX_USART2_UART_Init();
-}
+//void UART2_ReInit (void)
+//{
+//	MX_USART2_UART_Init();
+//}
 //
 //void LoraMacProcessNotify(void)
 //{

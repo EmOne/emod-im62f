@@ -53,7 +53,8 @@ void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
-
+  CLEAR_BIT(huart1.Instance->CR1, USART_CR1_WAKE);
+  SET_BIT(huart1.Instance->CR1, UART_WAKEUPMETHOD_ADDRESSMARK);
   /* USER CODE END USART1_Init 2 */
 
 }

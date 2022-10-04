@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 /* Includes ------------------------------------------------------------------*/
-#include "stm32l1xx_hal.h"
+#include "main.h"
 
 /** @addtogroup BSP
   * @{

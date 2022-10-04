@@ -189,6 +189,9 @@ extern "C" {
 #define Sx_Board_IsTcxo            S62F_RADIO_BoardIsTcxo
 #define Sx_Board_SetLedRx          S62F_RADIO_BoardSetLedRx
 #define Sx_Board_SetLedTx          S62F_RADIO_BoardSetLedTx
+#define Sx_Board_RxWrite           S62F_RADIO_DbgPinRxWrite
+#define Sx_Board_TxWrite           S62F_RADIO_DbgPinTxWrite
+
 #else
 #error "include your board here"
 #endif

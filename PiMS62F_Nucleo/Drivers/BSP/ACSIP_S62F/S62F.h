@@ -185,6 +185,26 @@ void S62F_RADIO_Bus_Init(void);
  */
 void S62F_RADIO_Bus_deInit(void);
 
+/*!
+ * \brief Writes new Tx debug pin state
+ *
+ * \param [IN] state Debug pin state
+ */
+void S62F_RADIO_DbgPinTxWrite( uint8_t state );
+
+/*!
+ * \brief Writes new Rx debug pin state
+ *
+ * \param [IN] state Debug pin state
+ */
+void S62F_RADIO_DbgPinRxWrite( uint8_t state );
+
+/*!
+ * \brief Set TCXO
+ */
+void S62F_RADIO_SetOX( FlagStatus flag );
+
+
 #ifdef __cplusplus
 }
 #endif

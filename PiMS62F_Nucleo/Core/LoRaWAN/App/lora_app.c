@@ -291,6 +291,17 @@ void LoRaWAN_Init(void)
 
   /* USER CODE BEGIN LoRaWAN_Init_Last */
 
+	WiMODLoRaWAN.beginAndAutoSetup();
+
+	WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
+
+	//setup data
+	//  activationData.DeviceAddress = WIMOD_DEV_ADDR;
+	//  memcpy(activationData.NwkSKey, NWKSKEY, 16);
+	//  memcpy(activationData.AppSKey, APPSKEY, 16);
+	//
+	//  memcpy( joinData.AppEUI, APPEUI, 8);
+	//  memcpy( joinData.AppKey, APPKEY, 16);
   /* USER CODE END LoRaWAN_Init_Last */
 }
 
