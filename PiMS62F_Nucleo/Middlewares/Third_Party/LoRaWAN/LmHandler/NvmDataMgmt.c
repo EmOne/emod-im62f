@@ -210,7 +210,7 @@ uint16_t NvmDataMgmtRestore( void )
     offset += sizeof( LoRaMacClassBNvmData_t );
 
     if( NvmmRead( ( uint8_t* ) nvm, sizeof( LoRaMacNvmData_t ), 0 ) ==
-                  sizeof( LoRaMacNvmData_t ) )
+                  false )
     {
         return sizeof( LoRaMacNvmData_t );
     }

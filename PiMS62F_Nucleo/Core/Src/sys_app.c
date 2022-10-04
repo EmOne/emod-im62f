@@ -280,9 +280,9 @@ void GetUniqueId(uint8_t *id)
   id[5] = (ID_1_3_val) >> 8;
   id[4] = (ID_1_3_val);
   id[3] = (ID_2_val) >> 24;
-  id[2] = (ID_2_val) >> 16;
-  id[1] = (ID_2_val) >> 8;
-  id[0] = (ID_2_val);
+//  id[2] = (ID_2_val) >> 16;
+//  id[1] = (ID_2_val) >> 8;
+//  id[0] = (ID_2_val);
 
   /* USER CODE BEGIN GetUniqueId_2 */
 

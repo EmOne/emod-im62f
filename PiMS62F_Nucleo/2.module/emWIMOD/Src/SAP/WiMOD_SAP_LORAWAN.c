@@ -379,6 +379,9 @@ TWiMODLRResultCodes setJoinParameter(TWiMODLORAWAN_JoinParams* joinParams, UINT8
 		memcpy(&joinData.AppKey, joinParams->AppKey,
 				WiMODLORAWAN_APP_KEY_LEN);
 
+		LmHandlerSetAppEUI(joinParams->AppEUI);
+		LmHandlerSetAppKey(joinParams->AppKey);
+
 		result = WiMODLR_RESULT_OK;
     } else {
     	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -1376,7 +1379,7 @@ TWiMODLRResultCodes getDeviceEUI (UINT8* deviceEUI, UINT8* statusRsp)
 //            // copy response status
 //            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //       }
-
+    	LmHandlerGetDevEUI(deviceEUI);
     	result = WiMODLR_RESULT_OK;
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -1384,7 +1387,7 @@ TWiMODLRResultCodes getDeviceEUI (UINT8* deviceEUI, UINT8* statusRsp)
 
     TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
 	tx->Payload[0] = result; //DeviceInfo.Status;
-	memcpy(&tx->Payload[1], deviceEUI, sizeof(UINT32));
+	memcpy(&tx->Payload[1], deviceEUI, 8);
 
 	*statusRsp = WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
 			LORAWAN_SAP_ID,
