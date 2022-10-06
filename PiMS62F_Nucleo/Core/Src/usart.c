@@ -281,4 +281,8 @@ void MX_USART2_UART_Init(void)
 
 }
 
+//void UART2_ReInit (void)
+//{
+//	MX_USART2_UART_Init();
+//}
 /* USER CODE END 1 */

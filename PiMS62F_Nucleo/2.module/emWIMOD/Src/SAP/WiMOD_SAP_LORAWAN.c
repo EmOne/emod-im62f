@@ -235,12 +235,12 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
     if ( statusRsp &&
             (WiMOD_SAP_LoRaWAN.txPayloadSize >= (4+ WiMODLORAWAN_NWK_SESSION_KEY_LEN + WiMODLORAWAN_APP_SESSION_KEY_LEN)))
     {
-        HTON32(&WiMOD_SAP_LoRaWAN.txPayload[offset], activationData->DeviceAddress);
-        offset += 0x04;
-        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], activationData->NwkSKey, WiMODLORAWAN_NWK_SESSION_KEY_LEN);
-        offset += WiMODLORAWAN_NWK_SESSION_KEY_LEN;
-        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], activationData->AppSKey, WiMODLORAWAN_APP_SESSION_KEY_LEN);
-        offset += WiMODLORAWAN_APP_SESSION_KEY_LEN;
+//        HTON32(&WiMOD_SAP_LoRaWAN.txPayload[offset], activationData->DeviceAddress);
+//        offset += 0x04;
+//        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], activationData->NwkSKey, WiMODLORAWAN_NWK_SESSION_KEY_LEN);
+//        offset += WiMODLORAWAN_NWK_SESSION_KEY_LEN;
+//        memcpy(&WiMOD_SAP_LoRaWAN.txPayload[offset], activationData->AppSKey, WiMODLORAWAN_APP_SESSION_KEY_LEN);
+//        offset += WiMODLORAWAN_APP_SESSION_KEY_LEN;
 
 #if 0
 

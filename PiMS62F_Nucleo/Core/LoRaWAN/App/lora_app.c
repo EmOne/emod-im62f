@@ -660,6 +660,7 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
   /* USER CODE BEGIN OnJoinRequest_1 */
   if (joinParams != NULL)
   {
+	  TWiMODLR_HCIMessage *tx = &WiMODLoRaWAN.SapLoRaWan->HciParser->TxMessage;
     if (joinParams->Status == LORAMAC_HANDLER_SUCCESS)
     {
       UTIL_TIMER_Stop(&JoinLedTimer);
@@ -679,6 +680,13 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
     else
     {
       APP_LOG(TS_OFF, VLEVEL_M, "\r\n###### = JOIN FAILED\r\n");
+		tx->Payload[0] = DeviceInfo.Status = WiMODLR_RESULT_NO_RESPONSE;
+		tx->Payload[1] = joinParams->Status; //Error code
+
+		WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+		LORAWAN_SAP_ID,
+		LORAWAN_MSG_RECV_NO_DATA_IND,
+				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 1);
     }
   }
   /* USER CODE END OnJoinRequest_1 */
