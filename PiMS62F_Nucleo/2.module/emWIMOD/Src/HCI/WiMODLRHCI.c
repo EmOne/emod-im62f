@@ -123,7 +123,6 @@ void Begin(void* handler) {
 	TWiMODLRHCI.comSlip->begin(handler, WIMODLR_SERIAL_BAUDRATE);
 	TWiMODLRHCI.comSlip->RegisterClient = registerClient;
 	TWiMODLRHCI.comSlip->RegisterClient((TComSlipClient*) processRxMessage);
-//	TWiMODLRHCI.comSlip->RxClient->ProcessRxMessage = processRxMessage;
 	TWiMODLRHCI.comSlip->SetRxBuffer(&TWiMODLRHCI.Rx.Message.SapID, WIMODLR_HCI_RX_MESSAGE_SIZE);
 	TWiMODLRHCI.wakeUp = true;
 }

@@ -283,7 +283,7 @@ void Begin(TLoRaWANregion region)
 void BeginAndAutoSetup(void)
 {
 
-	WiMODLoRaWAN.begin(LoRaWAN_Region_EU868);
+	WiMODLoRaWAN.begin(LoRaWAN_Region_AS923);
 //    isOpen = true;
 //    WiMODLoRaWAN.SapLoRaWan.setRegion(LoRaWAN_Region_EU868); // default pre-set
 //    WiMODLoRaWAN.autoSetupSupportedRegion();
@@ -304,7 +304,7 @@ void End(void)
 void AutoSetupSupportedRegion(void)
 {
 	TWiMODLORAWAN_SupportedBands cfg;
-	TLoRaWANregion				 region = LoRaWAN_Region_EU868;
+	TLoRaWANregion				 region = LoRaWAN_Region_AS923;
 	UINT8 						 i;
 
 	// ask the module which firmware region is supported

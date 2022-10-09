@@ -45,7 +45,7 @@
 
 /* External variables ---------------------------------------------------------*/
 /* USER CODE BEGIN EV */
-
+extern WiMODLoRaWAN_t WiMODLoRaWAN;
 /* USER CODE END EV */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -138,6 +138,12 @@ static void OnRxTimerLedEvent(void *context);
   */
 static void OnJoinTimerLedEvent(void *context);
 
+static void OnNetworkParamsChange( CommissioningParams_t *params );
+
+static void OnCurrentClassChange( DeviceClass_t deviceClass );
+
+static void OnSystemTimeChange( void );
+
 /* USER CODE END PFP */
 
 /* Private variables ---------------------------------------------------------*/
@@ -155,7 +161,10 @@ static LmHandlerCallbacks_t LmHandlerCallbacks =
   .OnMacProcess =              OnMacProcessNotify,
   .OnJoinRequest =             OnJoinRequest,
   .OnTxData =                  OnTxData,
-  .OnRxData =                  OnRxData
+  .OnRxData =                  OnRxData,
+  .OnNetworkParametersChange = OnNetworkParamsChange,
+  .OnClassChange = 				OnCurrentClassChange,
+  .OnSysTimeUpdate = 			OnSystemTimeChange
 };
 
 /**
@@ -267,6 +276,7 @@ void LoRaWAN_Init(void)
   LmHandlerConfigure(&LmHandlerParams);
 
   /* USER CODE BEGIN LoRaWAN_Init_2 */
+
 //  UTIL_TIMER_Start(&JoinLedTimer);
 
   /* USER CODE END LoRaWAN_Init_2 */
@@ -293,7 +303,9 @@ void LoRaWAN_Init(void)
 
 	WiMODLoRaWAN.beginAndAutoSetup();
 
-	WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
+//	WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
+
+	WiMODLoRaWAN.SapLoRaWan->setRegion(LmHandlerParams.ActiveRegion);
 
 	//setup data
 	//  activationData.DeviceAddress = WIMOD_DEV_ADDR;
@@ -702,6 +714,21 @@ static void OnMacProcessNotify(void)
   /* USER CODE BEGIN OnMacProcessNotify_2 */
 
   /* USER CODE END OnMacProcessNotify_2 */
+}
+
+static void OnNetworkParamsChange( CommissioningParams_t *params )
+{
+
+}
+
+static void OnCurrentClassChange( DeviceClass_t deviceClass )
+{
+
+}
+
+static void OnSystemTimeChange( void )
+{
+
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

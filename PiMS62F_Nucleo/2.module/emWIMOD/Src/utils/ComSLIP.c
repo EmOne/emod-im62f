@@ -59,7 +59,7 @@ TComSlip_t TComSlip = {
 		SetRxBuffer,
 		DecodeData,
 		SendWakeUpSequence,
-		StoreRxByte,
+		StoreRxByte
 //		SLIPDEC_IDLE_STATE,
 //		0x0,
 //		0x0,

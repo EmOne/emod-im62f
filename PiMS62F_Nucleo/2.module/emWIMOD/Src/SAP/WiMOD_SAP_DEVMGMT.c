@@ -57,8 +57,6 @@ static TWiMODLRResultCodes getSystemStatus(TWiMODLR_DevMgmt_SystemStatus* info, 
 static TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp);
 static TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp);
 static TWiMODLRResultCodes getSystemStatus(TWiMODLR_DevMgmt_SystemStatus* info, UINT8* statusRsp);
-static TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp);
-static TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp);
 static TWiMODLRResultCodes getRadioConfig(TWiMODLR_DevMgmt_RadioConfig* radioCfg, UINT8* statusRsp);
 static TWiMODLRResultCodes setRadioConfig(const TWiMODLR_DevMgmt_RadioConfig* radioCfg, UINT8* statusRsp);
 static TWiMODLRResultCodes resetRadioConfig(UINT8* statusRsp);
@@ -405,9 +403,18 @@ TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp)
 
     TWiMODLR_HCIMessage *tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
     //TODO: Get RTC time
-	u32rtcTime = 0xFFFFFFFF; //Dummy
+
+	RTC_TimeTypeDef sTime = { 0 };
+	RTC_DateTypeDef sDate = { 0 };
+
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
 	tx->Payload[0] = RTCAlarm.AlarmStatus = result;
-	memcpy(&tx->Payload[1], &u32rtcTime, 4);
+	tx->Payload[1] = ((sTime.Minutes & 0x03) << 6) | (sTime.Seconds & 0x3F);
+	tx->Payload[2] = ((sDate.Month & 0x0F) << 4) | (sTime.Minutes >> 2);
+	tx->Payload[3] = ((sDate.Date & 0x07) << 5)  | (sTime.Hours & 0x1F);
+	tx->Payload[4] = ((sDate.Year & 0x3F) << 2) | (sDate.Date >> 3);
 
 	*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(
 			DEVMGMT_SAP_ID,
@@ -433,6 +440,39 @@ TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp)
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
 
     if (statusRsp && (WiMOD_SAP_DevMgmt.HciParser->Rx.Message.Length >= 4)) {
+    	//TODO: Set HW RTC
+		struct tm localtime;
+//		SysTimeLocalTime(rtcTime, &localtime);
+
+		localtime.tm_sec = (rtcTime >> 0) & 0x3F;
+		localtime.tm_min = (rtcTime >> 6) & 0x3F;
+		localtime.tm_mon = (rtcTime >> 12) & 0xF;
+		localtime.tm_hour = (rtcTime >> 16) & 0x1F;
+		localtime.tm_mday = (rtcTime >> 21) & 0x1F;
+		localtime.tm_year = ((rtcTime >> 26) & 0x3F);
+
+		RTC_TimeTypeDef sTime = { 0 };
+		RTC_DateTypeDef sDate = { 0 };
+		sTime.Hours = localtime.tm_hour;
+		sTime.Minutes = localtime.tm_min;
+		sTime.Seconds = localtime.tm_sec;
+		sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+		sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+
+		sDate.Month = localtime.tm_mon; //RTC_MONTH_JANUARY;
+		sDate.Date = localtime.tm_mday;
+		sDate.Year = localtime.tm_year;
+		localtime.tm_year += 2000;
+		sDate.WeekDay = (localtime.tm_mday+=localtime.tm_mon<3?localtime.tm_year--:localtime.tm_year-2,23*localtime.tm_mon/9+localtime.tm_mday+4+localtime.tm_year/4-localtime.tm_year/100+localtime.tm_year/400)%7 ; //RTC_WEEKDAY_MONDAY;
+
+		if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK) {
+			Error_Handler();
+		}
+
+		if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK) {
+			Error_Handler();
+		}
+
     	result = WiMODLR_RESULT_OK;
     } else {
     	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -440,9 +480,7 @@ TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp)
 
     TWiMODLR_HCIMessage *tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
-    //TODO: Set HW RTC
-    RTCTime = rtcTime;
-	tx->Payload[0] = DEVMGMT_STATUS_OK;
+	tx->Payload[0] = result; //DEVMGMT_STATUS_OK;
 
 	*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(
 			DEVMGMT_SAP_ID,

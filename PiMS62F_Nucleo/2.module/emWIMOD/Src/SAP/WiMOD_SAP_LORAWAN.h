@@ -81,13 +81,14 @@
  * @brief LoRaWAN Region support
  */
 typedef enum {
-	LoRaWAN_Region_EU868,                                                       /*!< regional settings for EU 868 MHz  */
-	LoRaWAN_Region_US915,                                                       /*!< regional settings for US 915 MHz  */
-	LoRaWAN_Region_IN865,                                                       /*!< regional settings for India 865 MHz  */
-	LoRaWAN_Region_AS923,                                                       /*!< regional settings for Asia 923 MHz  */
-	LoRaWAN_Region_IL915,                                                       /*!< regional settings for Israel 915 MHz  */
-	LoRaWAN_Region_RU868,                                                       /*!< regional settings for Russia 868 MHz  */
-	LoRaWAN_Region_proprietary_WW2G4,
+	LoRaWAN_Region_AS923 = LORAMAC_REGION_AS923,                                                       /*!< regional settings for Asia 923 MHz  */
+	LoRaWAN_Region_EU868 = LORAMAC_REGION_EU868,                                                       /*!< regional settings for EU 868 MHz  */
+	LoRaWAN_Region_US915 = LORAMAC_REGION_US915,                                                       /*!< regional settings for US 915 MHz  */
+	LoRaWAN_Region_IN865 = LORAMAC_REGION_IN865,                                                       /*!< regional settings for India 865 MHz  */
+	LoRaWAN_Region_IL915 = LORAMAC_REGION_IL915,                                                       /*!< regional settings for Israel 915 MHz  */
+	LoRaWAN_Region_RU868 = LORAMAC_REGION_RU864,                                                       /*!< regional settings for Russia 868 MHz  */
+	LoRaWAN_Region_KR920 = LORAMAC_REGION_KR920,                                                       /*!< regional settings for Russia 920 MHz  */
+	LoRaWAN_Region_proprietary_WW2G4 = 0xFF,
 
 } TLoRaWANregion;
 

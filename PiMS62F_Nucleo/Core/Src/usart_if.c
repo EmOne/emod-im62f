@@ -266,17 +266,17 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if (huart->Instance == huart1.Instance) {
+	if (huart->Instance == USART1) {
 		/* USER CODE BEGIN HAL_UART_RxCpltCallback_1 */
-		emod_UART_RxCpltCallback(huart);
+		emod_UART_RxCpltCallback(&charRx, 1, 0);
 		/* USER CODE END HAL_UART_RxCpltCallback_1 */
-	} else if(huart->Instance == huart2.Instance){
+	} else if(huart->Instance == USART2){
 		if ((NULL != RxCpltCallback)
 				&& (HAL_UART_ERROR_NONE == huart->ErrorCode)) {
 			RxCpltCallback(&charRx, 1, 0);
 		}
-		HAL_UART_Receive_IT(huart, &charRx, 1);
 	}
+	HAL_UART_Receive_IT(huart, &charRx, 1);
   /* USER CODE BEGIN HAL_UART_RxCpltCallback_2 */
 
   /* USER CODE END HAL_UART_RxCpltCallback_2 */

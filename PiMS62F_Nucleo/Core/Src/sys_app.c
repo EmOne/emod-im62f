@@ -94,7 +94,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-__IO uint8_t charRx = 0x00;
+uint8_t charRx = 0x00;
 
 /* USER CODE END PV */
 
@@ -170,27 +170,25 @@ void SystemApp_Init(void)
 #error LOW_POWER_DISABLE not defined
 #endif /* LOW_POWER_DISABLE */
 
+  UTIL_ADV_TRACE_StartRxProcess(NULL);
+
   /* USER CODE BEGIN SystemApp_Init_2 */
-  MX_TIM2_Init();
-  MX_TIM3_Init();
+//  MX_TIM2_Init();
+//  MX_TIM3_Init();
   MX_TIM4_Init();
 #if defined (USE_EMOD_IMS62F)
 	//  MX_TIM5_Init();
-  MX_TIM9_Init();
+//  MX_TIM9_Init();
 #else
     MX_TIM8_Init();
 #endif
 
     //TODO: Restore user setting
 
-
-
 #if defined (USE_EMOD_IMS62F)
-	UTIL_ADV_TRACE_StartRxProcess(NULL); //	HAL_UART_Receive_IT(&huart1, (uint8_t*) &charRx, 1);
 	TWiMODLRHCI.begin(&huart1);
 #elif defined(STM32L4)
-      HAL_UART_Receive_IT(&huart2, (uint8_t*) &charRx, 1);
-      TWiMODLRHCI.begin(&huart2);
+    TWiMODLRHCI.begin(&huart2);
 #else
     #error "Please define your MCU series"
 #endif

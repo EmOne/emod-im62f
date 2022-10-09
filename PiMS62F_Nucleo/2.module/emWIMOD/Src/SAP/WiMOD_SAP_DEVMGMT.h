@@ -54,7 +54,8 @@
 #include "lora_app.h"
 #include "utilities_def.h"
 #include "stm32_seq.h"
-
+#include "stm32_systime.h"
+#include "rtc.h"
 /*
  * C++11 supports a better way for function pointers / function objects
  * But C++11 mode is not supported by all platforms.

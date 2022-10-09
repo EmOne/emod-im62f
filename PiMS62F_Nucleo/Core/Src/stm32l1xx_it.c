@@ -47,7 +47,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-extern TWiMODLORAWAN_ActivateDeviceData activationData;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -275,7 +275,7 @@ void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
 //	TWiMODLRHCI.WaitForResponse(0x01, 0x01);
-	TWiMODLRHCI.Process();
+
 	if(EmWimodData.ReceiveFrmUserRequest) {
 		WiMODLoRaWAN.Process(&TWiMODLRHCI.Rx.Message);
 		EmWimodData.ReceiveFrmUserRequest = 0x0;

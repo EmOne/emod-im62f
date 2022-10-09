@@ -19,9 +19,10 @@
 #include <string.h>
 #include "main.h"
 #include "CRC16.h"
+#include "utilities_conf.h"
 
 
-#define kMaxUARTPayloadSize			300U
+#define kMaxUARTPayloadSize			128U
 
 typedef union{
 
@@ -66,7 +67,7 @@ uint8_t CmdFrmUserIsReceived(Ci * pData);
 UINT8* ProcessRxMessage(UINT8* rxBuffer, UINT16 rxLength);
 /*---------------------------------------------------------------------------------------*/
 void emod_UART_ErrorCallback(UART_HandleTypeDef *huart);
-void emod_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+void emod_UART_RxCpltCallback(uint8_t *rxChar, uint16_t size, uint8_t error);
 /*-----------------------------------------local function-------------------------------------*/
 void SetValue (uint8_t * pdata, uint8_t data, uint16_t size);
 #endif /* INC_EMOD_UART_H_ */
