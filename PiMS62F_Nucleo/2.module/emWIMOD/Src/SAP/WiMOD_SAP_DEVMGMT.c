@@ -392,8 +392,7 @@ TWiMODLRResultCodes getSystemStatus(TWiMODLR_DevMgmt_SystemStatus* info, UINT8* 
 TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp)
 {
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
-//    UINT8              offset = WiMODLR_HCI_RSP_STATUS_POS;
-    UINT32 u32rtcTime;
+    UINT8              offset = WiMODLR_HCI_RSP_STATUS_POS;
 
     if (statusRsp) {
     	result = WiMODLR_RESULT_OK;
@@ -410,17 +409,19 @@ TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp)
 	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
-	tx->Payload[0] = RTCAlarm.AlarmStatus = result;
-	tx->Payload[1] = ((sTime.Minutes & 0x03) << 6) | (sTime.Seconds & 0x3F);
-	tx->Payload[2] = ((sDate.Month & 0x0F) << 4) | (sTime.Minutes >> 2);
-	tx->Payload[3] = ((sDate.Date & 0x07) << 5)  | (sTime.Hours & 0x1F);
-	tx->Payload[4] = ((sDate.Year & 0x3F) << 2) | (sDate.Date >> 3);
+	tx->Payload[offset++] = RTCAlarm.AlarmStatus = result;
+	tx->Payload[offset++] = ((sTime.Minutes & 0x03) << 6) | (sTime.Seconds & 0x3F);
+	tx->Payload[offset++] = ((sDate.Month & 0x0F) << 4) | (sTime.Minutes >> 2);
+	tx->Payload[offset++] = ((sDate.Date & 0x07) << 5)  | (sTime.Hours & 0x1F);
+	tx->Payload[offset++] = ((sDate.Year & 0x3F) << 2) | (sDate.Date >> 3);
 
 	*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(
 			DEVMGMT_SAP_ID,
 			DEVMGMT_MSG_GET_RTC_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
-			5);
+			offset);
+
+	memcpy((uint8_t *) rtcTime, (uint8_t *) &tx->Payload[1], sizeof(rtcTime));
 
     return result;
 }
@@ -442,7 +443,6 @@ TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp)
     if (statusRsp && (WiMOD_SAP_DevMgmt.HciParser->Rx.Message.Length >= 4)) {
     	//TODO: Set HW RTC
 		struct tm localtime;
-//		SysTimeLocalTime(rtcTime, &localtime);
 
 		localtime.tm_sec = (rtcTime >> 0) & 0x3F;
 		localtime.tm_min = (rtcTime >> 6) & 0x3F;

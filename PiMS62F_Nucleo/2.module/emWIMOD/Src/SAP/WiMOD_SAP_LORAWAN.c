@@ -256,6 +256,14 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         }
 #else
 
+        memcpy(activateData.AppSKey, activationData->AppSKey, 16);
+        memcpy(activateData.NwkSKey, activationData->NwkSKey, 16);
+        memcpy((uint8_t *)&activateData.DeviceAddress, (uint8_t *)&activationData->DeviceAddress, 4);
+
+        LmHandlerSetAppSKey((uint8_t *) &activateData.AppSKey );
+        LmHandlerSetNwkSKey((uint8_t *) &activateData.NwkSKey );
+        LmHandlerSetDevAddr( activateData.DeviceAddress );
+
         //copy response status
         result = WiMODLR_RESULT_OK;
 
@@ -308,8 +316,9 @@ TWiMODLRResultCodes reactivateDevice(UINT32* devAdr, UINT8* statusRsp)
 
     	//TODO: Reactivate in LoRa stack
 //        *devAdr = NTOH32(&rx->Payload[WiMODLR_HCI_RSP_CMD_PAYLOAD_POS]);
-		LoRaWAN_Init();
-
+//		LoRaWAN_Init();
+    	devAdr = &activateData.DeviceAddress;
+//    	LmHandlerSetDevAddr( activateData.DeviceAddress );
             // copy response status
 //            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //       }  else {
@@ -333,6 +342,8 @@ TWiMODLRResultCodes reactivateDevice(UINT32* devAdr, UINT8* statusRsp)
 			LORAWAN_MSG_REACTIVATE_DEVICE_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1 + 4);
+
+	LmHandlerJoin(ActivationType);
 
 	return result;
 }

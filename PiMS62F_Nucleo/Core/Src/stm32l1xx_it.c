@@ -279,6 +279,7 @@ void TIM4_IRQHandler(void)
 	if(EmWimodData.ReceiveFrmUserRequest) {
 		WiMODLoRaWAN.Process(&TWiMODLRHCI.Rx.Message);
 		EmWimodData.ReceiveFrmUserRequest = 0x0;
+		memset(&Rx2_buffer, 0x00, kMaxUARTPayloadSize);
 	}
   /* USER CODE END TIM4_IRQn 0 */
   HAL_TIM_IRQHandler(&htim4);
