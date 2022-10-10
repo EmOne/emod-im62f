@@ -1279,6 +1279,7 @@ TWiMODLRResultCodes deactivateDevice(UINT8* statusRsp)
 //        if (result == WiMODLR_RESULT_OK) {
 //            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //        }
+    	LmHandlerStop();
     	result = WiMODLR_RESULT_OK;
     } else {
     	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;

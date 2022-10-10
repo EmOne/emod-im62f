@@ -252,6 +252,13 @@ TWiMODLRResultCodes getDeviceInfo (TWiMODLR_DevMgmt_DevInfo* info, UINT8* status
     UINT8              offset = WiMODLR_HCI_RSP_CMD_PAYLOAD_POS;
 
     if (statusRsp) {
+    	LmHandlerGetDevAddr(&DeviceInfo.DevAdr);
+    	GetUniqueId(&DeviceInfo.DevID);
+    	info->DevAdr = DeviceInfo.DevAdr;
+    	info->DevID = DeviceInfo.DevID;
+    	info->GroupAdr = DeviceInfo.GroupAdr;
+    	info->ModuleType = DeviceInfo.ModuleType;
+    	info->Status = DeviceInfo.Status;
     	result = WiMODLR_RESULT_OK;
     } else {
     	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;

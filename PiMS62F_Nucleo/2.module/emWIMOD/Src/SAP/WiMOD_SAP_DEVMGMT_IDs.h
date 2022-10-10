@@ -173,7 +173,7 @@ typedef struct TWiMODLR_DevMgmt_DevInfo
 {
     UINT8       Status;                                                         /*!< status flag; indicates if other values are vaild */
     UINT8       ModuleType;                                                     /*!< type of WiMOD module */
-    UINT16      DevAdr;                                                         /*!< device address; not to be mixed up with the LoRaWAN device address */
+    UINT32      DevAdr;                                                         /*!< device address; not to be mixed up with the LoRaWAN device address */
     UINT8       GroupAdr;                                                       /*!< group address for radio communication */
     UINT32      DevID;                                                          /*!< the ID of the WiMOD */
 } TWiMODLR_DevMgmt_DevInfo;

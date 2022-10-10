@@ -163,7 +163,8 @@ void SX126xInit( DioIrqHandler dioIrq )
     {
       CalibrationParams_t calibParam;
 
-      SX126xSetDio3AsTcxoCtrl( TCXO_CTRL_1_7V, Sx_Board_GetWakeUpTime( ) << 6 ); // convert from ms to SX126x time base
+      SX126xSetDio3AsTcxoCtrl( TCXO_CTRL_3_0V, 1000 );
+//      SX126xSetDio3AsTcxoCtrl( TCXO_CTRL_1_7V, Sx_Board_GetWakeUpTime( ) << 6 ); // convert from ms to SX126x time base
       calibParam.Value = 0x7F;
       SX126xCalibrate( calibParam );
     }

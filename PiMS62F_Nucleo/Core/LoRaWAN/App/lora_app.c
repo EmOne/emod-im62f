@@ -382,7 +382,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 			//SNR
 			tx->Payload[offset++] = params->Snr;
 			//RX Slot
-			tx->Payload[offset] = params->RxSlot;
+			tx->Payload[offset++] = params->RxSlot;
 			switch (MsgType) {
 				case LORAMAC_HANDLER_UNCONFIRMED_MSG:
 					WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
