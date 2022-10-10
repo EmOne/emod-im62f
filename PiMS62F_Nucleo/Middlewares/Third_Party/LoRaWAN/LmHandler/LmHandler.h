@@ -748,6 +748,14 @@ LmHandlerErrorStatus_t LmHandlerDeviceTimeReq( void );
  *          0 LORAMAC_HANDLER_SUCCESS
  */
 LmHandlerErrorStatus_t LmHandlerLinkCheckReq( void );
+
+/*!
+ * Requests check max payload
+ *
+ * \retval -1 LORAMAC_HANDLER_ERROR
+ *          0 LORAMAC_HANDLER_SUCCESS
+ */
+LmHandlerErrorStatus_t LmHandlerGetMaxPayloadReq( int8_t dr, uint8_t *sz );
 #ifdef __cplusplus
 }
 #endif

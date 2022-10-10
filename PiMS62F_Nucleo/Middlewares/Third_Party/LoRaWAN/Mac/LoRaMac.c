@@ -373,15 +373,6 @@ static LoRaMacCryptoStatus_t GetFCntDown( AddressIdentifier_t addrID, FType_t fT
 static LoRaMacStatus_t SwitchClass( DeviceClass_t deviceClass );
 
 /*!
- * \brief Gets the maximum application payload length in the absence of the optional FOpt field.
- *
- * \param [IN] datarate        Current datarate
- *
- * \retval                    Max length
- */
-static uint8_t GetMaxAppPayloadWithoutFOptsLength( int8_t datarate );
-
-/*!
  * \brief Validates if the payload fits into the frame, taking the datarate
  *        into account.
  *
@@ -1886,7 +1877,7 @@ static LoRaMacStatus_t SwitchClass( DeviceClass_t deviceClass )
     return status;
 }
 
-static uint8_t GetMaxAppPayloadWithoutFOptsLength( int8_t datarate )
+uint8_t GetMaxAppPayloadWithoutFOptsLength( int8_t datarate )
 {
     GetPhyParams_t getPhy;
     PhyParam_t phyParam;

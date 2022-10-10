@@ -1938,3 +1938,9 @@ static void DisplayBeaconUpdate(LmHandlerBeaconParams_t *params)
     }
 }
 #endif /* LORAMAC_CLASSB_ENABLED == 1 */
+
+LmHandlerErrorStatus_t LmHandlerGetMaxPayloadReq( int8_t dr, uint8_t* sz )
+{
+	*sz = GetMaxAppPayloadWithoutFOptsLength(dr);
+	return LORAMAC_HANDLER_SUCCESS;
+}

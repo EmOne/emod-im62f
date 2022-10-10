@@ -353,14 +353,26 @@ TWiMODLRResultCodes getSystemStatus(TWiMODLR_DevMgmt_SystemStatus* info, UINT8* 
 	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_DevMgmt.HciParser->TxMessage;
 
 	tx->Payload[offset++] = SystemInfo.Status = result;
-	tx->Payload[offset++] = SystemInfo.SysTickResolution;
-	tx->Payload[offset] = SystemInfo.SysTickCounter;
+	tx->Payload[offset++] = SystemInfo.SysTickResolution = HAL_GetTickPrio();
+	tx->Payload[offset] = SystemInfo.SysTickCounter = HAL_GetTick();
 	offset += 0x04;
-	tx->Payload[offset] = SystemInfo.RtcTime;
+
+	RTC_TimeTypeDef sTime = { 0 };
+	RTC_DateTypeDef sDate = { 0 };
+
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+
+	RTCTime = (((sTime.Minutes & 0x03) << 6) | (sTime.Seconds & 0x3F));
+	RTCTime |= (((sDate.Month & 0x0F) << 4) | (sTime.Minutes >> 2)) << 8;
+	RTCTime |= (((sDate.Date & 0x07) << 5) | (sTime.Hours & 0x1F)) << 16;
+	RTCTime |= (((sDate.Year & 0x3F) << 2) | (sDate.Date >> 3)) << 24;
+
+	tx->Payload[offset] = SystemInfo.RtcTime = RTCTime;
 	offset += 0x04;
 	tx->Payload[offset] = SystemInfo.NvmStatus;
 	offset += 0x02;
-	tx->Payload[offset] = SystemInfo.BatteryStatus;
+	tx->Payload[offset] = SystemInfo.BatteryStatus = GetBatteryLevel();
 	offset += 0x02;
 	tx->Payload[offset] = SystemInfo.ExtraStatus;
 	offset += 0x02;
@@ -421,7 +433,7 @@ TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp)
 	tx->Payload[offset++] = ((sDate.Month & 0x0F) << 4) | (sTime.Minutes >> 2);
 	tx->Payload[offset++] = ((sDate.Date & 0x07) << 5)  | (sTime.Hours & 0x1F);
 	tx->Payload[offset++] = ((sDate.Year & 0x3F) << 2) | (sDate.Date >> 3);
-
+    memcpy(&rtcTime, &tx->Payload[1], 4);
 	*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(
 			DEVMGMT_SAP_ID,
 			DEVMGMT_MSG_GET_RTC_RSP,

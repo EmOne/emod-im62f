@@ -2810,6 +2810,15 @@ LoRaMacStatus_t LoRaMacMcpsRequest( McpsReq_t* mcpsRequest, bool allowDelayedTx 
  */
 LoRaMacStatus_t LoRaMacDeInitialization( void );
 
+/*!
+ * \brief Gets the maximum application payload length in the absence of the optional FOpt field.
+ *
+ * \param [IN] datarate        Current datarate
+ *
+ * \retval                    Max length
+ */
+uint8_t GetMaxAppPayloadWithoutFOptsLength( int8_t datarate );
+
 /*! \} defgroup LORAMAC */
 
 #ifdef __cplusplus

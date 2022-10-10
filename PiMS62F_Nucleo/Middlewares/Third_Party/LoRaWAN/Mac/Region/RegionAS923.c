@@ -54,7 +54,7 @@
 
 // Channel plan CHANNEL_PLAN_GROUP_AS923_1
 
-#define REGION_AS923_FREQ_OFFSET          0
+uint32_t REGION_AS923_FREQ_OFFSET         = 0;
 
 #define AS923_MIN_RF_FREQUENCY            915000000
 #define AS923_MAX_RF_FREQUENCY            928000000
