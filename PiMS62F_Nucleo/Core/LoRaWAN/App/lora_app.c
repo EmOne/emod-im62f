@@ -184,7 +184,7 @@ static LmHandlerParams_t LmHandlerParams =
   */
 //static TxEventType_t EventType = TX_ON_EVENT;
 
-static LmHandlerMsgTypes_t MsgType = LORAWAN_DEFAULT_CONFIRMED_MSG_STATE;
+LmHandlerMsgTypes_t MsgType = LORAWAN_DEFAULT_CONFIRMED_MSG_STATE;
 
 /**
   * @brief Timer to handle the application Tx
@@ -358,6 +358,23 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 
     if (params->IsMcpsIndication != 0) {
     	if (appData->BufferSize == 0) {
+    		if (appData->Port == 0 && MsgType == LORAMAC_HANDLER_CONFIRMED_MSG) {
+					//Channel idx
+					tx->Payload[offset++] = params->Channel;
+					//DR idx
+					tx->Payload[offset++] = params->Datarate;
+					//RSSi
+					tx->Payload[offset++] = params->Rssi;
+					//SNR
+					tx->Payload[offset++] = params->Snr;
+					//RX Slot
+					tx->Payload[offset++] = params->RxSlot;
+
+					WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
+					LORAWAN_SAP_ID,
+					LORAWAN_MSG_RECV_ACK_IND,
+							&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], offset);
+			} else {
 				tx->Payload[0] = DeviceInfo.Status = WiMODLR_RESULT_NO_RESPONSE;
 				tx->Payload[1] = params->Status; //Error code
 
@@ -365,6 +382,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 				LORAWAN_SAP_ID,
 				LORAWAN_MSG_RECV_NO_DATA_IND,
 						&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 1);
+			}
 		} else {
 			//LRW Port LEN: 1
 			tx->Payload[offset++] = appData->Port;

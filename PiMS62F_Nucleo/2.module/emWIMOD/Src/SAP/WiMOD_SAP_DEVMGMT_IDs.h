@@ -242,12 +242,21 @@ typedef struct TWiMODLR_DevMgmt_SystemStatus
     UINT16      NvmStatus;                                                      /*!< Status of the internal NVM slots */
     UINT16      BatteryStatus;                                                  /*!< current voltage level of power supply in mV */
     UINT16      ExtraStatus;                                                    /*!< extra status bits */
-    UINT32 		RxPackets;														/*!< number of received radio packets with CRC OK */
-	UINT32 		RxAddressMatch;													/*!< number of received radio packets with CRC and Address OK */
-	UINT32 		RxCRCError;														/*!< number of received radio packets with CRC Error */
-	UINT32 		TxPackets;														/*!< number of transmitted radio packets */
-	UINT32 		TxError;														/*!< number of not transmitted radio packets */
-	UINT32 		TxMediaBusyEvents;												/*!< number of not transmitted packets due to LBT result “media busy” */
+    UINT32 		TxPackets;														/*!< number of transmitted radio packets */
+    UINT32 		TxMediaBusyEvents;
+    UINT32 		TxError;														/*!< number of not transmitted radio packets */
+    UINT32 		Rx1Packets;														/*!< number of received radio packets with CRC OK */
+	UINT32 		Rx1AddressMatch;													/*!< number of received radio packets with CRC and Address OK */
+	UINT32 		Rx1CRCError;														/*!< number of received radio packets with CRC Error */
+												/*!< number of not transmitted packets due to LBT result “media busy” */
+	UINT32 		Rx2Packets;														/*!< number of received radio packets with CRC OK */
+	UINT32 		Rx2AddressMatch;													/*!< number of received radio packets with CRC and Address OK */
+	UINT32 		Rx2CRCError;														/*!< number of received radio packets with CRC Error */
+
+	UINT32 		TxJoin;													/*!< number of received radio packets with CRC and Address OK */
+	UINT32 		RxAccept;														/*!< number of received radio packets with CRC Error */
+
+
 } TWiMODLR_DevMgmt_SystemStatus;
 
 

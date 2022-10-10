@@ -189,6 +189,7 @@ TWiMODLORAWAN_RadioStackConfig radioStack = {
 
 LmHandlerAppData_t appData;
 extern uint32_t REGION_AS923_FREQ_OFFSET;
+extern LmHandlerMsgTypes_t MsgType;
 /******************************************************************************/
 
 //-----------------------------------------------------------------------------
@@ -393,6 +394,7 @@ TWiMODLRResultCodes setJoinParameter(TWiMODLORAWAN_JoinParams* joinParams, UINT8
 
 		LmHandlerSetAppEUI(joinParams->AppEUI);
 		LmHandlerSetAppKey(joinParams->AppKey);
+		LmHandlerSetNwkKey(joinParams->AppKey);
 
 		result = WiMODLR_RESULT_OK;
     } else {
@@ -505,7 +507,7 @@ TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data *data,
 		appData.BufferSize = MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), data->Length);
 		appData.Port = data->Port;
 		appData.Buffer = (uint8_t *)&data->Payload;
-
+		MsgType = LORAMAC_HANDLER_UNCONFIRMED_MSG;
 		LmHandlerSend(&appData, LORAMAC_HANDLER_UNCONFIRMED_MSG, &u32CreditTime, false);
 
 //		UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
@@ -571,7 +573,7 @@ TWiMODLRResultCodes sendCData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
 		appData.BufferSize = MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), data->Length);
 		appData.Port = data->Port;
 		appData.Buffer = (uint8_t *) &data->Payload;
-
+		MsgType = LORAMAC_HANDLER_CONFIRMED_MSG;
 		LmHandlerSend(&appData, LORAMAC_HANDLER_CONFIRMED_MSG, &u32CreditTime, false);
 
 //		UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);

@@ -120,6 +120,11 @@ TWiMODLR_DevMgmt_SystemStatus SystemInfo = {
 		0x00000000,
 		0x00000000,
 		0x00000000,
+		0x00000000,
+		0x00000000,
+		0x00000000,
+		0x00000000,
+		0x00000000
 };
 
 TWiMOD_OperationMode OperationMode = OperationMode_Application;
@@ -354,7 +359,8 @@ TWiMODLRResultCodes getSystemStatus(TWiMODLR_DevMgmt_SystemStatus* info, UINT8* 
 
 	tx->Payload[offset++] = SystemInfo.Status = result;
 	tx->Payload[offset++] = SystemInfo.SysTickResolution = HAL_GetTickPrio();
-	tx->Payload[offset] = SystemInfo.SysTickCounter = HAL_GetTick();
+	SystemInfo.SysTickCounter = HAL_GetTick();
+	memcpy(&tx->Payload[offset], SystemInfo.SysTickCounter, 4);
 	offset += 0x04;
 
 	RTC_TimeTypeDef sTime = { 0 };
@@ -368,32 +374,53 @@ TWiMODLRResultCodes getSystemStatus(TWiMODLR_DevMgmt_SystemStatus* info, UINT8* 
 	RTCTime |= (((sDate.Date & 0x07) << 5) | (sTime.Hours & 0x1F)) << 16;
 	RTCTime |= (((sDate.Year & 0x3F) << 2) | (sDate.Date >> 3)) << 24;
 
-	tx->Payload[offset] = SystemInfo.RtcTime = RTCTime;
+	SystemInfo.RtcTime = RTCTime;
+	memcpy(&tx->Payload[offset], &SystemInfo.RtcTime, 4);
 	offset += 0x04;
-	tx->Payload[offset] = SystemInfo.NvmStatus;
+
+	memcpy(&tx->Payload[offset], &SystemInfo.NvmStatus, 2);
 	offset += 0x02;
-	tx->Payload[offset] = SystemInfo.BatteryStatus = GetBatteryLevel();
+
+	SystemInfo.BatteryStatus = (uint16_t) SYS_GetBatteryLevel();
+	memcpy(&tx->Payload[offset], &SystemInfo.BatteryStatus, 2);
 	offset += 0x02;
-	tx->Payload[offset] = SystemInfo.ExtraStatus;
+
+	memcpy(&tx->Payload[offset], &SystemInfo.ExtraStatus, 2);
 	offset += 0x02;
-	tx->Payload[offset] = SystemInfo.RxPackets;
+
+	memcpy(&tx->Payload[offset], &SystemInfo.TxPackets, 4);
 	offset += 0x04;
-	tx->Payload[offset] = SystemInfo.RxAddressMatch;
+	memcpy(&tx->Payload[offset], &SystemInfo.TxMediaBusyEvents, 4);
 	offset += 0x04;
-	tx->Payload[offset] = SystemInfo.RxCRCError;
+	memcpy(&tx->Payload[offset], &SystemInfo.TxError, 4);
 	offset += 0x04;
-	tx->Payload[offset] = SystemInfo.TxPackets;
+
+	memcpy(&tx->Payload[offset], &SystemInfo.Rx1Packets, 4);
 	offset += 0x04;
-	tx->Payload[offset] = SystemInfo.TxError;
+	memcpy(&tx->Payload[offset], &SystemInfo.Rx1AddressMatch, 4);
 	offset += 0x04;
-	tx->Payload[offset] = SystemInfo.TxMediaBusyEvents;
+	memcpy(&tx->Payload[offset], &SystemInfo.Rx1CRCError, 4);
 	offset += 0x04;
+
+	memcpy(&tx->Payload[offset], &SystemInfo.Rx2Packets, 4);
+	offset += 0x04;
+	memcpy(&tx->Payload[offset], &SystemInfo.Rx2AddressMatch, 4);
+	offset += 0x04;
+	memcpy(&tx->Payload[offset], &SystemInfo.Rx2CRCError, 4);
+	offset += 0x04;
+
+	memcpy(&tx->Payload[offset], &SystemInfo.TxJoin, 4);
+	offset += 0x04;
+	memcpy(&tx->Payload[offset], &SystemInfo.RxAccept, 4);
+	offset += 0x04;
+
+	memcpy(info, &SystemInfo, sizeof(TWiMODLR_DevMgmt_SystemStatus));
 
 	*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(
 			DEVMGMT_SAP_ID,
 			DEVMGMT_MSG_GET_SYSTEM_STATUS_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
-			sizeof(TWiMODLR_DevMgmt_SystemStatus));
+			offset);
 
     return result;
 }
