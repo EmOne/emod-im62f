@@ -187,7 +187,7 @@ TWiMODLORAWAN_RadioStackConfig radioStack = {
 		.Options = 0b11011000
 };
 
-
+LmHandlerAppData_t appData;
 /******************************************************************************/
 
 //-----------------------------------------------------------------------------
@@ -545,7 +545,6 @@ TWiMODLRResultCodes sendCData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
 	TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
 //	UINT8 offset = 0;
 	UINT32 u32CreditTime = 0;
-	LmHandlerAppData_t appData;
 
     if ( data && (data->Length > 0) && statusRsp) {
 
@@ -1518,6 +1517,16 @@ TWiMODLRResultCodes getNwkStatus(TWiMODLORAWAN_NwkStatus_Data* nwkStatus, UINT8*
 //            // copy response status
 //            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //       }
+    	LoRaMacTxInfo_t txinfo;
+    	LmHandlerGetDevAddr(&nwkStatus->DeviceAddress);
+    	LmHandlerGetTxDatarate(&nwkStatus->DataRateIndex);
+    	LmHandlerGetTxPower(&nwkStatus->PowerLevel);
+    	LoRaMacQueryTxPossible( appData.BufferSize, &txinfo);
+    	networkStatus.DeviceAddress = nwkStatus->DeviceAddress;
+    	networkStatus.DataRateIndex = nwkStatus->DataRateIndex;
+    	networkStatus.PowerLevel = nwkStatus->PowerLevel;
+    	networkStatus.MaxPayloadSize = nwkStatus->MaxPayloadSize;
+
     	result = WiMODLR_RESULT_OK;
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;

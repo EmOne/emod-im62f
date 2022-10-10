@@ -54,7 +54,7 @@ extern "C" {
 /**
   * @brief Enable trace logs
   */
-#define APP_LOG_ENABLED             1
+#define APP_LOG_ENABLED             0
 
 /**
   * @brief Enable MCU Debugger pins (dbg serial wires, sbg spi, etc)
@@ -70,7 +70,7 @@ extern "C" {
   * @brief Disable Low Power mode
   * @note  0: LowPowerMode enabled. MCU enters stop2 mode, 1: LowPowerMode disabled. MCU enters sleep mode only
   */
-#define LOW_POWER_DISABLE           0
+#define LOW_POWER_DISABLE           1
 
 /* USER CODE BEGIN EC */
 
