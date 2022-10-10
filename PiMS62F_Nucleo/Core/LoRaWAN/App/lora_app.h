@@ -67,7 +67,7 @@ extern "C" {
 /*!
  * LoRaWAN default endNode class port
  */
-#define LORAWAN_DEFAULT_CLASS                       CLASS_A
+#define LORAWAN_DEFAULT_CLASS                       CLASS_C
 
 /*!
  * LoRaWAN default confirm state
