@@ -460,14 +460,14 @@ TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp)
 	tx->Payload[offset++] = ((sDate.Month & 0x0F) << 4) | (sTime.Minutes >> 2);
 	tx->Payload[offset++] = ((sDate.Date & 0x07) << 5)  | (sTime.Hours & 0x1F);
 	tx->Payload[offset++] = ((sDate.Year & 0x3F) << 2) | (sDate.Date >> 3);
-    memcpy(&rtcTime, &tx->Payload[1], 4);
+
 	*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(
 			DEVMGMT_SAP_ID,
 			DEVMGMT_MSG_GET_RTC_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			offset);
 
-	memcpy((uint8_t *) rtcTime, (uint8_t *) &tx->Payload[1], sizeof(rtcTime));
+	memcpy((uint8_t *) rtcTime, (uint8_t *) &tx->Payload[1], 4);
 
     return result;
 }
