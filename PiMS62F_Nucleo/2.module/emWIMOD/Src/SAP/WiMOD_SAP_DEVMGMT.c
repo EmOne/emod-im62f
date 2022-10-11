@@ -360,7 +360,7 @@ TWiMODLRResultCodes getSystemStatus(TWiMODLR_DevMgmt_SystemStatus* info, UINT8* 
 	tx->Payload[offset++] = SystemInfo.Status = result;
 	tx->Payload[offset++] = SystemInfo.SysTickResolution = HAL_GetTickPrio();
 	SystemInfo.SysTickCounter = HAL_GetTick();
-	memcpy(&tx->Payload[offset], SystemInfo.SysTickCounter, 4);
+	memcpy(&tx->Payload[offset], &SystemInfo.SysTickCounter, 4);
 	offset += 0x04;
 
 	RTC_TimeTypeDef sTime = { 0 };
