@@ -247,15 +247,6 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 	/* USER CODE BEGIN HAL_UART_TxCpltCallback_1 */
 
 	/* USER CODE END HAL_UART_TxCpltCallback_1 */
-
-	if (huart->Instance == huart1.Instance)
-	{
-
-	}
-	else if (huart->Instance == huart2.Instance)
-	{
-
-	}
 	/* buffer transmission complete*/
 	if(TxCpltCallback != NULL)
 		TxCpltCallback(huart);
@@ -266,15 +257,11 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if (huart->Instance == USART1) {
-		/* USER CODE BEGIN HAL_UART_RxCpltCallback_1 */
-		emod_UART_RxCpltCallback(&charRx, 1, 0);
-		/* USER CODE END HAL_UART_RxCpltCallback_1 */
-	} else if(huart->Instance == USART2){
-		if ((NULL != RxCpltCallback)
-				&& (HAL_UART_ERROR_NONE == huart->ErrorCode)) {
-			RxCpltCallback(&charRx, 1, 0);
-		}
+	/* USER CODE BEGIN HAL_UART_RxCpltCallback_1 */
+
+	/* USER CODE END HAL_UART_RxCpltCallback_1 */
+	if ((NULL != RxCpltCallback) && (HAL_UART_ERROR_NONE == huart->ErrorCode)) {
+		RxCpltCallback(&charRx, 1, 0);
 	}
 	HAL_UART_Receive_IT(huart, &charRx, 1);
   /* USER CODE BEGIN HAL_UART_RxCpltCallback_2 */

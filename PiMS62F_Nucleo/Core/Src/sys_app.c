@@ -68,7 +68,7 @@
 
 /* External variables ---------------------------------------------------------*/
 /* USER CODE BEGIN EV */
-
+extern uint32_t bIsWakeup;
 /* USER CODE END EV */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -170,15 +170,15 @@ void SystemApp_Init(void)
 #error LOW_POWER_DISABLE not defined
 #endif /* LOW_POWER_DISABLE */
 
-  UTIL_ADV_TRACE_StartRxProcess(NULL);
+  UTIL_ADV_TRACE_StartRxProcess(&emod_UART_RxCpltCallback);
 
   /* USER CODE BEGIN SystemApp_Init_2 */
-//  MX_TIM2_Init();
-//  MX_TIM3_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
   MX_TIM4_Init();
 #if defined (USE_EMOD_IMS62F)
 	//  MX_TIM5_Init();
-//  MX_TIM9_Init();
+  MX_TIM9_Init();
 #else
     MX_TIM8_Init();
 #endif
@@ -212,11 +212,15 @@ void SystemApp_Init(void)
 void UTIL_SEQ_Idle(void)
 {
   /* USER CODE BEGIN UTIL_SEQ_Idle_1 */
+	if (bIsWakeup-- == 0) {
 
   /* USER CODE END UTIL_SEQ_Idle_1 */
-//  UTIL_LPM_EnterLowPower();
-  /* USER CODE BEGIN UTIL_SEQ_Idle_2 */
 
+	UTIL_LPM_EnterLowPower();
+
+  /* USER CODE BEGIN UTIL_SEQ_Idle_2 */
+	bIsWakeup = 100000;
+	}
   /* USER CODE END UTIL_SEQ_Idle_2 */
 }
 

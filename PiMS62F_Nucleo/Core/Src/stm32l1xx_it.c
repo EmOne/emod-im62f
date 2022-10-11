@@ -70,7 +70,7 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
 extern UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN EV */
-
+extern EXTI_HandleTypeDef g_hExtiHandle;
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -381,9 +381,15 @@ void EXTI9_5_IRQHandler(void)
 
 void EXTI15_10_IRQHandler(void)
 {
+	if (g_hExtiHandle.PendingCallback != NULL)
+		HAL_EXTI_IRQHandler(&g_hExtiHandle);
+	else
+
+
 #if (defined(SX1276MB1MAS) | defined(SX1276MB1LAS) | defined(SX1272MB2DAS) | defined(USE_EMOD_IMS62F))
   HAL_EXTI_IRQHandler(&H_EXTI_10);
 #endif
+
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
 }
 

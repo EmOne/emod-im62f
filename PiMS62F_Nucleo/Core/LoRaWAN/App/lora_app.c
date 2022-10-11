@@ -119,6 +119,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params);
 static void OnMacProcessNotify(void);
 
 /* USER CODE BEGIN PFP */
+void OnWakeupEvent(void *context);
 
 /**
   * @brief  LED Tx timer callback function
@@ -208,6 +209,11 @@ LmHandlerMsgTypes_t MsgType = LORAWAN_DEFAULT_CONFIRMED_MSG_STATE;
 //static uint8_t AppLedStateOn = RESET;
 
 /**
+  * @brief Timer to handle the wake up period
+  */
+UTIL_TIMER_Object_t WakeupTimer;
+uint32_t bIsWakeup = 100000;
+/**
   * @brief Timer to handle the application Tx Led to toggle
   */
 static UTIL_TIMER_Object_t TxLedTimer;
@@ -255,9 +261,11 @@ void LoRaWAN_Init(void)
           (uint8_t)(__SUBGHZ_PHY_VERSION >> __APP_VERSION_SUB1_SHIFT),
           (uint8_t)(__SUBGHZ_PHY_VERSION >> __APP_VERSION_SUB2_SHIFT));
 
+//  UTIL_TIMER_Create(&WakeupTimer, 0xFFFFFFFFU, UTIL_TIMER_PERIODIC, OnWakeupEvent, NULL);
   UTIL_TIMER_Create(&TxLedTimer, 0xFFFFFFFFU, UTIL_TIMER_ONESHOT, OnTxTimerLedEvent, NULL);
   UTIL_TIMER_Create(&RxLedTimer, 0xFFFFFFFFU, UTIL_TIMER_ONESHOT, OnRxTimerLedEvent, NULL);
   UTIL_TIMER_Create(&JoinLedTimer, 0xFFFFFFFFU, UTIL_TIMER_PERIODIC, OnJoinTimerLedEvent, NULL);
+//  UTIL_TIMER_SetPeriod(&WakeupTimer, 10000);
   UTIL_TIMER_SetPeriod(&TxLedTimer, 500);
   UTIL_TIMER_SetPeriod(&RxLedTimer, 500);
   UTIL_TIMER_SetPeriod(&JoinLedTimer, 500);
@@ -307,13 +315,6 @@ void LoRaWAN_Init(void)
 
 	WiMODLoRaWAN.SapLoRaWan->setRegion(LmHandlerParams.ActiveRegion);
 
-	//setup data
-	//  activationData.DeviceAddress = WIMOD_DEV_ADDR;
-	//  memcpy(activationData.NwkSKey, NWKSKEY, 16);
-	//  memcpy(activationData.AppSKey, APPSKEY, 16);
-	//
-	//  memcpy( joinData.AppEUI, APPEUI, 8);
-	//  memcpy( joinData.AppKey, APPKEY, 16);
   /* USER CODE END LoRaWAN_Init_Last */
 }
 
@@ -599,6 +600,13 @@ static void SendTxData(void)
 //}
 
 /* USER CODE BEGIN PrFD_LedEvents */
+
+void OnWakeupEvent(void *context)
+{
+	//TODO: Go to low power mode
+	bIsWakeup = false;
+}
+
 static void OnTxTimerLedEvent(void *context)
 {
   LED_Off(LED_RED2);

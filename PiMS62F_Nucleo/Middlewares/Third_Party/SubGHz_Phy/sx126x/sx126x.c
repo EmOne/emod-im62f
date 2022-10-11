@@ -156,7 +156,7 @@ void SX126xInit( DioIrqHandler dioIrq )
 
     Sx_Board_WakeUp( );
 
-    SX126xSetStandby( STDBY_XOSC );
+    SX126xSetStandby( STDBY_RC );
 
     // Initialize TCXO control
     if (Sx_Board_IsTcxo()  == true )
