@@ -219,7 +219,15 @@ void UTIL_SEQ_Idle(void)
 	UTIL_LPM_EnterLowPower();
 
   /* USER CODE BEGIN UTIL_SEQ_Idle_2 */
-	bIsWakeup = 100000;
+	HAL_TIM_Base_Start_IT(&htim2);
+	HAL_TIM_Base_Start_IT(&htim4);
+#if defined (USE_EMOD_IMS62F)
+	//  HAL_TIM_Base_Start_IT(&htim5);
+	HAL_TIM_Base_Start_IT(&htim9);
+#else
+	  HAL_TIM_Base_Start_IT(&htim8);
+#endif
+	  bIsWakeup = 100000;
 	}
   /* USER CODE END UTIL_SEQ_Idle_2 */
 }

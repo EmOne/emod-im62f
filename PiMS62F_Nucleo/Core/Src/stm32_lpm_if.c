@@ -209,8 +209,20 @@ static void PWR_WakeupCallback ( void )
 	/*Set verbose LEVEL*/
 	UTIL_ADV_TRACE_StartRxProcess(&emod_UART_RxCpltCallback);
 
-	HAL_EXTI_RegisterCallback(&g_hExtiHandle, HAL_EXTI_COMMON_CB_ID, NULL);
-//	HAL_EXTI_ClearPending(&g_hExtiHandle, EXTI_TRIGGER_RISING);
+	MX_TIM2_Init();
+	MX_TIM3_Init();
+	MX_TIM4_Init();
+#if defined (USE_EMOD_IMS62F)
+	//  MX_TIM5_Init();
+	MX_TIM9_Init();
+#else
+	    MX_TIM8_Init();
+	#endif
+
+
+	g_hExtiHandle.PendingCallback = NULL;
+//	HAL_EXTI_RegisterCallback(&g_hExtiHandle., HAL_EXTI_COMMON_CB_ID, NULL);
+	HAL_EXTI_ClearPending(&g_hExtiHandle, EXTI_TRIGGER_RISING);
 //	HAL_EXTI_ClearConfigLine(&g_hExtiHandle);
 //	bIsWakeup = true;
 //	UTIL_TIMER_Start(&WakeupTimer);
