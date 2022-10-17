@@ -71,6 +71,7 @@ typedef struct {
   UTIL_ADV_TRACE_Status_t  (* DeInit)(void);                                                      /*!< Media Un-initialization.   */
   UTIL_ADV_TRACE_Status_t  (* StartRx)(void (*cb)(uint8_t *pdata, uint16_t size, uint8_t error)); /*!< Media to start RX process. */
   UTIL_ADV_TRACE_Status_t  (* Send)(uint8_t *pdata, uint16_t size);                               /*!< Media to send data.        */
+  UTIL_ADV_TRACE_Status_t  (* Resume)( void );                               /*!< Media resume.        */
 }UTIL_ADV_TRACE_Driver_s;
 
 /**
@@ -97,7 +98,7 @@ extern const UTIL_ADV_TRACE_Driver_s UTIL_TraceDriver;
 /** @defgroup ADV_TRACE_exported_function ADV_TRACE exported function
  *  @{
  */
-
+UTIL_ADV_TRACE_Status_t UTIL_ADV_TRACE_Resume(void);
 /**
  * @brief TraceInit Initializes Logging feature
  * @retval Status based on @ref UTIL_ADV_TRACE_Status_t

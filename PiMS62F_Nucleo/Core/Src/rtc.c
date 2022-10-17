@@ -164,13 +164,5 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
 }
 
 /* USER CODE BEGIN 1 */
-/**
-  * @brief  Alarm A callback.
-  * @param  hrtc: RTC handle
-  * @retval None
-  */
-//void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
-//{
-//  TimerIrqHandler();
-//}
+
 /* USER CODE END 1 */

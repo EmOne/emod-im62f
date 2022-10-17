@@ -68,7 +68,7 @@ extern "C" {
 #define RADIO_BUSY_PORT                           RF_BUSY_GPIO_Port //GPIOB
 #define RADIO_BUSY_PIN                            RF_BUSY_Pin //GPIO_PIN_1
 
-#define RADIO_DIOn                               1U
+#define RADIO_DIOn                               2U
 
 #define RADIO_DIO_1_IT_PRIO                        0
 #define RADIO_DIO_1_PORT                  RF_DIO1_GPIO_Port //GPIOB
@@ -89,7 +89,7 @@ extern "C" {
 
 #define DEVICE_SEL_PORT                           BOOT1_GPIO_Port //GPIOB
 #define DEVICE_SEL_PIN                            BOOT1_Pin //GPIO_PIN_2
-#define RADIO_DEV_SEL_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
+#define RADIO_DEV_SEL_CLK_ENABLE()      		  __HAL_RCC_GPIOB_CLK_ENABLE()
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ extern "C" {
 
 #define RADIO_DIO_2_PORT                          RF_DIO2_GPIO_Port //GPIOB
 #define RADIO_DIO_2_PIN                           RF_DIO2_Pin //GPIO_PIN_11
-#define RADIO_DIO_2_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
+#define RADIO_DIO_2_GPIO_CLK_ENABLE()      		  __HAL_RCC_GPIOB_CLK_ENABLE()
 
 //#define RADIO_DIO_3_PORT                          GPIOB
 //#define RADIO_DIO_3_PIN                           GPIO_PIN_4
@@ -160,48 +160,6 @@ extern "C" {
 /* --------------------------- RTC HW definition -------------------------------- */
 
 #define RTC_OUTPUT       DBG_RTC_OUTPUT
-
-/* --------------------------- USART HW definition -------------------------------*/
-//#define USARTx                           USART2
-//#define USARTx_CLK_ENABLE()              __USART2_CLK_ENABLE();
-//#define USARTx_RX_GPIO_CLK_ENABLE()      __GPIOA_CLK_ENABLE()
-//#define USARTx_TX_GPIO_CLK_ENABLE()      __GPIOA_CLK_ENABLE()
-//#define DMAx_CLK_ENABLE()                __HAL_RCC_DMA1_CLK_ENABLE()
-//
-//#define USARTx_FORCE_RESET()             __USART2_FORCE_RESET()
-//#define USARTx_RELEASE_RESET()           __USART2_RELEASE_RESET()
-//
-//
-//#define USARTx_TX_PIN                  GPIO_PIN_2
-//#define USARTx_TX_GPIO_PORT            GPIOA
-//#define USARTx_TX_AF                   GPIO_AF7_USART2
-//#define USARTx_RX_PIN                  GPIO_PIN_3
-//#define USARTx_RX_GPIO_PORT            GPIOA
-//#define USARTx_RX_AF                   GPIO_AF7_USART2
-//
-///* Definition for USARTx's NVIC */
-//#define USARTx_IRQn                      USART2_IRQn
-//#define USARTx_IRQHandler                USART2_IRQHandler
-//
-///* Definition for USARTx's DMA */
-//#define USARTx_TX_DMA_CHANNEL             DMA1_Channel7
-//
-///* Definition for USARTx's NVIC */
-//#define USARTx_DMA_TX_IRQn                DMA1_Channel7_IRQn
-//#define USARTx_DMA_TX_IRQHandler          DMA1_Channel7_IRQHandler
-
-//#define USARTx_Priority 0
-//#define USARTx_DMA_Priority 0
-
-/* --------------------------- DEBUG redefinition -------------------------------*/
-
-#define __HAL_RCC_DBGMCU_CLK_ENABLE()
-#define __HAL_RCC_DBGMCU_CLK_DISABLE()
-
-#define LED_Toggle( x )
-#define LED_On( x )
-#define LED_Off( x )
-/////////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 }
