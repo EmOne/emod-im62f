@@ -266,6 +266,8 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         LmHandlerSetNwkSKey((uint8_t *) &activateData.NwkSKey );
         LmHandlerSetDevAddr( activateData.DeviceAddress );
 
+        EepromMcuWriteBuffer(0x200, &activateData, sizeof(activateData));
+
         //copy response status
         result = WiMODLR_RESULT_OK;
 
@@ -344,6 +346,8 @@ TWiMODLRResultCodes reactivateDevice(UINT32* devAdr, UINT8* statusRsp)
 			LORAWAN_MSG_REACTIVATE_DEVICE_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1 + 4);
+
+	EepromMcuWriteBuffer(0x300, &activateData, sizeof(activateData));
 
 	LmHandlerJoin(ActivationType);
 
