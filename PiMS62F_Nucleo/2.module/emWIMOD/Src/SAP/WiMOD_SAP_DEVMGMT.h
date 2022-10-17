@@ -57,6 +57,8 @@
 #include "stm32_systime.h"
 #include "rtc.h"
 #include "LmHandler.h"
+#include "adc_if.h"
+#include "sys_app.h"
 /*
  * C++11 supports a better way for function pointers / function objects
  * But C++11 mode is not supported by all platforms.

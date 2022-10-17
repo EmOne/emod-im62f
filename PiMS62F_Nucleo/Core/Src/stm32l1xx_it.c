@@ -28,6 +28,7 @@
 #include "ComSLIP.h"
 #include "WiMODLRHCI.h"
 #include "WiMODLoRaWAN.h"
+#include "stm32_lpm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -280,6 +281,7 @@ void TIM4_IRQHandler(void)
 		WiMODLoRaWAN.Process(&TWiMODLRHCI.Rx.Message);
 		EmWimodData.ReceiveFrmUserRequest = 0x0;
 		memset(&Rx2_buffer, 0x00, kMaxUARTPayloadSize);
+//		UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_RX_Id), UTIL_LPM_ENABLE);
 	}
   /* USER CODE END TIM4_IRQn 0 */
   HAL_TIM_IRQHandler(&htim4);
@@ -334,16 +336,16 @@ void TIM8_IRQHandler(void)
 /**
   * @brief This function handles TIM6 global interrupt.
   */
-void TIM6_IRQHandler(void)
-{
+//void TIM6_IRQHandler(void)
+//{
   /* USER CODE BEGIN TIM6_IRQn 0 */
 
   /* USER CODE END TIM6_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim6);
+//  HAL_TIM_IRQHandler(&htim6);
   /* USER CODE BEGIN TIM6_IRQn 1 */
 
   /* USER CODE END TIM6_IRQn 1 */
-}
+//}
 
 /* USER CODE BEGIN 1 */
 void EXTI0_IRQHandler(void)
@@ -381,16 +383,16 @@ void EXTI9_5_IRQHandler(void)
 
 void EXTI15_10_IRQHandler(void)
 {
-	if (g_hExtiHandle.PendingCallback != NULL)
-		HAL_EXTI_IRQHandler(&g_hExtiHandle);
-	else
-
-
+	if (hRADIO_DIO_exti[1].PendingCallback != NULL) {
+		hRADIO_DIO_exti[1].PendingCallback();
+	}
 #if (defined(SX1276MB1MAS) | defined(SX1276MB1LAS) | defined(SX1272MB2DAS) | defined(USE_EMOD_IMS62F))
-  HAL_EXTI_IRQHandler(&H_EXTI_10);
+//	if (HAL_GPIO_ReadPin(RADIO_DIO_1_PORT, RADIO_DIO_1_PIN) == GPIO_PIN_SET) {
+		HAL_EXTI_IRQHandler(&H_EXTI_10);
+//	}
 #endif
 
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+//  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
 }
 
 void DMA1_Channel4_IRQHandler(void)

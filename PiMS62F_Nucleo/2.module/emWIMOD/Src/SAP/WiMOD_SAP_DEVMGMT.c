@@ -258,7 +258,7 @@ TWiMODLRResultCodes getDeviceInfo (TWiMODLR_DevMgmt_DevInfo* info, UINT8* status
 
     if (statusRsp) {
     	LmHandlerGetDevAddr(&DeviceInfo.DevAdr);
-    	GetUniqueId(&DeviceInfo.DevID);
+    	GetUniqueId((uint8_t *)&DeviceInfo.DevID);
     	info->DevAdr = DeviceInfo.DevAdr;
     	info->DevID = DeviceInfo.DevID;
     	info->GroupAdr = DeviceInfo.GroupAdr;

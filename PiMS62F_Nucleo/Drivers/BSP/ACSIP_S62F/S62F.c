@@ -57,6 +57,7 @@
 #define RADIO_GET_STATUS                        0xC0
 /* Private macro -------------------------------------------------------------*/
 /* static */ EXTI_HandleTypeDef hRADIO_DIO_exti[RADIO_DIOn];
+DioIrqHandler *hDioIrq;
 
 static void S62F_RADIO_SPI_IoInit(SPI_HandleTypeDef *spiHandle);
 static void S62F_RADIO_SPI_IoDeInit(void);
@@ -142,20 +143,28 @@ void S62F_RADIO_IoDeInit( void )
 	S62F_RADIO_SPI_IoDeInit();
 
 	GPIO_InitTypeDef initStruct={0};
-	initStruct.Mode = GPIO_MODE_INPUT;
+	initStruct.Mode = GPIO_MODE_ANALOG;
 	initStruct.Pull = GPIO_NOPULL;
 	initStruct.Pin = RADIO_DIO_1_PIN;
 	HAL_GPIO_Init( RADIO_DIO_1_PORT, &initStruct);
 
+	HAL_EXTI_ClearPending(&hRADIO_DIO_exti[0], EXTI_TRIGGER_RISING_FALLING);
+	HAL_EXTI_ClearConfigLine(&hRADIO_DIO_exti[0]);
+	HAL_NVIC_DisableIRQ(RADIO_DIO_1_IRQn);
+
 	initStruct.Pin = RADIO_BUSY_PIN;
 	HAL_GPIO_Init( RADIO_BUSY_PORT, &initStruct);
+
 }
 
 void S62F_RADIO_IoIrqInit( DioIrqHandler **irqHandlers )
 {
-//  HW_GPIO_SetIrq( RADIO_DIO_1_PORT, RADIO_DIO_1_PIN, IRQ_HIGH_PRIORITY, dioIrq );
+	if (hDioIrq == NULL) {
+		hDioIrq = irqHandlers[0];
+	}
+
   HAL_EXTI_GetHandle(&hRADIO_DIO_exti[0], RADIO_DIO_1_EXTI_LINE);
-  HAL_EXTI_RegisterCallback(&hRADIO_DIO_exti[0], HAL_EXTI_COMMON_CB_ID, irqHandlers[0]);
+  HAL_EXTI_RegisterCallback(&hRADIO_DIO_exti[0], HAL_EXTI_COMMON_CB_ID, hDioIrq);
   HAL_NVIC_SetPriority(RADIO_DIO_1_IRQn, RADIO_DIO_1_IT_PRIO, 0x00);
   HAL_NVIC_EnableIRQ(RADIO_DIO_1_IRQn);
 }

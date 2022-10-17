@@ -1204,9 +1204,9 @@ TWiMODLRResultCodes getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 //        if (result == WiMODLR_RESULT_OK) {
 //            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
 //
-    		LmHandlerGetTxDatarate(&radioStack.DataRateIndex);
+    		LmHandlerGetTxDatarate((int8_t *)&radioStack.DataRateIndex);
             data->DataRateIndex   		= radioStack.DataRateIndex; //rx->Payload[offset++];
-            LmHandlerGetTxPower(&radioStack.TXPowerLevel);
+            LmHandlerGetTxPower((int8_t *)&radioStack.TXPowerLevel);
             data->TXPowerLevel    		= radioStack.TXPowerLevel; //rx->Payload[offset++];
             bool state = true;
             if(LmHandlerGetAdrEnable(&state) == LORAMAC_HANDLER_SUCCESS )
@@ -1536,8 +1536,8 @@ TWiMODLRResultCodes getNwkStatus(TWiMODLORAWAN_NwkStatus_Data* nwkStatus, UINT8*
 //       }
     	LoRaMacTxInfo_t txinfo;
     	LmHandlerGetDevAddr(&nwkStatus->DeviceAddress);
-    	LmHandlerGetTxDatarate(&nwkStatus->DataRateIndex);
-    	LmHandlerGetTxPower(&nwkStatus->PowerLevel);
+    	LmHandlerGetTxDatarate((int8_t *)&nwkStatus->DataRateIndex);
+    	LmHandlerGetTxPower((int8_t *)&nwkStatus->PowerLevel);
     	LoRaMacQueryTxPossible( appData.BufferSize, &txinfo);
     	networkStatus.DeviceAddress = nwkStatus->DeviceAddress;
     	networkStatus.DataRateIndex = nwkStatus->DataRateIndex;

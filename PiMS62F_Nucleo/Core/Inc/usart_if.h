@@ -104,10 +104,10 @@ void vcom_DMA_TX_IRQHandler(void);
 /**
   * @brief  Resume the UART and associated DMA (used by LPM)
   */
-void vcom_Resume(void);
+UTIL_ADV_TRACE_Status_t vcom_Resume ( void );
 
 /* USER CODE BEGIN EFP */
-
+void vcom_Sleep ( void );
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

@@ -61,15 +61,7 @@
 /* USER CODE END ExternalFunctions */
 
 /* USER CODE BEGIN 0 */
-/**
-  * @brief This function provides delay (in ms)
-  * @param Delay: specifies the delay time length, in milliseconds.
-  * @retval None
-  */
-//void HAL_Delay(__IO uint32_t Delay)
-//{
-//  HW_RTC_DelayMs(Delay);   /* based on RTC */
-//}
+
 /* USER CODE END 0 */
 /**
   * Initializes the Global MSP.
@@ -81,7 +73,7 @@ void HAL_MspInit(void)
   /* USER CODE END MspInit 0 */
 //  PWR_PVDTypeDef sConfigPVD = {0};
 
-  __HAL_RCC_COMP_CLK_ENABLE();
+//  __HAL_RCC_COMP_CLK_ENABLE();
   __HAL_RCC_SYSCFG_CLK_ENABLE();
   __HAL_RCC_PWR_CLK_ENABLE();
 
@@ -132,7 +124,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     /* Peripheral clock enable */
     __HAL_RCC_TIM2_CLK_ENABLE();
     /* TIM2 interrupt Init */
-    HAL_NVIC_SetPriority(TIM2_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(TIM2_IRQn, 0, 1);
     HAL_NVIC_EnableIRQ(TIM2_IRQn);
   /* USER CODE BEGIN TIM2_MspInit 1 */
 
@@ -160,7 +152,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
     /* Peripheral clock enable */
     __HAL_RCC_TIM9_CLK_ENABLE();
     /* TIM9 interrupt Init */
-    HAL_NVIC_SetPriority(TIM9_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(TIM9_IRQn, 0, 1);
     HAL_NVIC_EnableIRQ(TIM9_IRQn);
   /* USER CODE BEGIN TIM9_MspInit 1 */
 
