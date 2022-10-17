@@ -24,9 +24,14 @@
 
 /* USER CODE BEGIN Includes */
 #include "emod_uart.h"
+#include "stm32_lpm.h"
+#include "utilities_def.h"
 /* USER CODE END Includes */
 
 /* External variables ---------------------------------------------------------*/
+
+extern EXTI_HandleTypeDef hRADIO_DIO_exti[];
+
 /**
   * @brief DMA handle
   */
@@ -38,8 +43,11 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
 /**
   * @brief UART handle
   */
+#if defined ( USE_EMOD_IMS62F )
 extern UART_HandleTypeDef huart1;
+#else
 extern UART_HandleTypeDef huart2;
+#endif
 
 /**
   * @brief buffer to receive 1 character
@@ -60,6 +68,7 @@ const UTIL_ADV_TRACE_Driver_s UTIL_TraceDriver =
   vcom_DeInit,
   vcom_ReceiveInit,
   vcom_Trace_DMA,
+  vcom_Resume
 };
 
 /* USER CODE BEGIN PTD */
@@ -98,7 +107,7 @@ static void (*RxCpltCallback)(uint8_t *rxChar, uint16_t size, uint8_t error);
 /* Private function prototypes -----------------------------------------------*/
 
 /* USER CODE BEGIN PFP */
-
+void vcom_ResumeCallback ( void );
 /* USER CODE END PFP */
 
 /* Exported functions --------------------------------------------------------*/
@@ -132,7 +141,7 @@ UTIL_ADV_TRACE_Status_t vcom_DeInit(void)
   __HAL_RCC_USART1_RELEASE_RESET();
 
   /* ##-2- MspDeInit ################################################## */
-  HAL_UART_MspDeInit(&huart1);
+  HAL_UART_DeInit(&huart1);
 
   /* ##-3- Disable the NVIC for DMA ########################################### */
   /* USER CODE BEGIN 1 */
@@ -149,11 +158,11 @@ UTIL_ADV_TRACE_Status_t vcom_DeInit(void)
     /* USER CODE BEGIN 1 */
     HAL_NVIC_DisableIRQ(DMA1_Channel7_IRQn);
 #endif
-  return UTIL_ADV_TRACE_OK;
   /* USER CODE END 1 */
   /* USER CODE BEGIN vcom_DeInit_2 */
-
+  vcom_Sleep();
   /* USER CODE END vcom_DeInit_2 */
+  return UTIL_ADV_TRACE_OK;
 }
 
 void vcom_Trace(uint8_t *p_data, uint16_t size)
@@ -207,10 +216,15 @@ UTIL_ADV_TRACE_Status_t vcom_ReceiveInit(void (*RxCb)(uint8_t *rxChar, uint16_t 
   /* USER CODE END vcom_ReceiveInit_2 */
 }
 
-void vcom_Resume(void)
+UTIL_ADV_TRACE_Status_t vcom_Resume ( void )
 {
   /* USER CODE BEGIN vcom_Resume_1 */
+    HAL_EXTI_RegisterCallback(&hRADIO_DIO_exti[1], HAL_EXTI_COMMON_CB_ID, NULL);
+    HAL_EXTI_ClearPending(&hRADIO_DIO_exti[1], EXTI_TRIGGER_RISING_FALLING);
+    HAL_EXTI_ClearConfigLine(&hRADIO_DIO_exti[1]);
+    HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
 
+	__HAL_RCC_USART1_CLK_ENABLE();
   /* USER CODE END vcom_Resume_1 */
 #if defined ( USE_EMOD_IMS62F )
   /*to re-enable lost UART settings*/
@@ -238,8 +252,13 @@ void vcom_Resume(void)
     }
 #endif
   /* USER CODE BEGIN vcom_Resume_2 */
+    //	HAL_ResumeTick();
 
+    UTIL_ADV_TRACE_StartRxProcess(&emod_UART_RxCpltCallback);
+//    UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_RX_Id), UTIL_LPM_DISABLE);
+//    UTIL_LPM_SetOffMode((1 << CFG_LPM_UART_RX_Id), UTIL_LPM_ENABLE);
   /* USER CODE END vcom_Resume_2 */
+    return UTIL_ADV_TRACE_OK;
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
@@ -247,15 +266,6 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 	/* USER CODE BEGIN HAL_UART_TxCpltCallback_1 */
 
 	/* USER CODE END HAL_UART_TxCpltCallback_1 */
-
-	if (huart->Instance == huart1.Instance)
-	{
-
-	}
-	else if (huart->Instance == huart2.Instance)
-	{
-
-	}
 	/* buffer transmission complete*/
 	if(TxCpltCallback != NULL)
 		TxCpltCallback(huart);
@@ -266,29 +276,26 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if (huart->Instance == USART1) {
-		/* USER CODE BEGIN HAL_UART_RxCpltCallback_1 */
-		emod_UART_RxCpltCallback(&charRx, 1, 0);
-		/* USER CODE END HAL_UART_RxCpltCallback_1 */
-	} else if(huart->Instance == USART2){
-		if ((NULL != RxCpltCallback)
-				&& (HAL_UART_ERROR_NONE == huart->ErrorCode)) {
-			RxCpltCallback(&charRx, 1, 0);
-		}
+	/* USER CODE BEGIN HAL_UART_RxCpltCallback_1 */
+
+	/* USER CODE END HAL_UART_RxCpltCallback_1 */
+	if ((NULL != RxCpltCallback) && (HAL_UART_ERROR_NONE == huart->ErrorCode)) {
+		RxCpltCallback(&charRx, 1, 0);
 	}
 	HAL_UART_Receive_IT(huart, &charRx, 1);
   /* USER CODE BEGIN HAL_UART_RxCpltCallback_2 */
-
+    UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_RX_Id), UTIL_LPM_DISABLE);
+//  UTIL_LPM_SetOffMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
   /* USER CODE END HAL_UART_RxCpltCallback_2 */
 }
 
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
-	if (huart->Instance == huart1.Instance) {
+	if (huart->Instance == USART1) {
 		/* USER CODE BEGIN HAL_UART_ErrorCpltCallback_1 */
 		emod_UART_ErrorCallback(huart);
 		/* USER CODE END HAL_UART_ErrorCpltCallback_1 */
-	} else if (huart->Instance == huart2.Instance) {
+	} else if (huart->Instance == USART2) {
 
 	}
 
@@ -300,6 +307,36 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 /* Private Functions Definition -----------------------------------------------*/
 
 /* USER CODE BEGIN PrFD */
+void vcom_ResumeCallback ( void )
+{
+	vcom_Resume ();
+}
+
+void vcom_Sleep ( void )
+{
+	GPIO_InitTypeDef gpioInitType;
+
+	USARTx_RX_GPIO_CLK_ENABLE();
+	gpioInitType.Mode = GPIO_MODE_IT_FALLING;
+	gpioInitType.Pin = USARTx_RX_PIN;
+	gpioInitType.Pull = GPIO_NOPULL;
+	gpioInitType.Speed = GPIO_SPEED_MEDIUM;
+	HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &gpioInitType);
+
+  	EXTI_ConfigTypeDef hExtiConfig;
+  	hExtiConfig.Line = EXTI_LINE_10; // PA10
+  	hExtiConfig.Mode = EXTI_MODE_INTERRUPT;
+  	hExtiConfig.Trigger = EXTI_TRIGGER_FALLING;
+  	hExtiConfig.GPIOSel = EXTI_GPIOA;   // PA10
+  	HAL_EXTI_SetConfigLine(&hRADIO_DIO_exti[1], &hExtiConfig);
+  	HAL_EXTI_RegisterCallback(&hRADIO_DIO_exti[1], HAL_EXTI_COMMON_CB_ID, vcom_ResumeCallback);
+
+  	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
+//  	HAL_SuspendTick();
+//  	UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_RX_Id), UTIL_LPM_ENABLE);
+}
 
 /* USER CODE END PrFD */
 

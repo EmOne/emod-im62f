@@ -145,9 +145,30 @@ void UART2_ReInit (void);
 
 /* Pin mapping */
 
+/* --------------------------- USART HW definition -------------------------------*/
+#define USARTx                           USART1
+#define USARTx_CLK_ENABLE()              __USART1_CLK_ENABLE();
+#define USARTx_RX_GPIO_CLK_ENABLE()      __GPIOA_CLK_ENABLE()
+#define USARTx_TX_GPIO_CLK_ENABLE()      __GPIOA_CLK_ENABLE()
+
 /* Definition for UARTx clock resources */
 #define DMAx_CLK_ENABLE()                __HAL_RCC_DMA1_CLK_ENABLE()
 #define DMAMUX_CLK_ENABLE()              __HAL_RCC_DMAMUX1_CLK_ENABLE()
+
+#define USARTx_FORCE_RESET()             __USART1_FORCE_RESET()
+#define USARTx_RELEASE_RESET()           __USART1_RELEASE_RESET()
+
+#define USARTx_TX_PIN                  TXD_Pin
+#define USARTx_TX_GPIO_PORT            TXD_GPIO_Port
+#define USARTx_RX_PIN                  RXD_Pin
+#define USARTx_RX_GPIO_PORT            RXD_GPIO_Port
+
+#define USARTx_TX_AF                     GPIO_AF7_USART1
+#define USARTx_RX_AF                     GPIO_AF7_USART1
+
+/* Definition for USARTx's NVIC */
+#define USARTx_IRQn                      USART1_IRQn
+#define USARTx_IRQHandler                USART1_IRQHandler
 
 /* Definition for USARTx's DMA */
 #define USARTx_TX_DMA_CHANNEL             DMA1_Channel4
@@ -156,23 +177,8 @@ void UART2_ReInit (void);
 #define USARTx_DMA_TX_IRQn                DMA1_Channel4_IRQn
 #define USARTx_DMA_TX_IRQHandler          DMA1_Channel4_IRQHandler
 
-/* Definition for USARTx's NVIC */
-#define USARTx_IRQn                      USART1_IRQn
 #define USARTx_Priority 0
 #define USARTx_DMA_Priority 0
-
-
-#define USARTx_RX_Pin RXD_Pin
-#define USARTx_RX_GPIO_Port GPIOA
-#define USARTx_TX_Pin TXD_Pin
-#define USARTx_TX_GPIO_Port GPIOA
-
-#define USARTx_RX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
-#define USARTx_TX_GPIO_CLK_ENABLE()      __HAL_RCC_GPIOA_CLK_ENABLE()
-
-#define USARTx_TX_AF                     GPIO_AF7_USART1
-#define USARTx_RX_AF                     GPIO_AF7_USART1
-
 
 #elif defined ( NUCLEO_L1 )
 

@@ -160,6 +160,10 @@ static uint32_t TRACE_IsLocked(void);
 
 /* Functions Definition ------------------------------------------------------*/
 
+UTIL_ADV_TRACE_Status_t UTIL_ADV_TRACE_Resume(void)
+{
+	return UTIL_TraceDriver.Resume();
+}
 /** @addtogroup ADV_TRACE_exported_function
  *  @{
  */

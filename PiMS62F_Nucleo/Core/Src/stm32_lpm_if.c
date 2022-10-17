@@ -27,7 +27,9 @@
 #include "adc.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "stm32_seq.h"
+#include "stm32_timer.h"
+#include "utilities_def.h"
 /* USER CODE END Includes */
 
 /* External variables ---------------------------------------------------------*/
@@ -102,6 +104,8 @@ void PWR_EnterStopMode(void)
 
   HAL_ADC_MspDeInit(&hadc);
 
+  UTIL_ADV_TRACE_DeInit();
+
   /*clear wake up flag*/
   SET_BIT(PWR->CR, PWR_CR_CWUF);
 
@@ -111,6 +115,7 @@ void PWR_EnterStopMode(void)
   /* USER CODE END EnterStopMode_2 */
   /* Enter Stop Mode */
   HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
+
   /* USER CODE BEGIN EnterStopMode_3 */
 
   /* USER CODE END EnterStopMode_3 */
@@ -144,7 +149,13 @@ void PWR_ExitStopMode(void)
   while (__HAL_RCC_GET_SYSCLK_SOURCE() != RCC_SYSCLKSOURCE_STATUS_PLLCLK) {}
 
   /* initializes the peripherals */
+  UTIL_ADV_TRACE_Resume();
+
+  HAL_ADC_MspInit(&hadc);
+
   Sx_Board_IoInit();
+
+  Sx_Board_IoIrqInit(NULL);
 
   UTILS_EXIT_CRITICAL_SECTION();
   /* USER CODE BEGIN ExitStopMode_2 */
@@ -155,10 +166,11 @@ void PWR_ExitStopMode(void)
 void PWR_EnterSleepMode(void)
 {
   /* USER CODE BEGIN EnterSleepMode_1 */
-
+//	UTILS_ENTER_CRITICAL_SECTION();
   /* USER CODE END EnterSleepMode_1 */
+//	UTIL_ADV_TRACE_DeInit();
   /* USER CODE BEGIN EnterSleepMode_2 */
-
+//	UTILS_EXIT_CRITICAL_SECTION();
   /* USER CODE END EnterSleepMode_2 */
   HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
   /* USER CODE BEGIN EnterSleepMode_3 */
@@ -169,11 +181,11 @@ void PWR_EnterSleepMode(void)
 void PWR_ExitSleepMode(void)
 {
   /* USER CODE BEGIN ExitSleepMode_1 */
-
+//	UTILS_ENTER_CRITICAL_SECTION();
   /* USER CODE END ExitSleepMode_1 */
-
+//	UTIL_ADV_TRACE_Resume();
   /* USER CODE BEGIN ExitSleepMode_2 */
-
+//	UTILS_EXIT_CRITICAL_SECTION();
   /* USER CODE END ExitSleepMode_2 */
 }
 

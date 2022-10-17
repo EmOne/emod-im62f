@@ -68,7 +68,7 @@
 
 /* External variables ---------------------------------------------------------*/
 /* USER CODE BEGIN EV */
-
+extern uint32_t bIsWakeup;
 /* USER CODE END EV */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -170,15 +170,15 @@ void SystemApp_Init(void)
 #error LOW_POWER_DISABLE not defined
 #endif /* LOW_POWER_DISABLE */
 
-  UTIL_ADV_TRACE_StartRxProcess(NULL);
+  UTIL_ADV_TRACE_StartRxProcess(&emod_UART_RxCpltCallback);
 
   /* USER CODE BEGIN SystemApp_Init_2 */
-//  MX_TIM2_Init();
-//  MX_TIM3_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
   MX_TIM4_Init();
 #if defined (USE_EMOD_IMS62F)
 	//  MX_TIM5_Init();
-//  MX_TIM9_Init();
+  MX_TIM9_Init();
 #else
     MX_TIM8_Init();
 #endif
@@ -214,7 +214,9 @@ void UTIL_SEQ_Idle(void)
   /* USER CODE BEGIN UTIL_SEQ_Idle_1 */
 
   /* USER CODE END UTIL_SEQ_Idle_1 */
-//  UTIL_LPM_EnterLowPower();
+
+  UTIL_LPM_EnterLowPower();
+
   /* USER CODE BEGIN UTIL_SEQ_Idle_2 */
 
   /* USER CODE END UTIL_SEQ_Idle_2 */
@@ -356,7 +358,7 @@ void UTIL_ADV_TRACE_PreSendHook(void)
   /* USER CODE BEGIN UTIL_ADV_TRACE_PreSendHook_1 */
 
   /* USER CODE END UTIL_ADV_TRACE_PreSendHook_1 */
-  UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_TX_Id), UTIL_LPM_DISABLE);
+//  UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_TX_Id), UTIL_LPM_DISABLE);
   /* USER CODE BEGIN UTIL_ADV_TRACE_PreSendHook_2 */
 
   /* USER CODE END UTIL_ADV_TRACE_PreSendHook_2 */
@@ -367,7 +369,7 @@ void UTIL_ADV_TRACE_PostSendHook(void)
   /* USER CODE BEGIN UTIL_LPM_SetStopMode_1 */
 
   /* USER CODE END UTIL_LPM_SetStopMode_1 */
-  UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_TX_Id), UTIL_LPM_ENABLE);
+//  UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_TX_Id), UTIL_LPM_ENABLE);
   /* USER CODE BEGIN UTIL_LPM_SetStopMode_2 */
 
   /* USER CODE END UTIL_LPM_SetStopMode_2 */
@@ -396,17 +398,17 @@ static void tiny_snprintf_like(char *buf, uint32_t maxsize, const char *strForma
 /**
   * @note This function overwrites the __weak one from HAL
   */
-//HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
-//{
-//  /*Don't enable SysTick if TIMER_IF is based on other counters (e.g. RTC) */
-//  /* USER CODE BEGIN HAL_InitTick_1 */
-//
-//  /* USER CODE END HAL_InitTick_1 */
-//  return HAL_OK;
-//  /* USER CODE BEGIN HAL_InitTick_2 */
-//
-//  /* USER CODE END HAL_InitTick_2 */
-//}
+HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
+{
+  /*Don't enable SysTick if TIMER_IF is based on other counters (e.g. RTC) */
+  /* USER CODE BEGIN HAL_InitTick_1 */
+
+  /* USER CODE END HAL_InitTick_1 */
+  return HAL_OK;
+  /* USER CODE BEGIN HAL_InitTick_2 */
+
+  /* USER CODE END HAL_InitTick_2 */
+}
 
 /**
   * @note This function overwrites the __weak one from HAL
