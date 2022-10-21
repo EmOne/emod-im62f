@@ -102,7 +102,7 @@ TWiMODLR_DevMgmt_FwInfo firmwareInfo = {
 		0x00,
 		0x01,
 		0x0000,
-		"14 JAN 2022",
+		"21 OCT 22",
 		"eMOD Module by EmOne",
 };
 
@@ -318,11 +318,11 @@ TWiMODLRResultCodes getFirmwareInfo(TWiMODLR_DevMgmt_FwInfo* info, UINT8* status
 	tx->Payload[offset] = firmwareInfo.BuildCount;
 	offset += 0x02;
 
-	strncpy((char*) &tx->Payload[offset], (char*) &info->BuildDateStr,
+	strncpy((char*) &tx->Payload[offset], (char*) &firmwareInfo.BuildDateStr,
 			WIMOD_DEVMGMT_BUILDDATE_LEN);
 	offset += WIMOD_DEVMGMT_BUILDDATE_LEN;
 
-	strncpy((char*) &tx->Payload[offset], (char*) &info->FirmwareName,
+	strncpy((char*) &tx->Payload[offset], (char*) &firmwareInfo.FirmwareName,
 			WIMOD_DEVMGMT_FIRMWARE_NAME_LEN);
 
 	*statusRsp = WiMOD_SAP_DevMgmt.HciParser->PostMessage(

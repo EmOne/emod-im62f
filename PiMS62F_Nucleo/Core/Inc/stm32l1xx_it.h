@@ -80,7 +80,7 @@ void TIM9_IRQHandler(void);
 void TIM8_IRQHandler(void);
 #endif
 /* USER CODE BEGIN EFP */
-
+void WWDG_IRQhandle ( void );
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

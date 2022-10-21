@@ -190,6 +190,7 @@ TWiMODLORAWAN_RadioStackConfig radioStack = {
 LmHandlerAppData_t appData;
 extern uint32_t REGION_AS923_FREQ_OFFSET;
 extern LmHandlerMsgTypes_t MsgType;
+extern LmHandlerParams_t lmHParams;
 /******************************************************************************/
 
 //-----------------------------------------------------------------------------
@@ -258,6 +259,8 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         }
 #else
 
+        LmHandlerStop();
+
         memcpy(activateData.AppSKey, activationData->AppSKey, 16);
         memcpy(activateData.NwkSKey, activationData->NwkSKey, 16);
         memcpy((uint8_t *)&activateData.DeviceAddress, (uint8_t *)&activationData->DeviceAddress, 4);
@@ -266,10 +269,14 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         LmHandlerSetNwkSKey((uint8_t *) &activateData.NwkSKey );
         LmHandlerSetDevAddr( activateData.DeviceAddress );
 
+    	ActivationType = ACTIVATION_TYPE_ABP;
+
         //copy response status
         result = WiMODLR_RESULT_OK;
-
 #endif
+    } else
+    {
+    	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
     }
 
 	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
@@ -281,8 +288,7 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
 
-	ActivationType = ACTIVATION_TYPE_ABP;
-    LmHandlerJoin(ACTIVATION_TYPE_ABP);
+	UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_Join), CFG_SEQ_Prio_0);
 
     return result;
 }
@@ -319,13 +325,16 @@ TWiMODLRResultCodes reactivateDevice(UINT32* devAdr, UINT8* statusRsp)
     	//TODO: Reactivate in LoRa stack
 //        *devAdr = NTOH32(&rx->Payload[WiMODLR_HCI_RSP_CMD_PAYLOAD_POS]);
 //		LoRaWAN_Init();
-    	devAdr = &activateData.DeviceAddress;
+
 //    	LmHandlerSetDevAddr( activateData.DeviceAddress );
             // copy response status
 //            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //       }  else {
 //    	   result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
 //       }
+    	LmHandlerStop();
+
+    	devAdr = &activateData.DeviceAddress;
 
         result = WiMODLR_RESULT_OK;
     } else {
@@ -345,7 +354,7 @@ TWiMODLRResultCodes reactivateDevice(UINT32* devAdr, UINT8* statusRsp)
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1 + 4);
 
-	LmHandlerJoin(ActivationType);
+	UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_Join), CFG_SEQ_Prio_0);
 
 	return result;
 }
@@ -386,6 +395,8 @@ TWiMODLRResultCodes setJoinParameter(TWiMODLORAWAN_JoinParams* joinParams, UINT8
 //            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //        }
 
+    	LmHandlerStop();
+
         memcpy(&joinData.AppEUI, joinParams->AppEUI,
 				WiMODLORAWAN_APP_EUI_LEN);
 
@@ -395,6 +406,8 @@ TWiMODLRResultCodes setJoinParameter(TWiMODLORAWAN_JoinParams* joinParams, UINT8
 		LmHandlerSetAppEUI(joinParams->AppEUI);
 		LmHandlerSetAppKey(joinParams->AppKey);
 		LmHandlerSetNwkKey(joinParams->AppKey);
+
+		LmHandlerSetTxDatarate(lmHParams.TxDatarate);
 
 		result = WiMODLR_RESULT_OK;
     } else {
@@ -445,6 +458,9 @@ TWiMODLRResultCodes joinNetwork(UINT8* statusRsp)
 //        if (result == WiMODLR_RESULT_OK) {
 //            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //        }
+
+    	ActivationType = ACTIVATION_TYPE_OTAA;
+
         result = WiMODLR_RESULT_OK;
     } else {
     	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -457,8 +473,7 @@ TWiMODLRResultCodes joinNetwork(UINT8* statusRsp)
 	LORAWAN_SAP_ID, LORAWAN_MSG_JOIN_NETWORK_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1);
 
-	ActivationType = ACTIVATION_TYPE_OTAA;
-	LmHandlerJoin(ACTIVATION_TYPE_OTAA);
+	UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_Join), CFG_SEQ_Prio_0);
 
     return result;
 }
@@ -1087,6 +1102,8 @@ void registerRxAckIndicationClient(TRxAckIndicationCallback cb)
 TWiMODLRResultCodes setRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UINT8* statusRsp)
 {
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
+    GetPhyParams_t getPhy;
+	PhyParam_t phyParam;
 //    UINT8              offset = 0;
 
     if ( data && statusRsp) {
@@ -1125,39 +1142,72 @@ TWiMODLRResultCodes setRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 //    } else {
 //        result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
 //    }    return result;
-        radioStack.DataRateIndex = data->DataRateIndex;
-        LmHandlerSetTxDatarate(radioStack.DataRateIndex);
-        radioStack.TXPowerLevel = data->TXPowerLevel;
-        LmHandlerSetTxDatarate(radioStack.TXPowerLevel);
-		radioStack.Options = data->Options;
-		(radioStack.Options & 0x1) ? LmHandlerSetAdrEnable(true) : LmHandlerSetAdrEnable(false);
-		(radioStack.Options & 0x2) ? LmHandlerSetDutyCycleEnable(true) : LmHandlerSetDutyCycleEnable(false);
-		(radioStack.Options & 0x4) ? LmHandlerRequestClass(CLASS_C) : LmHandlerRequestClass(CLASS_A);
 
-		radioStack.PowerSavingMode = data->PowerSavingMode;
-		radioStack.Retransmissions = data->Retransmissions;
-		radioStack.BandIndex = data->BandIndex;
 
-		switch (radioStack.BandIndex) {
-			case 0x0B: //AS923-2
-				REGION_AS923_FREQ_OFFSET = ( ( ~( 0xFFFFB9B0 ) + 1 ) * 100 );
-				break;
-			case 0x0C: //AS923-3
-				REGION_AS923_FREQ_OFFSET = ( ( ~( 0xFFFEFE30 ) + 1 ) * 100 );
-				break;
-			case 0x0A: //AS923-1
-			default:
-				REGION_AS923_FREQ_OFFSET = 0;
-				radioStack.BandIndex = 0x0A;
-				break;
+		switch (data->BandIndex) {
+		case 0x0B: //AS923-2
+			REGION_AS923_FREQ_OFFSET = ((~(0xFFFFB9B0) + 1) * 100);
+			break;
+		case 0x0C: //AS923-3
+			REGION_AS923_FREQ_OFFSET = ((~(0xFFFEFE30) + 1) * 100);
+			break;
+		case 0x0A: //AS923-1
+			REGION_AS923_FREQ_OFFSET = 0;
+			break;
+		default:
+			data->WrongParamErrCode |= (0x1 << 5);
+			break;
 		}
 
-		if (WiMOD_SAP_LoRaWAN.region == LoRaWAN_Region_US915) {
-			radioStack.SubBandMask1 = data->SubBandMask1;
-			radioStack.SubBandMask2 = data->SubBandMask2;
+		if (data->WrongParamErrCode != 0)
+		{
+			result = LoRaWAN_Status_Wrong_parameter;
 		}
+		else
+		{
+			if (radioStack.BandIndex != data->BandIndex)
+				LmHandlerSetActiveRegion(lmHParams.ActiveRegion);
+			else
+				radioStack.BandIndex = data->BandIndex;
 
-       	result = WiMODLR_RESULT_OK;
+			radioStack.Options = data->Options;
+			lmHParams.AdrEnable =
+					(radioStack.Options & 0x1) ?
+							LORAMAC_HANDLER_ADR_ON : LORAMAC_HANDLER_ADR_OFF;
+			lmHParams.DutyCycleEnabled =
+					(radioStack.Options & 0x2) ?
+							LORAMAC_HANDLER_SET : LORAMAC_HANDLER_RESET;
+			lmHParams.DefaultClass =
+					(radioStack.Options & 0x4) ? CLASS_C : CLASS_A;
+
+			LmHandlerSetAdrEnable(lmHParams.AdrEnable);
+			LmHandlerSetDutyCycleEnable(lmHParams.DutyCycleEnabled );
+			LmHandlerRequestClass(lmHParams.DefaultClass);
+
+			getPhy.Attribute = PHY_DEF_TX_DR;
+			phyParam = RegionGetPhyParam(WiMOD_SAP_LoRaWAN.region, &getPhy);
+			radioStack.DataRateIndex =
+					data->DataRateIndex >= phyParam.Value ?
+							data->DataRateIndex : phyParam.Value;
+			lmHParams.TxDatarate = (int) radioStack.DataRateIndex;
+			LmHandlerSetTxDatarate(lmHParams.TxDatarate);
+
+			getPhy.Attribute = PHY_DEF_MAX_EIRP;
+			phyParam = RegionGetPhyParam( WiMOD_SAP_LoRaWAN.region, &getPhy );
+			data->TXPowerLevel = data->TXPowerLevel > (UINT8)phyParam.fValue ? (UINT8)phyParam.fValue : data->TXPowerLevel;
+			radioStack.TXPowerLevel = ((UINT8)phyParam.fValue - data->TXPowerLevel) / 2;
+			LmHandlerSetTxPower(radioStack.TXPowerLevel);
+
+			radioStack.PowerSavingMode = data->PowerSavingMode;
+			radioStack.Retransmissions = data->Retransmissions;
+
+			if (WiMOD_SAP_LoRaWAN.region == LoRaWAN_Region_US915) {
+				radioStack.SubBandMask1 = data->SubBandMask1;
+				radioStack.SubBandMask2 = data->SubBandMask2;
+			}
+
+			result = LoRaWAN_Status_Ok;
+		}
     } else {
 		result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
 	}
@@ -1192,6 +1242,8 @@ TWiMODLRResultCodes setRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 TWiMODLRResultCodes getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UINT8* statusRsp)
 {
     TWiMODLRResultCodes result = WiMODLR_RESULT_TRANMIT_ERROR;
+    GetPhyParams_t getPhy;
+	PhyParam_t phyParam;
 //    UINT8              offset = WiMODLR_HCI_RSP_STATUS_POS + 1;
 
     if ( data && statusRsp) {
@@ -1206,8 +1258,12 @@ TWiMODLRResultCodes getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 //
     		LmHandlerGetTxDatarate((int8_t *)&radioStack.DataRateIndex);
             data->DataRateIndex   		= radioStack.DataRateIndex; //rx->Payload[offset++];
+
+            getPhy.Attribute = PHY_DEF_MAX_EIRP;
+            phyParam = RegionGetPhyParam( WiMOD_SAP_LoRaWAN.region, &getPhy );
+
             LmHandlerGetTxPower((int8_t *)&radioStack.TXPowerLevel);
-            data->TXPowerLevel    		= radioStack.TXPowerLevel; //rx->Payload[offset++];
+            data->TXPowerLevel    		= (UINT8) phyParam.fValue - (radioStack.TXPowerLevel * 2); //rx->Payload[offset++];
             bool state = true;
             if(LmHandlerGetAdrEnable(&state) == LORAMAC_HANDLER_SUCCESS )
             	radioStack.Options |=  state << 0;
@@ -1229,7 +1285,7 @@ TWiMODLRResultCodes getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
             data->Options         		= radioStack.Options; //rx->Payload[offset++];
             data->PowerSavingMode 		= radioStack.PowerSavingMode; //rx->Payload[offset++];
             data->Retransmissions 		= radioStack.Retransmissions; //rx->Payload[offset++];
-            data->BandIndex       		= radioStack.BandIndex = 0x0A; //rx->Payload[offset++];
+            data->BandIndex       		= radioStack.BandIndex; //rx->Payload[offset++];
             data->HeaderMacCmdCapacity 	= radioStack.HeaderMacCmdCapacity; //rx->Payload[offset++];
 //
             if (WiMOD_SAP_LoRaWAN.region == LoRaWAN_Region_US915) {
@@ -1336,6 +1392,7 @@ TWiMODLRResultCodes factoryReset(UINT8* statusRsp)
 //        if (result == WiMODLR_RESULT_OK) {
 //            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //        }
+    	NvmDataMgmtFactoryReset();
     	result = WiMODLR_RESULT_OK;
     } else {
     	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -1384,6 +1441,7 @@ TWiMODLRResultCodes setDeviceEUI(const UINT8* deviceEUI, UINT8* statusRsp)
 //        if (result == WiMODLR_RESULT_OK) {
 //            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //        }
+
     	result = WiMODLR_RESULT_OK;
     } else {
         result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -1541,7 +1599,7 @@ TWiMODLRResultCodes getNwkStatus(TWiMODLORAWAN_NwkStatus_Data* nwkStatus, UINT8*
     	LoRaMacQueryTxPossible( appData.BufferSize, &txinfo);
     	networkStatus.DeviceAddress = nwkStatus->DeviceAddress;
     	networkStatus.DataRateIndex = nwkStatus->DataRateIndex;
-    	networkStatus.PowerLevel = nwkStatus->PowerLevel;
+    	networkStatus.PowerLevel = 16 - (nwkStatus->PowerLevel * 2);
     	LmHandlerGetMaxPayloadReq(nwkStatus->DataRateIndex, &nwkStatus->MaxPayloadSize);
     	networkStatus.MaxPayloadSize = nwkStatus->MaxPayloadSize;
 
@@ -1552,7 +1610,8 @@ TWiMODLRResultCodes getNwkStatus(TWiMODLORAWAN_NwkStatus_Data* nwkStatus, UINT8*
 
 	TWiMODLR_HCIMessage *tx = &WiMOD_SAP_LoRaWAN.HciParser->TxMessage;
 	tx->Payload[0] = result; //DeviceInfo.Status;
-	tx->Payload[1] = LmHandlerJoinStatus();
+	tx->Payload[1] = (LmHandlerJoinStatus() == LORAMAC_HANDLER_SET) ? ActivationType :
+			(ActivationType == ACTIVATION_TYPE_OTAA) ? 0x03 : ACTIVATION_TYPE_NONE;
 	memcpy(&tx->Payload[2], &nwkStatus->DeviceAddress, 4);
 	tx->Payload[6] = nwkStatus->DataRateIndex;
 	tx->Payload[7] = nwkStatus->PowerLevel;
@@ -1607,7 +1666,6 @@ TWiMODLRResultCodes sendMacCmd(const TWiMODLORAWAN_MacCmd* cmd, UINT8* statusRsp
     	appData.BufferSize = MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), 1);
 		appData.Port = 0;
 		appData.Buffer = (uint8_t *)&cmd->MacCmdID;
-
 
 		LmHandlerSend(&appData, cmd->DataServiceType, &u32CreditTime, false);
 

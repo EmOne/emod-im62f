@@ -56,6 +56,10 @@
 #include "utilities_def.h"
 #include "stm32_seq.h"
 #include "LmHandler.h"
+#include "utilities.h"
+#include "LoRaMac.h"
+#include "NvmDataMgmt.h"
+#include "Region.h"
 
 /*
  * C++11 supports a better way for function pointers / function objects

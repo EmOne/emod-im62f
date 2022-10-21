@@ -370,9 +370,9 @@ LmHandlerErrorStatus_t LmHandlerConfigure( LmHandlerParams_t *handlerParams )
     }
 
     // Read secure-element DEV_EUI and JOIN_EUI values.
-    mibReq.Type = MIB_DEV_EUI;
-    LoRaMacMibGetRequestConfirm( &mibReq );
-    memcpy1( CommissioningParams.DevEui, mibReq.Param.DevEui, 8 );
+	mibReq.Type = MIB_DEV_EUI;
+	LoRaMacMibGetRequestConfirm(&mibReq);
+	memcpy1(CommissioningParams.DevEui, mibReq.Param.DevEui, 8);
 
     mibReq.Type = MIB_JOIN_EUI;
     LoRaMacMibGetRequestConfirm( &mibReq );
@@ -466,7 +466,8 @@ void LmHandlerProcess( void )
 void LmHandlerJoin( ActivationType_t mode )
 {
     MibRequestConfirm_t mibReq;
-
+    MlmeReq_t mlmeReq;
+    JoinParams.Mode = mode;
 #if (!defined (LORAWAN_KMS) || (LORAWAN_KMS == 0))
 #else /* LORAWAN_KMS == 1 */
 #if (OVER_THE_AIR_ACTIVATION == 0)
@@ -487,9 +488,6 @@ void LmHandlerJoin( ActivationType_t mode )
 
     if ( mode == ACTIVATION_TYPE_OTAA )
     {
-        MlmeReq_t mlmeReq;
-        JoinParams.Mode = ACTIVATION_TYPE_OTAA;
-
         LoRaMacStart();
 
         mlmeReq.Type = MLME_JOIN;
@@ -527,6 +525,10 @@ void LmHandlerJoin( ActivationType_t mode )
         mibReq.Type = MIB_NETWORK_ACTIVATION;
         mibReq.Param.NetworkActivation = ACTIVATION_TYPE_ABP;
         LoRaMacMibSetRequestConfirm( &mibReq );
+
+        mlmeReq.Type = MLME_LINK_CHECK;
+        mlmeReq.Req.Join.Datarate = LmHandlerParams.TxDatarate;
+        LoRaMacMlmeRequest( &mlmeReq );
 
         // Notify upper layer
         LmHandlerCallbacks->OnJoinRequest( &JoinParams );

@@ -92,6 +92,7 @@ static void SendTxData(void);
   * @param  context ptr of timer context
   */
 //static void OnTxTimerEvent(void *context);
+static void JoinRequest( void );
 
 /**
   * @brief  join event callback function
@@ -171,7 +172,7 @@ static LmHandlerCallbacks_t LmHandlerCallbacks =
 /**
   * @brief LoRaWAN handler parameters
   */
-static LmHandlerParams_t LmHandlerParams =
+LmHandlerParams_t lmHParams =
 {
   .ActiveRegion =             ACTIVE_REGION,
   .DefaultClass =             LORAWAN_DEFAULT_CLASS,
@@ -274,14 +275,14 @@ void LoRaWAN_Init(void)
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LmHandlerProcess), UTIL_SEQ_RFU, LmHandlerProcess);
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), UTIL_SEQ_RFU, SendTxData);
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_Reset), UTIL_SEQ_RFU, NVIC_SystemReset);
-
+  UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_Join), UTIL_SEQ_RFU, JoinRequest);
   /* Init Info table used by LmHandler*/
   LoraInfo_Init();
 
   /* Init the Lora Stack*/
   LmHandlerInit(&LmHandlerCallbacks);
 
-  LmHandlerConfigure(&LmHandlerParams);
+  LmHandlerConfigure(&lmHParams);
 
   /* USER CODE BEGIN LoRaWAN_Init_2 */
 
@@ -313,8 +314,9 @@ void LoRaWAN_Init(void)
 
 //	WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
 
-	WiMODLoRaWAN.SapLoRaWan->setRegion(LmHandlerParams.ActiveRegion);
+	WiMODLoRaWAN.SapLoRaWan->setRegion(lmHParams.ActiveRegion);
 
+//	JoinRequest();
   /* USER CODE END LoRaWAN_Init_Last */
 }
 
@@ -484,6 +486,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 						LORAWAN_MSG_JOIN_NETWORK_IND,
 						&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 						1 + 9);
+				LmHandlerSetTxDatarate(lmHParams.TxDatarate);
 			} else {
 
 			}
@@ -691,6 +694,36 @@ static void OnTxData(LmHandlerTxParams_t *params)
   }
 
   /* USER CODE END OnTxData_1 */
+}
+
+static void JoinRequest( void )
+{
+	UTIL_TIMER_Start(&JoinLedTimer);
+	LmHandlerJoin(ActivationType);
+	if (ActivationType != ACTIVATION_TYPE_OTAA) {
+		UTIL_TIMER_Time_t nextTxIn = 0;
+		LmHandlerAppData_t AppData;
+		AppData.Port = 0;
+		AppData.BufferSize = 0;
+		AppData.Buffer = NULL;
+
+//		MibRequestConfirm_t mibSet;
+//		mibSet.Type = MIB_DEVICE_CLASS;
+//		mibSet.Param.Class = CLASS_A;
+//		LoRaMacMibSetRequestConfirm(&mibSet);
+
+		if (LORAMAC_HANDLER_SUCCESS
+				== LmHandlerSend(&AppData, LORAMAC_HANDLER_UNCONFIRMED_MSG,
+						&nextTxIn, false)) {
+			APP_LOG(TS_ON, VLEVEL_L, "SEND ACTIVATE REQUEST\r\n");
+		} else if (nextTxIn > 0) {
+			APP_LOG(TS_ON, VLEVEL_L, "Next Tx in  : ~%d second(s)\r\n", (nextTxIn / 1000));
+		}
+	}
+	else
+	{
+
+	}
 }
 
 static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)

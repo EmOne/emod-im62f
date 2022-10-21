@@ -55,7 +55,7 @@ bool NvmmCrc32Check( uint16_t size, uint16_t offset )
     uint32_t readCrc32 = 0;
 
     if( NvmmRead( ( uint8_t* ) &readCrc32, sizeof( readCrc32 ),
-                  ( offset + ( size - sizeof( readCrc32 ) ) ) ) == sizeof( readCrc32 ) )
+                  ( offset + ( size - sizeof( readCrc32 ) ) ) ) == NVMM_SUCCESS )
     {
         // Calculate crc
         calculatedCrc32 = Crc32Init( );
@@ -82,7 +82,7 @@ bool NvmmReset( uint16_t size, uint16_t offset )
     uint32_t crc32 = 0;
 
     if( EepromMcuWriteBuffer( offset + size - sizeof( crc32 ),
-                              ( uint8_t* ) &crc32, sizeof( crc32 ) ) == SUCCESS )
+                              ( uint8_t* ) &crc32, sizeof( crc32 ) ) == NVMM_SUCCESS )
     {
         return NVMM_SUCCESS;
     }

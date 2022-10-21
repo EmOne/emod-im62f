@@ -23,6 +23,7 @@
 #include "radio_board_if.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "wwdg.h"
 #include "tim.h"
 #include "usart.h"
 #include "ComSLIP.h"
@@ -443,5 +444,10 @@ void RTC_Alarm_IRQHandler(void)
   /* USER CODE BEGIN RTC_Alarm_IRQn 1 */
 
   /* USER CODE END RTC_Alarm_IRQn 1 */
+}
+
+void WWDG_IRQhandle ( void ) {
+	HAL_WWDG_IRQHandler(&hwwdg);
+	HAL_WWDG_Refresh(&hwwdg);
 }
 /* USER CODE END 1 */

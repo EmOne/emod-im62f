@@ -3388,6 +3388,21 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t* primitives, LoRaMacC
 
     LoRaMacEnableRequests( LORAMAC_REQUEST_HANDLING_ON );
 
+#if( CONTEXT_MANAGEMENT_ENABLED == 1 )
+	uint32_t crc = 0;
+	uint16_t notifyFlags = LORAMAC_NVM_NOTIFY_FLAG_NONE;
+	// Secure Element
+	crc = Crc32((uint8_t*) &Nvm.SecureElement,
+			sizeof(Nvm.SecureElement) - sizeof(Nvm.SecureElement.Crc32));
+	if (crc != Nvm.SecureElement.Crc32) {
+		Nvm.SecureElement.Crc32 = crc;
+		notifyFlags |= LORAMAC_NVM_NOTIFY_FLAG_SECURE_ELEMENT;
+	}
+	CallNvmDataChangeCallback(notifyFlags);
+	MacCtx.MacState = LORAMAC_IDLE;
+	NvmDataMgmtStore();
+#endif
+
     return LORAMAC_STATUS_OK;
 }
 
