@@ -284,8 +284,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 	HAL_UART_Receive_IT(huart, &charRx, 1);
   /* USER CODE BEGIN HAL_UART_RxCpltCallback_2 */
-    UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_RX_Id), UTIL_LPM_DISABLE);
-//  UTIL_LPM_SetOffMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+    UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_DISABLE);
   /* USER CODE END HAL_UART_RxCpltCallback_2 */
 }
 

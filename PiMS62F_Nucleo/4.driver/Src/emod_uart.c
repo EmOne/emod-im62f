@@ -105,9 +105,10 @@ void emod_UART_ErrorCallback(UART_HandleTypeDef *huart)
 
     if(huart == uartHandler) {
 
-//        __USART2_FORCE_RESET();
-//        __USART2_RELEASE_RESET();
+        __USART1_FORCE_RESET();
+        __USART1_RELEASE_RESET();
 //        UART2_ReInit();
+    	HAL_UART_Init(huart);
 
         EmWimodData.ReceiveFrmUserRequest = 0x0;
         EmWimodData.CmdFrmUserCount = 0x0;

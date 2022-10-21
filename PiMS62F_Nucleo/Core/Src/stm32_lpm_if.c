@@ -100,6 +100,8 @@ void PWR_EnterStopMode(void)
   /* USER CODE END EnterStopMode_1 */
   UTILS_ENTER_CRITICAL_SECTION();
 
+//  Gpio_PreInit();
+
   Sx_Board_IoDeInit();
 
   HAL_ADC_MspDeInit(&hadc);
@@ -108,6 +110,10 @@ void PWR_EnterStopMode(void)
 
   /*clear wake up flag*/
   SET_BIT(PWR->CR, PWR_CR_CWUF);
+
+  SET_BIT(PWR->CR, PWR_CR_LPSDSR);
+
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
 
   UTILS_EXIT_CRITICAL_SECTION();
   /* USER CODE BEGIN EnterStopMode_2 */
@@ -130,6 +136,7 @@ void PWR_ExitStopMode(void)
 
   UTILS_ENTER_CRITICAL_SECTION();
 
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /* After wake-up from STOP reconfigure the system clock */
   /* Enable HSI */
   __HAL_RCC_HSI_ENABLE();
@@ -166,11 +173,35 @@ void PWR_ExitStopMode(void)
 void PWR_EnterSleepMode(void)
 {
   /* USER CODE BEGIN EnterSleepMode_1 */
-//	UTILS_ENTER_CRITICAL_SECTION();
+//	RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+//	RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+	UTILS_ENTER_CRITICAL_SECTION();
   /* USER CODE END EnterSleepMode_1 */
+//	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+//    RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+//	RCC_OscInitStruct.MSICalibrationValue = RCC_MSICALIBRATION_DEFAULT;
+//	RCC_OscInitStruct.MSIClockRange = RCC_ICSCR_MSIRANGE_4;
+//	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+//		Error_Handler();
+//	}
+//
+//	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK;
+//	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
+//	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) {
+//		Error_Handler();
+//	}
 //	UTIL_ADV_TRACE_DeInit();
+//	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
+
+//	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+//	RCC_OscInitStruct.HSIState = RCC_HSI_OFF;
+//
+//	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+//		Error_Handler();
+//		}
+
   /* USER CODE BEGIN EnterSleepMode_2 */
-//	UTILS_EXIT_CRITICAL_SECTION();
+	UTILS_EXIT_CRITICAL_SECTION();
   /* USER CODE END EnterSleepMode_2 */
   HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
   /* USER CODE BEGIN EnterSleepMode_3 */
@@ -181,11 +212,20 @@ void PWR_EnterSleepMode(void)
 void PWR_ExitSleepMode(void)
 {
   /* USER CODE BEGIN ExitSleepMode_1 */
-//	UTILS_ENTER_CRITICAL_SECTION();
+	UTILS_ENTER_CRITICAL_SECTION();
   /* USER CODE END ExitSleepMode_1 */
+//	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 //	UTIL_ADV_TRACE_Resume();
+//	SystemClock_Config();
+//
+//	HAL_ADC_MspInit(&hadc);
+//
+//	Sx_Board_IoInit();
+//
+//	Sx_Board_IoIrqInit(NULL);
+
   /* USER CODE BEGIN ExitSleepMode_2 */
-//	UTILS_EXIT_CRITICAL_SECTION();
+	UTILS_EXIT_CRITICAL_SECTION();
   /* USER CODE END ExitSleepMode_2 */
 }
 

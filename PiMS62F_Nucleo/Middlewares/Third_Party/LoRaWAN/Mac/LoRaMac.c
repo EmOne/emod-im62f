@@ -1429,6 +1429,7 @@ static void LoRaMacHandleIndicationEvents( void )
     {
         MacCtx.MacFlags.Bits.MlmeInd = 0;
         MacCtx.MacPrimitives->MacMlmeIndication( &MacCtx.MlmeIndication, &MacCtx.RxStatus );
+        UpdateRxSlotIdleState();
     }
 
     if( MacCtx.MacFlags.Bits.MlmeSchedUplinkInd == 1 )

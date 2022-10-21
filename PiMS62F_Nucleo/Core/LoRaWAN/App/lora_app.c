@@ -386,6 +386,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 				LORAWAN_MSG_RECV_NO_DATA_IND,
 						&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 1);
 			}
+    		UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
 		} else {
 			//LRW Port LEN: 1
 			tx->Payload[offset++] = appData->Port;
@@ -422,7 +423,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 				default:
 					break;
 			}
-
+			UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
 	//			switch (appData->Port) {
 	//			case LORAWAN_SWITCH_CLASS_PORT:
 	//				/*this port switches the class*/
@@ -487,13 +488,17 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 						&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 						1 + 9);
 				LmHandlerSetTxDatarate(lmHParams.TxDatarate);
+				UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+
 			} else {
 
 			}
+
 		}
+
 	}
   /* USER CODE END OnRxData_1 */
-}
+ }
 
 static void SendTxData(void)
 {
@@ -675,6 +680,7 @@ static void OnTxData(LmHandlerTxParams_t *params)
 								LORAWAN_MSG_SEND_UDATA_TX_IND,
 								&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 								1 + 2);
+		UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
       }
 
     } else {
@@ -687,8 +693,11 @@ static void OnTxData(LmHandlerTxParams_t *params)
 			LORAWAN_MSG_JOIN_NETWORK_TX_IND,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1 + 3);
-    }
 
+		if (ActivationType == ACTIVATION_TYPE_ABP) {
+			UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+		}
+    }
   } else { // params is NULL
 
   }
@@ -747,6 +756,7 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
       {
         APP_LOG(TS_OFF, VLEVEL_M, "OTAA =====================\r\n");
       }
+
     }
     else
     {
@@ -759,6 +769,7 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
 		LORAWAN_MSG_RECV_NO_DATA_IND,
 				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 1);
     }
+    UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
   }
   /* USER CODE END OnJoinRequest_1 */
 }
