@@ -1946,3 +1946,37 @@ LmHandlerErrorStatus_t LmHandlerGetMaxPayloadReq( int8_t dr, uint8_t* sz )
 	*sz = GetMaxAppPayloadWithoutFOptsLength(dr);
 	return LORAMAC_HANDLER_SUCCESS;
 }
+
+LmHandlerErrorStatus_t LmHandlerStartTXCW( uint16_t timeout ){
+	if (LoRaMacStop() != LORAMAC_STATUS_OK) {
+		return LORAMAC_HANDLER_ERROR;
+	}
+	uint8_t data[3] = { 0x7, timeout };
+	McpsIndication_t mcpsInd;
+	mcpsInd.McpsIndication = MCPS_PROPRIETARY;
+	mcpsInd.BufferSize = 3;
+	mcpsInd.Buffer = (uint8_t*) &data;
+	mcpsInd.Status = LORAMAC_EVENT_INFO_STATUS_OK;
+	mcpsInd.RxData = true;
+	mcpsInd.Port = 224;
+	mcpsInd.AckReceived = 1;
+	LmHandlerPackages[PACKAGE_ID_COMPLIANCE]->OnMcpsIndicationProcess(&mcpsInd);
+	return LORAMAC_STATUS_OK;
+}
+
+LmHandlerErrorStatus_t LmHandlerStartTXCW1( uint8_t power, uint32_t freq, uint16_t timeout ){
+	if(LoRaMacStop() != LORAMAC_STATUS_OK){
+		return LORAMAC_HANDLER_ERROR;
+	}
+	uint8_t data[7] = {0x7, timeout, freq, power};
+	McpsIndication_t mcpsInd;
+	mcpsInd.McpsIndication = MCPS_PROPRIETARY;
+	mcpsInd.BufferSize = 7;
+	mcpsInd.Buffer = (uint8_t *) &data;
+	mcpsInd.Status = LORAMAC_EVENT_INFO_STATUS_OK;
+	mcpsInd.RxData = true;
+	mcpsInd.Port = 224;
+	mcpsInd.AckReceived = 1;
+	LmHandlerPackages[PACKAGE_ID_COMPLIANCE]->OnMcpsIndicationProcess(&mcpsInd);
+	return LORAMAC_STATUS_OK;
+}

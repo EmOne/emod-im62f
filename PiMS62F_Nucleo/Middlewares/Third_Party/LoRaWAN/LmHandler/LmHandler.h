@@ -756,6 +756,16 @@ LmHandlerErrorStatus_t LmHandlerLinkCheckReq( void );
  *          0 LORAMAC_HANDLER_SUCCESS
  */
 LmHandlerErrorStatus_t LmHandlerGetMaxPayloadReq( int8_t dr, uint8_t *sz );
+
+/*!
+ * Requests TX CW testing
+ *
+ * \retval -1 LORAMAC_HANDLER_ERROR
+ *          0 LORAMAC_HANDLER_SUCCESS
+ */
+LmHandlerErrorStatus_t LmHandlerStartTXCW( uint16_t timeout );
+LmHandlerErrorStatus_t LmHandlerStartTXCW1( uint8_t power, uint32_t freq, uint16_t timeout );
+
 #ifdef __cplusplus
 }
 #endif

@@ -287,6 +287,13 @@ void BeginAndAutoSetup(void)
 //    isOpen = true;
 //    WiMODLoRaWAN.SapLoRaWan.setRegion(LoRaWAN_Region_EU868); // default pre-set
 //    WiMODLoRaWAN.autoSetupSupportedRegion();
+
+	TWiMODLR_HCIMessage *tx = &WiMODLoRaWAN.SapLoRaWan->HciParser->TxMessage;
+	WiMODLoRaWAN.SapLoRaWan->HciParser->PostMessage(
+			LORAWAN_SAP_ID,
+			LORAWAN_MSG_RECV_DEVNONCE_RST_IND,
+			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
+			0);
 }
 //! @endcond
 

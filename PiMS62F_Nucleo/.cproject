@@ -87,7 +87,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="2.module"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="3.component"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="4.driver"/>
-						<entry excluding="Src/fw_update_agent.c|Src/frag_decoder_if.c|Src/flash_if.c|Startup/startup_stm32l151rcyx.s|Src/stm32_adv_trace_if.c|LoRaWAN/Target/nucleo_l152re_bus.c|Src/vcom.c|Src/stm32l1xx_hw.c|Src/hw_spi.c|Src/hw_rtc.c|Src/hw_gpio.c|Src/adc_if.c|ThreadSafe|Src/usart.c|Src/system_stm32l1xx.c|Src/stm32l1xx_it.c|Src/stm32l1xx_hal_timebase_tim.c|Src/stm32l1xx_hal_msp.c|Src/spi.c|Src/tim.c|Src/i2c.c|Src/gpio.c|Src/crc.c|Src/adc.c|Startup/startup_stm32l151ucyx.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry excluding="Startup/startup_stm32l151rdyx.s|Src/fw_update_agent.c|Src/frag_decoder_if.c|Src/flash_if.c|Startup/startup_stm32l151rcyx.s|Src/stm32_adv_trace_if.c|LoRaWAN/Target/nucleo_l152re_bus.c|Src/vcom.c|Src/stm32l1xx_hw.c|Src/hw_spi.c|Src/hw_rtc.c|Src/hw_gpio.c|Src/adc_if.c|ThreadSafe|Src/usart.c|Src/system_stm32l1xx.c|Src/stm32l1xx_it.c|Src/stm32l1xx_hal_timebase_tim.c|Src/stm32l1xx_hal_msp.c|Src/spi.c|Src/tim.c|Src/i2c.c|Src/gpio.c|Src/crc.c|Src/adc.c|Startup/startup_stm32l151ucyx.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry excluding="CMSIS/Device/ST/STM32L1xx/|STM32L1xx_HAL_Driver/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Drivers"/>
 					</sourceEntries>
 				</configuration>
@@ -165,7 +165,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="2.module"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="3.component"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="4.driver"/>
-						<entry excluding="Src/fw_update_agent.c|Src/frag_decoder_if.c|Src/flash_if.c|Startup/startup_stm32l151rcyx.s|Src/stm32_adv_trace_if.c|LoRaWAN/Target/nucleo_l152re_bus.c|Src/vcom.c|Src/stm32l1xx_hw.c|Src/hw_spi.c|Src/hw_rtc.c|Src/hw_gpio.c|Src/adc_if.c|ThreadSafe|Src/system_stm32l1xx.c|Src/stm32l1xx_it.c|Src/stm32l1xx_hal_timebase_tim.c|Src/stm32l1xx_hal_msp.c|Src/spi.c|Src/rtc.c|Src/tim.c|Src/i2c.c|Src/gpio.c|Src/crc.c|Src/adc.c|Startup/startup_stm32l151ucyx.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry excluding="Startup/startup_stm32l151rdyx.s|Src/fw_update_agent.c|Src/frag_decoder_if.c|Src/flash_if.c|Startup/startup_stm32l151rcyx.s|Src/stm32_adv_trace_if.c|LoRaWAN/Target/nucleo_l152re_bus.c|Src/vcom.c|Src/stm32l1xx_hw.c|Src/hw_spi.c|Src/hw_rtc.c|Src/hw_gpio.c|Src/adc_if.c|ThreadSafe|Src/system_stm32l1xx.c|Src/stm32l1xx_it.c|Src/stm32l1xx_hal_timebase_tim.c|Src/stm32l1xx_hal_msp.c|Src/spi.c|Src/rtc.c|Src/tim.c|Src/i2c.c|Src/gpio.c|Src/crc.c|Src/adc.c|Startup/startup_stm32l151ucyx.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry excluding="STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_timebase_tim_template.c|STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_msp_template.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 					</sourceEntries>
 				</configuration>
@@ -188,13 +188,13 @@
 				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147" name="Debug L1 iMS62F-UC" parent="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug">
 					<folderInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147." name="/" resourcePath="">
 						<toolChain id="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug.640898984" name="MCU ARM GCC" nonInternalBuilderId="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug">
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.1784762798" name="MCU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu" useByScannerDiscovery="true" value="STM32L151UCYx" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.1784762798" name="MCU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu" useByScannerDiscovery="true" value="STM32L151RDYx" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid.959217349" name="CPU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid" useByScannerDiscovery="false" value="0" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid.1911982207" name="Core" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid" useByScannerDiscovery="false" value="0" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.482816147" name="Floating-point unit" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.value.none" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.510457887" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.soft" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.2024497619" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" useByScannerDiscovery="false" value="genericBoard" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.459331014" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" useByScannerDiscovery="false" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.5 || Debug || true || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32L151UCYx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../USB_DEVICE/Target | ../Drivers/CMSIS/Include | ../Core/Inc | ../Drivers/STM32L1xx_HAL_Driver/Inc | ../USB_DEVICE/App | ../Middlewares/ST/STM32_USB_Device_Library/Class/DFU/Inc | ../Drivers/CMSIS/Device/ST/STM32L1xx/Include | ../Drivers/STM32L1xx_HAL_Driver/Inc/Legacy | ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc | ../Core/ThreadSafe ||  ||  || STM32_THREAD_SAFE_STRATEGY=2 | USE_HAL_DRIVER | STM32L151xC ||  || Core/ThreadSafe | Drivers | Core/Startup | Middlewares | Core | USB_DEVICE ||  ||  || ${workspace_loc:/${ProjName}/STM32L151UCYX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || Generic_AllowLockFromIRQ || " valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.459331014" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" useByScannerDiscovery="false" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.5 || Debug || true || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32L151RDYx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../USB_DEVICE/Target | ../Drivers/CMSIS/Include | ../Core/Inc | ../Drivers/STM32L1xx_HAL_Driver/Inc | ../USB_DEVICE/App | ../Middlewares/ST/STM32_USB_Device_Library/Class/DFU/Inc | ../Drivers/CMSIS/Device/ST/STM32L1xx/Include | ../Drivers/STM32L1xx_HAL_Driver/Inc/Legacy | ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc | ../Core/ThreadSafe ||  ||  || STM32_THREAD_SAFE_STRATEGY=2 | USE_HAL_DRIVER | STM32L151xC ||  || Core/ThreadSafe | Drivers | Core/Startup | Middlewares | Core | USB_DEVICE ||  ||  || ${workspace_loc:/${ProjName}/STM32L151RDYX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || Generic_AllowLockFromIRQ || " valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.260329764" name="Toolchain" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.base.gnu-tools-for-stm32.10.3-2021.10" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex.896914773" name="Convert to Intel Hex file (-O ihex)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat.2035014105" name="Use float with printf from newlib-nano (-u _printf_float)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat" useByScannerDiscovery="false" value="true" valueType="boolean"/>
@@ -209,8 +209,8 @@
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.1189400255" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
 							</tool>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1762138269" name="MCU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler">
-								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.debuglevel.814535051" name="Debug level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.debuglevel" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.debuglevel.value.g3" valueType="enumerated"/>
-								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level.1023931099" name="Optimization level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level.value.o0" valueType="enumerated"/>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.debuglevel.814535051" name="Debug level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.debuglevel" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.debuglevel.value.g" valueType="enumerated"/>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level.1023931099" name="Optimization level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level.value.os" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols.1697983307" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
 									<listOptionValue builtIn="false" value="USE_EMOD_IMS62F"/>
@@ -258,7 +258,7 @@
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.optimization.level.1311122525" name="Optimization level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.optimization.level" useByScannerDiscovery="false"/>
 							</tool>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.748450255" name="MCU GCC Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker">
-								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script.1420195292" name="Linker Script (-T)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script" useByScannerDiscovery="false" value="${workspace_loc:/${ProjName}/STM32L151UCYX_FLASH.ld}" valueType="string"/>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script.1420195292" name="Linker Script (-T)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script" useByScannerDiscovery="false" value="${workspace_loc:/${ProjName}/STM32L151RDYX_FLASH.ld}" valueType="string"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.input.1898958447" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -280,7 +280,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="1.system"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="2.module"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="4.driver"/>
-						<entry excluding="Src/fw_update_agent.c|Src/frag_decoder_if.c|Src/flash_if.c|Startup/startup_stm32l151rcyx.s|Src/stm32_adv_trace_if.c|LoRaWAN/Target/nucleo_l152re_bus.c|Src/vcom.c|Src/stm32l1xx_hw.c|Src/hw_spi.c|Src/hw_rtc.c|Src/hw_gpio.c|ThreadSafe|Src/stm32l4xx_hal_timebase_tim.c|Src/i2c.c|Src/crc.c|Src/stm32l4xx_hal_msp.c|Src/stm32l4xx_it.c|Src/system_stm32l4xx.c|Startup/startup_stm32l476rgtx.s" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Core"/>
+						<entry excluding="Startup/startup_stm32l151rdyx.s|Src/fw_update_agent.c|Src/frag_decoder_if.c|Src/flash_if.c|Startup/startup_stm32l151rcyx.s|Src/stm32_adv_trace_if.c|LoRaWAN/Target/nucleo_l152re_bus.c|Src/vcom.c|Src/stm32l1xx_hw.c|Src/hw_spi.c|Src/hw_rtc.c|Src/hw_gpio.c|ThreadSafe|Src/stm32l4xx_hal_timebase_tim.c|Src/i2c.c|Src/crc.c|Src/stm32l4xx_hal_msp.c|Src/stm32l4xx_it.c|Src/system_stm32l4xx.c|Startup/startup_stm32l476rgtx.s" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Core"/>
 						<entry excluding="STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_timebase_tim_template.c|STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_msp_template.c|STM32L4xx_HAL_Driver/|CMSIS/Device/ST/STM32L4xx/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Drivers"/>
 						<entry excluding="Third_Party/LoRaWAN/LmHandler/Packages/FragDecoder.c|Third_Party/SubGHz_Phy/sx1276|Third_Party/SubGHz_Phy/sx1272|ST/STM32_USB_Device_Library|ST/STM32_Secure_Engine|Third_Party/mbedTLS" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Utilities"/>
@@ -305,13 +305,13 @@
 				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.524449134" name="Debug L1 Nucleo" parent="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug">
 					<folderInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.524449134." name="/" resourcePath="">
 						<toolChain id="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug.331099711" name="MCU ARM GCC" nonInternalBuilderId="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug">
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.1757621200" name="MCU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu" useByScannerDiscovery="true" value="STM32L151UCYx" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.1757621200" name="MCU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu" useByScannerDiscovery="true" value="STM32L151RDYx" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid.1088253033" name="CPU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid" useByScannerDiscovery="false" value="0" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid.855496033" name="Core" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid" useByScannerDiscovery="false" value="0" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.493724496" name="Floating-point unit" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.value.none" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.1598919234" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.soft" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.343217180" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" useByScannerDiscovery="false" value="genericBoard" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1621206310" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" useByScannerDiscovery="false" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.5 || Debug || true || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32L151UCYx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../USB_DEVICE/Target | ../Drivers/CMSIS/Include | ../Core/Inc | ../Drivers/STM32L1xx_HAL_Driver/Inc | ../USB_DEVICE/App | ../Middlewares/ST/STM32_USB_Device_Library/Class/DFU/Inc | ../Drivers/CMSIS/Device/ST/STM32L1xx/Include | ../Drivers/STM32L1xx_HAL_Driver/Inc/Legacy | ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc | ../Core/ThreadSafe ||  ||  || STM32_THREAD_SAFE_STRATEGY=2 | USE_HAL_DRIVER | STM32L151xC ||  || Core/ThreadSafe | Drivers | Core/Startup | Middlewares | Core | USB_DEVICE ||  ||  || ${workspace_loc:/${ProjName}/STM32L151UCYX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || Generic_AllowLockFromIRQ || " valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1621206310" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" useByScannerDiscovery="false" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.5 || Debug || true || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32L151RDYx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../USB_DEVICE/Target | ../Drivers/CMSIS/Include | ../Core/Inc | ../Drivers/STM32L1xx_HAL_Driver/Inc | ../USB_DEVICE/App | ../Middlewares/ST/STM32_USB_Device_Library/Class/DFU/Inc | ../Drivers/CMSIS/Device/ST/STM32L1xx/Include | ../Drivers/STM32L1xx_HAL_Driver/Inc/Legacy | ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc | ../Core/ThreadSafe ||  ||  || STM32_THREAD_SAFE_STRATEGY=2 | USE_HAL_DRIVER | STM32L151xC ||  || Core/ThreadSafe | Drivers | Core/Startup | Middlewares | Core | USB_DEVICE ||  ||  || ${workspace_loc:/${ProjName}/STM32L151RDYX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || Generic_AllowLockFromIRQ || " valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.784360078" name="Toolchain" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.base.gnu-tools-for-stm32.10.3-2021.10" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex.308048172" name="Convert to Intel Hex file (-O ihex)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform.1457522636" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
@@ -367,7 +367,7 @@
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.optimization.level.1476095284" name="Optimization level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.optimization.level" useByScannerDiscovery="false"/>
 							</tool>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.641620391" name="MCU GCC Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker">
-								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script.360806480" name="Linker Script (-T)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script" useByScannerDiscovery="false" value="${workspace_loc:/${ProjName}/STM32L151UCYX_FLASH.ld}" valueType="string"/>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script.360806480" name="Linker Script (-T)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script" useByScannerDiscovery="false" value="${workspace_loc:/${ProjName}/STM32L151RDYX_FLASH.ld}" valueType="string"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.input.920551425" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -388,8 +388,126 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="2.module"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="3.component"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="4.driver"/>
-						<entry excluding="Src/fw_update_agent.c|Src/frag_decoder_if.c|Src/flash_if.c|Startup/startup_stm32l151rcyx.s|Src/stm32_adv_trace_if.c|LoRaWAN/Target/nucleo_l152re_bus.c|Src/vcom.c|Src/stm32l1xx_hw.c|Src/hw_spi.c|Src/hw_rtc.c|Src/hw_gpio.c|ThreadSafe|Src/stm32l4xx_hal_timebase_tim.c|Src/i2c.c|Src/crc.c|Src/stm32l4xx_hal_msp.c|Src/stm32l4xx_it.c|Src/system_stm32l4xx.c|Startup/startup_stm32l476rgtx.s" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Core"/>
+						<entry excluding="Startup/startup_stm32l151ucyx.s|Startup/startup_stm32l151rdyx.s|Src/fw_update_agent.c|Src/frag_decoder_if.c|Src/flash_if.c|Startup/startup_stm32l151rcyx.s|Src/stm32_adv_trace_if.c|LoRaWAN/Target/nucleo_l152re_bus.c|Src/vcom.c|Src/stm32l1xx_hw.c|Src/hw_spi.c|Src/hw_rtc.c|Src/hw_gpio.c|ThreadSafe|Src/stm32l4xx_hal_timebase_tim.c|Src/i2c.c|Src/crc.c|Src/stm32l4xx_hal_msp.c|Src/stm32l4xx_it.c|Src/system_stm32l4xx.c|Startup/startup_stm32l476rgtx.s" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Core"/>
 						<entry excluding="STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_timebase_tim_template.c|STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_msp_template.c|STM32L4xx_HAL_Driver/|CMSIS/Device/ST/STM32L4xx/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Drivers"/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+		<cconfiguration id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.635508211">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.635508211" moduleId="org.eclipse.cdt.core.settings" name="Debug L1 iMS62F-RD">
+				<externalSettings/>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GmakeErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GCCErrorParser" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.635508211" name="Debug L1 iMS62F-RD" parent="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug">
+					<folderInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.635508211." name="/" resourcePath="">
+						<toolChain id="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug.772691355" name="MCU ARM GCC" nonInternalBuilderId="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.toolchain.exe.debug">
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu.402372016" name="MCU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_mcu" useByScannerDiscovery="true" value="STM32L151RDYx" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid.1468117178" name="CPU" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_cpuid" useByScannerDiscovery="false" value="0" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid.467439167" name="Core" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_coreid" useByScannerDiscovery="false" value="0" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.341791977" name="Floating-point unit" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.value.none" valueType="enumerated"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.201869686" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.soft" valueType="enumerated"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.629600899" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" useByScannerDiscovery="false" value="genericBoard" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.857317947" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" useByScannerDiscovery="false" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.5 || Debug || true || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32L151RDYx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../USB_DEVICE/Target | ../Drivers/CMSIS/Include | ../Core/Inc | ../Drivers/STM32L1xx_HAL_Driver/Inc | ../USB_DEVICE/App | ../Middlewares/ST/STM32_USB_Device_Library/Class/DFU/Inc | ../Drivers/CMSIS/Device/ST/STM32L1xx/Include | ../Drivers/STM32L1xx_HAL_Driver/Inc/Legacy | ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc | ../Core/ThreadSafe ||  ||  || STM32_THREAD_SAFE_STRATEGY=2 | USE_HAL_DRIVER | STM32L151xC ||  || Core/ThreadSafe | Drivers | Core/Startup | Middlewares | Core | USB_DEVICE ||  ||  || ${workspace_loc:/${ProjName}/STM32L151RDYX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || Generic_AllowLockFromIRQ || " valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.395560762" name="Toolchain" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex.1569831425" name="Convert to Intel Hex file (-O ihex)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat.1001983867" name="Use float with printf from newlib-nano (-u _printf_float)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.convertbinary.945962982" name="Convert to binary file (-O binary)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.convertbinary" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoscanffloat.2917697" name="Use float with scanf from newlib-nano (-u _scanf_float)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoscanffloat" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform.207669001" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
+							<builder buildPath="${workspace_loc:/PiMS62F}/Debug L1" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder.1627975066" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder"/>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.1214313686" name="MCU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler">
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.debuglevel.21639318" name="Debug level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.debuglevel" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.debuglevel.value.g3" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.definedsymbols.1939793330" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="DEBUG"/>
+								</option>
+								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input.1913111033" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.input"/>
+							</tool>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1249187654" name="MCU GCC Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler">
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.debuglevel.340116381" name="Debug level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.debuglevel" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.debuglevel.value.g3" valueType="enumerated"/>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level.1373060788" name="Optimization level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level.value.o0" valueType="enumerated"/>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols.561487597" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="DEBUG"/>
+									<listOptionValue builtIn="false" value="USE_EMOD_IMS62F"/>
+									<listOptionValue builtIn="false" value="SOFT_SE"/>
+									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>
+									<listOptionValue builtIn="false" value="STM32L1"/>
+									<listOptionValue builtIn="false" value="STM32L151xD"/>
+									<listOptionValue builtIn="false" value="__SOFTFP__"/>
+									<listOptionValue builtIn="false" value="STM32_THREAD_SAFE_STRATEGY=2"/>
+								</option>
+								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.1178729991" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;../Core/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Utilities/trace/adv_trace&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Core/LoRaWAN/Target&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Core/LoRaWAN/App&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../2.module/emWIMOD/Src/HCI&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../2.module/emWIMOD/Src/LoRaWAN&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../2.module/emWIMOD/Src/SAP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../2.module/emWIMOD/Src/utils&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../4.driver/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../1.system/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Drivers/CMSIS/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Drivers/CMSIS/Device/ST/STM32L1xx/Include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Drivers/STM32L1xx_HAL_Driver/Inc/Legacy&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Drivers/STM32L1xx_HAL_Driver/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Drivers/BSP/ACSIP_S62F&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Drivers/BSP/Components/Common&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares/Third_Party/SubGHz_Phy&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares/Third_Party/SubGHz_Phy/sx126x&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares/Third_Party/LoRaWAN/Utilities&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares/Third_Party/LoRaWAN/Crypto&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares/Third_Party/LoRaWAN/Mac&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares/Third_Party/LoRaWAN/Mac/Region&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares/Third_Party/LoRaWAN/LmHandler&quot;"/>
+									<listOptionValue builtIn="false" value="../Middlewares/Third_Party/LoRaWAN/LmHandler/Packages"/>
+									<listOptionValue builtIn="false" value="&quot;../Utilities/lpm/tiny_lpm&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Utilities/misc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Utilities/sequencer&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Utilities/timer&quot;"/>
+								</option>
+								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1231155698" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
+							</tool>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.975725587" name="MCU G++ Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler">
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.debuglevel.1383786532" name="Debug level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.debuglevel" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.debuglevel.value.g3" valueType="enumerated"/>
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.optimization.level.284403076" name="Optimization level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.option.optimization.level" useByScannerDiscovery="false"/>
+							</tool>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.911758266" name="MCU GCC Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker">
+								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script.1961634848" name="Linker Script (-T)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.option.script" useByScannerDiscovery="false" value="${workspace_loc:/${ProjName}/STM32L151RDYX_FLASH.ld}" valueType="string"/>
+								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.input.1677909712" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+								<outputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.output.elf.1423804017" outputPrefix="" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.output.elf"/>
+							</tool>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.976464262" name="MCU G++ Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker"/>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.archiver.905418398" name="MCU GCC Archiver" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.archiver"/>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.size.2017443038" name="MCU Size" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.size"/>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objdump.listfile.1268217571" name="MCU Output Converter list file" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objdump.listfile"/>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.hex.1990946216" name="MCU Output Converter Hex" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.hex"/>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.binary.1375684779" name="MCU Output Converter Binary" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.binary"/>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.verilog.161313943" name="MCU Output Converter Verilog" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.verilog"/>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.srec.1201429002" name="MCU Output Converter Motorola S-rec" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.srec"/>
+							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.2119020034" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="1.system"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="2.module"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="4.driver"/>
+						<entry excluding="Startup/startup_stm32l151ucyx.s|Src/fw_update_agent.c|Src/frag_decoder_if.c|Src/flash_if.c|Startup/startup_stm32l151rcyx.s|Src/stm32_adv_trace_if.c|LoRaWAN/Target/nucleo_l152re_bus.c|Src/vcom.c|Src/stm32l1xx_hw.c|Src/hw_spi.c|Src/hw_rtc.c|Src/hw_gpio.c|ThreadSafe|Src/stm32l4xx_hal_timebase_tim.c|Src/i2c.c|Src/crc.c|Src/stm32l4xx_hal_msp.c|Src/stm32l4xx_it.c|Src/system_stm32l4xx.c|Startup/startup_stm32l476rgtx.s" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Core"/>
+						<entry excluding="STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_timebase_tim_template.c|STM32L1xx_HAL_Driver/Src/stm32l1xx_hal_msp_template.c|STM32L4xx_HAL_Driver/|CMSIS/Device/ST/STM32L4xx/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Drivers"/>
+						<entry excluding="Third_Party/LoRaWAN/LmHandler/Packages/FragDecoder.c|Third_Party/SubGHz_Phy/sx1276|Third_Party/SubGHz_Phy/sx1272|ST/STM32_USB_Device_Library|ST/STM32_Secure_Engine|Third_Party/mbedTLS" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Middlewares"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Utilities"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -426,6 +544,9 @@
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1637818955;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.189903775">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.635508211;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.635508211.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1249187654;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1231155698">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1866538353;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1866538353.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.662631287;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.344979891">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>

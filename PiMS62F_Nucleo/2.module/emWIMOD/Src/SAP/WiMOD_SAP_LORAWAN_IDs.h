@@ -179,6 +179,8 @@ typedef enum TLoraWANTxDataIndStatusFormat
 
 #define LORAWAN_MSG_ACTIVATE_DEVICE_REQ          0x01
 #define LORAWAN_MSG_ACTIVATE_DEVICE_RSP          0x02
+#define LORAWAN_MSG_ACTIVATE_PARAM_REQ           0x03
+#define LORAWAN_MSG_ACTIVATE_PARAM_RSP           0x04
 #define LORAWAN_MSG_SET_JOIN_PARAM_REQ           0x05
 #define LORAWAN_MSG_SET_JOIN_PARAM_RSP           0x06
 #define LORAWAN_MSG_JOIN_NETWORK_REQ             0x09
@@ -230,6 +232,7 @@ typedef enum TLoraWANTxDataIndStatusFormat
 #define LORAWAN_MSG_SET_LINKADRREQ_CONFIG_RSP    0x3C
 #define	LORAWAN_MSG_GET_LINKADRREQ_CONFIG_REQ    0x3D
 #define LORAWAN_MSG_GET_LINKADRREQ_CONFIG_RSP    0x3E
+#define LORAWAN_MSG_RECV_DEVNONCE_RST_IND	     0x60
 //! @endcond
 
 // Radio Stack Config Options; bit field
