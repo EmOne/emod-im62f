@@ -93,6 +93,7 @@ extern "C"
 #include "secure-element-nvm.h"
 #include "LoRaMacClassBNvm.h"
 #include "lorawan_conf.h"
+#include "user_setting.h"
 
 /*!
  * Maximum number of times the MAC layer tries to get an acknowledge.
@@ -164,6 +165,11 @@ extern "C"
  * Bitmap value for the NVM group class b.
  */
 #define LORAMAC_NVM_NOTIFY_FLAG_CLASS_B             0x40
+
+/*!
+ * Bitmap value for the NVM group user settings.
+ */
+#define LORAMAC_NVM_NOTIFY_FLAG_USER_SETTING        0x80
 
 /*!
  * End-Device activation type
@@ -734,6 +740,11 @@ typedef struct sLoRaMacNvmData
      * Parameters related to class b.
      */
     LoRaMacClassBNvmData_t ClassB;
+	/*!
+	 * Parameters user settings.
+	 */
+    TWiMODLORAWAN_RadioStackConfig userSettings;
+
 }LoRaMacNvmData_t;
 
 /*!

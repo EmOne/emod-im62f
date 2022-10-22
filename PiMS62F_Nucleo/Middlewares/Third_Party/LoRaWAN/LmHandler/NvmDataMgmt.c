@@ -35,6 +35,8 @@
 #include "utilities.h"
 #include "LoRaMac.h"
 #include "NvmDataMgmt.h"
+#include "user_setting.h"
+
 /*!
  * Enables/Disables the context storage management storage.
  * Must be enabled for LoRaWAN 1.0.4 or later.
@@ -140,6 +142,14 @@ uint16_t NvmDataMgmtStore( void )
     }
     offset += sizeof( nvm->ClassB );
 
+    // User settings
+	if ((NvmNotifyFlags & LORAMAC_NVM_NOTIFY_FLAG_USER_SETTING) ==
+	LORAMAC_NVM_NOTIFY_FLAG_USER_SETTING) {
+		dataSize += NvmmWrite((uint8_t*) &nvm->userSettings, sizeof(nvm->userSettings),
+				offset);
+	}
+	offset += sizeof(nvm->userSettings);
+
     // Reset notification flags
     NvmNotifyFlags = LORAMAC_NVM_NOTIFY_FLAG_NONE;
 
@@ -209,6 +219,11 @@ uint16_t NvmDataMgmtRestore( void )
     }
     offset += sizeof( LoRaMacClassBNvmData_t );
 
+	if (NvmmCrc32Check(sizeof(TWiMODLORAWAN_RadioStackConfig), offset) == false) {
+		return 0;
+	}
+	offset += sizeof(TWiMODLORAWAN_RadioStackConfig);
+
     if( NvmmRead( ( uint8_t* ) nvm, sizeof( LoRaMacNvmData_t ), 0 ) ==
     		NVMM_SUCCESS )
     {
@@ -270,6 +285,13 @@ bool NvmDataMgmtFactoryReset( void )
         return false;
     }
     offset += sizeof( LoRaMacClassBNvmData_t );
+
+    // User settings
+	if (NvmmReset(sizeof(TWiMODLORAWAN_RadioStackConfig), offset) == false) {
+		return false;
+	}
+	offset += sizeof(TWiMODLORAWAN_RadioStackConfig);
+
 #endif
     return true;
 }

@@ -214,6 +214,7 @@ extern LmHandlerParams_t lmHParams;
 void SetRegion(TLoRaWANregion regionalSetting)
 {
 	WiMOD_SAP_LoRaWAN.region = regionalSetting;
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
 }
 
 //-----------------------------------------------------------------------------
@@ -422,7 +423,7 @@ TWiMODLRResultCodes setJoinParameter(TWiMODLORAWAN_JoinParams* joinParams, UINT8
     	LORAWAN_MSG_SET_JOIN_PARAM_RSP, 
     	&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 
     	1);
-    
+    UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 
@@ -1221,7 +1222,7 @@ TWiMODLRResultCodes setRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 			LORAWAN_MSG_SET_RSTACK_CONFIG_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1 + 1);
-
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
 	return result;
 }
 
@@ -1324,7 +1325,7 @@ TWiMODLRResultCodes getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 			LORAWAN_MSG_GET_RSTACK_CONFIG_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			10);
-
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 
@@ -1508,7 +1509,7 @@ TWiMODLRResultCodes getDeviceEUI (UINT8* deviceEUI, UINT8* statusRsp)
 			LORAWAN_MSG_GET_DEVICE_EUI_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			9);
-
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 
@@ -1622,6 +1623,10 @@ TWiMODLRResultCodes getNwkStatus(TWiMODLORAWAN_NwkStatus_Data* nwkStatus, UINT8*
 			LORAWAN_MSG_GET_NWK_STATUS_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			2 + 7);
+
+	if (tx->Payload[1] == 0x01 || tx->Payload[1] == 0x02) {
+		UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+	}
 
     return result;
 }
@@ -1778,7 +1783,7 @@ TWiMODLRResultCodes getCustomConfig(INT8* rfGain, UINT8* statusRsp)
 			LORAWAN_MSG_GET_CUSTOM_CFG_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			2);
-
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 
@@ -1834,7 +1839,7 @@ TWiMODLRResultCodes getSupportedBands(TWiMODLORAWAN_SupportedBands* supportedBan
 			LORAWAN_MSG_GET_SUPPORTED_BANDS_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1 + 4);
-
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 
@@ -1896,7 +1901,7 @@ TWiMODLRResultCodes getTxPowerLimitConfig(TWiMODLORAWAN_TxPwrLimitConfig* txPwrL
 		LORAWAN_MSG_GET_TXPOWER_LIMIT_CONFIG_RSP,
 		&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 		1);
-
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 
@@ -1964,7 +1969,7 @@ TWiMODLRResultCodes setTxPowerLimitConfig(TWiMODLORAWAN_TxPwrLimitConfig* txPwrL
 		LORAWAN_MSG_SET_TXPOWER_LIMIT_CONFIG_RSP,
    		&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
    		1);
-
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 
@@ -2020,7 +2025,7 @@ TWiMODLRResultCodes getLinkAdrReqConfig(TWiMODLORAWAN_LinkAdrReqConfig* linkAdrR
 			 LORAWAN_MSG_GET_LINKADRREQ_CONFIG_RSP,
 			 &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			 1 + 1);
-
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 
@@ -2070,7 +2075,7 @@ TWiMODLRResultCodes setLinkAdrReqConfig(TWiMODLORAWAN_LinkAdrReqConfig* linkAdrR
     	LORAWAN_MSG_SET_LINKADRREQ_CONFIG_RSP, 
     	&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
     	1);
-    
+    UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 

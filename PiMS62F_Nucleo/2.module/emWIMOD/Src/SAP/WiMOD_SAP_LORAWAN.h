@@ -60,6 +60,7 @@
 #include "LoRaMac.h"
 #include "NvmDataMgmt.h"
 #include "Region.h"
+#include "stm32_lpm.h"
 
 /*
  * C++11 supports a better way for function pointers / function objects
