@@ -98,44 +98,21 @@ TWiMODLRResultCodes ExecuteHwTestCmd(TWiMODLR_HwTest_RadioTestInfo* info, UINT8*
 				result = HWTEST_STATUS_OK;
 				break;
 			case 0x2:
-				UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_DISABLE);
 				LmHandlerStartTXCW(info->Timeout);
+				UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_DISABLE);
 				result = HWTEST_STATUS_OK;
 				break;
 			case 0x3:
-				UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_DISABLE);
 				LmHandlerStartTXCW1(info->PowerLevel,
 						FreqCalc_calcRegisterToFreq(info->FreqLSB, info->FreqMID, info->FreqMSB),
 						info->Timeout);
+				UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_DISABLE);
+				result = HWTEST_STATUS_OK;
 				break;
 			default:
 				result = HWTEST_STATUS_WRONG_PARAMETER;
 				break;
 		}
-//    	payLen = MIN(WiMOD_SAP_Generic.txyPayloadSize, info->CmdPayloadLength);
-//
-//    	memcpy(WiMOD_SAP_Generic.txPayload, info->CmdPayload, payLen);
-//
-//        result = WiMOD_SAP_Generic.HciParser->SendHCIMessage(info->SapID,
-//                                           info->MsgReqID,
-//                                           info->MsgRspID,
-//										   WiMOD_SAP_Generic.txPayload, payLen);
-//
-//        if (result == WiMODLR_RESULT_OK) {
-//            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_Generic.HciParser->GetRxMessage();
-//
-//            // extract data from response
-//            info->Status     = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-//
-//            info->CmdPayloadLength = 0;
-//            if (rx->Length > WiMODLR_HCI_RSP_CMD_PAYLOAD_POS) {
-//				info->CmdPayloadLength = MIN(rx->Length-WiMODLR_HCI_RSP_CMD_PAYLOAD_POS, WiMOD_GENERIC_MSG_SIZE);
-//				memcpy(info->CmdPayload, &rx->Payload[offset], info->CmdPayloadLength);
-//
-//            }
-//
-//            *statusRsp = rx->Payload[WiMODLR_HCI_RSP_STATUS_POS];
-//        }
 
     } else {
     	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;

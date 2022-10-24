@@ -237,7 +237,6 @@ TWiMODLRResultCodes reset(UINT8* statusRsp)
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
 
-	UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_Reset), CFG_SEQ_Prio_0);
     return result;
 }
 
@@ -284,7 +283,6 @@ TWiMODLRResultCodes getDeviceInfo (TWiMODLR_DevMgmt_DevInfo* info, UINT8* status
 			DEVMGMT_MSG_GET_DEVICEINFO_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			10);
-
     return result;
 }
 
@@ -330,7 +328,6 @@ TWiMODLRResultCodes getFirmwareInfo(TWiMODLR_DevMgmt_FwInfo* info, UINT8* status
 			DEVMGMT_MSG_GET_FW_VERSION_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			sizeof(TWiMODLR_DevMgmt_FwInfo));
-
     return result;
 }
 
@@ -421,7 +418,6 @@ TWiMODLRResultCodes getSystemStatus(TWiMODLR_DevMgmt_SystemStatus* info, UINT8* 
 			DEVMGMT_MSG_GET_SYSTEM_STATUS_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			offset);
-
     return result;
 }
 
@@ -468,7 +464,6 @@ TWiMODLRResultCodes getRtc(UINT32* rtcTime, UINT8* statusRsp)
 			offset);
 
 	memcpy((uint8_t *) rtcTime, (uint8_t *) &tx->Payload[1], 4);
-
     return result;
 }
 
@@ -533,7 +528,6 @@ TWiMODLRResultCodes setRtc(const UINT32 rtcTime, UINT8* statusRsp)
 			DEVMGMT_MSG_SET_RTC_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
-
     return result;
 }
 
@@ -630,7 +624,7 @@ TWiMODLRResultCodes getRadioConfig(TWiMODLR_DevMgmt_RadioConfig* radioCfg, UINT8
 			DEVMGMT_MSG_GET_RADIO_CONFIG_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			sizeof(TWiMODLR_DevMgmt_RadioConfig));
-
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
 	return result;
 }
 
@@ -729,7 +723,6 @@ TWiMODLRResultCodes setRadioConfig(const TWiMODLR_DevMgmt_RadioConfig* radioCfg,
 			DEVMGMT_MSG_SET_RADIO_CONFIG_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
-
     return result;
 }
 
@@ -791,7 +784,6 @@ TWiMODLRResultCodes resetRadioConfig(UINT8* statusRsp) {
    			DEVMGMT_MSG_SET_RADIO_CONFIG_RSP,
    			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
    			1);
-
     return result;
 }
 
@@ -836,7 +828,6 @@ TWiMODLRResultCodes getOperationMode(TWiMOD_OperationMode* opMode, UINT8* status
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			2);
 	result = WiMODLR_RESULT_OK;
-
     return result;
 }
 
@@ -879,7 +870,6 @@ TWiMODLRResultCodes setOperationMode(const TWiMOD_OperationMode opMode, UINT8* s
 			DEVMGMT_MSG_SET_OPMODE_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
-
     return result;
 }
 
@@ -922,7 +912,6 @@ TWiMODLRResultCodes setRadioMode(const TRadioCfg_RadioMode radioMode, UINT8* sta
 			DEVMGMT_MSG_SET_RADIO_MODE_RSP,
  			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
  			1);
-
      return result;
  }
 
@@ -963,7 +952,6 @@ TWiMODLRResultCodes setAesKey(const UINT8* key, UINT8* statusRsp) {
 			DEVMGMT_MSG_SET_AES_KEY_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
-
     return result;
 }
 
@@ -1009,7 +997,6 @@ TWiMODLRResultCodes getAesKey(UINT8* key, UINT8* statusRsp)
 			DEVMGMT_MSG_GET_AES_KEY_RSP,
    			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
    			1 + DEVMGMT_AES_KEY_LEN);
-
     return result;
 }
 
@@ -1045,7 +1032,6 @@ TWiMODLRResultCodes setRtcAlarm(const TWiMODLR_DevMgmt_RtcAlarm* rtcAlarm, UINT8
 			DEVMGMT_MSG_SET_RTC_ALARM_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
-
     return result;
 }
 
@@ -1085,7 +1071,6 @@ TWiMODLRResultCodes getRtcAlarm(TWiMODLR_DevMgmt_RtcAlarm* rtcAlarm, UINT8* stat
 			DEVMGMT_MSG_GET_RTC_ALARM_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			sizeof(TWiMODLR_DevMgmt_RtcAlarm) + 1);
-
     return result;
 }
 
@@ -1122,7 +1107,6 @@ TWiMODLRResultCodes clearRtcAlarm(UINT8* statusRsp)
 			DEVMGMT_MSG_CLEAR_RTC_ALARM_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
-
     return result;
 }
 
@@ -1187,7 +1171,6 @@ TWiMODLRResultCodes setHCIConfig(const TWiMODLR_DevMgmt_HciConfig* hciConfig, UI
 			DEVMGMT_MSG_SET_HCI_CFG_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
-
     return result;
 }
 
@@ -1245,7 +1228,6 @@ TWiMODLRResultCodes getHCIConfig(TWiMODLR_DevMgmt_HciConfig* hciConfig, UINT8* s
 			DEVMGMT_MSG_GET_HCI_CFG_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1 + sizeof(TWiMODLR_DevMgmt_HciConfig));
-
     return result;
 }
 
@@ -1320,6 +1302,7 @@ void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg)
         default:
             break;
     }
+    UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return;
 }
 //------------------------------------------------------------------------------

@@ -59,6 +59,7 @@
 #include "LmHandler.h"
 #include "adc_if.h"
 #include "sys_app.h"
+#include "stm32_lpm.h"
 /*
  * C++11 supports a better way for function pointers / function objects
  * But C++11 mode is not supported by all platforms.
