@@ -1951,16 +1951,13 @@ LmHandlerErrorStatus_t LmHandlerStartTXCW( uint16_t timeout ){
 	if (LoRaMacStop() != LORAMAC_STATUS_OK) {
 		return LORAMAC_HANDLER_ERROR;
 	}
-	uint8_t data[3] = { 0x7, timeout };
-	McpsIndication_t mcpsInd;
-	mcpsInd.McpsIndication = MCPS_PROPRIETARY;
-	mcpsInd.BufferSize = 3;
-	mcpsInd.Buffer = (uint8_t*) &data;
-	mcpsInd.Status = LORAMAC_EVENT_INFO_STATUS_OK;
-	mcpsInd.RxData = true;
-	mcpsInd.Port = 224;
-	mcpsInd.AckReceived = 1;
-	LmHandlerPackages[PACKAGE_ID_COMPLIANCE]->OnMcpsIndicationProcess(&mcpsInd);
+
+	MlmeReq_t mlmeReq;
+	mlmeReq.Type = MLME_TXCW;
+	mlmeReq.Req.TxCw.Timeout = (uint16_t) (timeout);
+
+	LoRaMacMlmeRequest(&mlmeReq);
+
 	return LORAMAC_STATUS_OK;
 }
 
@@ -1968,15 +1965,13 @@ LmHandlerErrorStatus_t LmHandlerStartTXCW1( uint8_t power, uint32_t freq, uint16
 	if(LoRaMacStop() != LORAMAC_STATUS_OK){
 		return LORAMAC_HANDLER_ERROR;
 	}
-	uint8_t data[7] = {0x7, timeout, freq, power};
-	McpsIndication_t mcpsInd;
-	mcpsInd.McpsIndication = MCPS_PROPRIETARY;
-	mcpsInd.BufferSize = 7;
-	mcpsInd.Buffer = (uint8_t *) &data;
-	mcpsInd.Status = LORAMAC_EVENT_INFO_STATUS_OK;
-	mcpsInd.RxData = true;
-	mcpsInd.Port = 224;
-	mcpsInd.AckReceived = 1;
-	LmHandlerPackages[PACKAGE_ID_COMPLIANCE]->OnMcpsIndicationProcess(&mcpsInd);
+	MlmeReq_t mlmeReq;
+	mlmeReq.Type = MLME_TXCW_1;
+	mlmeReq.Req.TxCw.Timeout = (uint16_t) timeout;
+	mlmeReq.Req.TxCw.Frequency = (uint32_t) (freq) * 100;
+	mlmeReq.Req.TxCw.Power = power;
+
+	LoRaMacMlmeRequest(&mlmeReq);
+
 	return LORAMAC_STATUS_OK;
 }

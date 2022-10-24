@@ -253,6 +253,8 @@ void Begin(TLoRaWANregion region)
 	WiMODLoRaWAN.SapLoRaWan->HciParser = &TWiMODLRHCI;
 	WiMODLoRaWAN.SapDevMgmt = &WiMOD_SAP_DevMgmt;
 	WiMODLoRaWAN.SapDevMgmt->HciParser = &TWiMODLRHCI;
+	WiMODLoRaWAN.SapHwTest = & WiMOD_SAP_HwTest;
+	WiMODLoRaWAN.SapHwTest->HciParser = &TWiMODLRHCI;
 	WiMODLoRaWAN.SapGeneric = &WiMOD_SAP_Generic;
 	WiMODLoRaWAN.SapGeneric->HciParser = &TWiMODLRHCI;
 
@@ -2791,7 +2793,9 @@ void process (TWiMODLR_HCIMessage* rxMsg)
         case    LORAWAN_SAP_ID:
         	WiMODLoRaWAN.SapLoRaWan->Process(&WiMODLoRaWAN.lastStatusRsp, rxMsg);
                 break;
-
+        case	HWTEST_SAP_ID:
+        	WiMODLoRaWAN.SapHwTest->Process(&WiMODLoRaWAN.lastStatusRsp, rxMsg);
+        		break;
         default:
                 if (TWiMODLRHCI.StackErrorClientCB) {
                 	TWiMODLRHCI.StackErrorClientCB(WIMOD_STACK_ERR_UNKNOWN_RX_SAP_ID);

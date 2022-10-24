@@ -2137,7 +2137,7 @@ TWiMODLRResultCodes setBatteryLevelStatus(UINT8 battStatus, UINT8* statusRsp)
  * @param rxMsg reference to the complete received HCI message; DO NOT MODIFIY it!
 
  */
-void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg)
+static void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg)
 {
 	 switch (rxMsg->MsgID)
 	    {
@@ -2224,7 +2224,7 @@ void process (UINT8* statusRsp, TWiMODLR_HCIMessage* rxMsg)
  *
  * @endinternal
  */
-void dispatchLoRaWANMessage(TWiMODLR_HCIMessage* rxMsg)
+static void dispatchLoRaWANMessage(TWiMODLR_HCIMessage* rxMsg)
 {
     switch (rxMsg->MsgID)
     {

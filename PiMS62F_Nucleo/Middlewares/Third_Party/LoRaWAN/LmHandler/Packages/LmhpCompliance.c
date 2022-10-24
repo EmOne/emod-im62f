@@ -373,6 +373,8 @@ static void LmhpComplianceOnMcpsIndication( McpsIndication_t* mcpsIndication )
 
             // Confirm compliance test protocol activation
             LmhpComplianceTxProcess( );
+        } else {
+
         }
     }
     else
