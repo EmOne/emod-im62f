@@ -171,66 +171,66 @@ uint16_t NvmDataMgmtRestore( void )
     uint16_t offset = 0;
 
     // Crypto
-    if( NvmmCrc32Check( sizeof( LoRaMacCryptoNvmData_t ), offset ) == false )
+  if (NvmmCrc32Check (sizeof(LoRaMacCryptoNvmData_t), offset) == false)
     {
-        return 0;
+      return 0;
     }
     offset += sizeof( LoRaMacCryptoNvmData_t );
 
     // Mac Group 1
-    if( NvmmCrc32Check( sizeof( LoRaMacNvmDataGroup1_t ), offset ) == false )
+  if (NvmmCrc32Check (sizeof(LoRaMacNvmDataGroup1_t), offset) == false)
     {
-        return 0;
+      return 0;
     }
     offset += sizeof( LoRaMacNvmDataGroup1_t );
 
     // Mac Group 2
-    if( NvmmCrc32Check( sizeof( LoRaMacNvmDataGroup2_t ), offset ) == false )
+  if (NvmmCrc32Check (sizeof(LoRaMacNvmDataGroup2_t), offset) == false)
     {
-        return 0;
+      return 0;
     }
     offset += sizeof( LoRaMacNvmDataGroup2_t );
 
     // Secure element
-    if( NvmmCrc32Check( sizeof( SecureElementNvmData_t ), offset ) == false )
+  if (NvmmCrc32Check (sizeof(SecureElementNvmData_t), offset) == false)
     {
-        return 0;
+      return 0;
     }
     offset += sizeof( SecureElementNvmData_t );
 
     // Region group 1
-    if( NvmmCrc32Check( sizeof( RegionNvmDataGroup1_t ), offset ) == false )
+  if (NvmmCrc32Check (sizeof(RegionNvmDataGroup1_t), offset) == false)
     {
-        return 0;
+      return 0;
     }
     offset += sizeof( RegionNvmDataGroup1_t );
 
     // Region group 2
-    if( NvmmCrc32Check( sizeof( RegionNvmDataGroup2_t ), offset ) == false )
+  if (NvmmCrc32Check (sizeof(RegionNvmDataGroup2_t), offset) == false)
     {
-        return 0;
+      return 0;
     }
     offset += sizeof( RegionNvmDataGroup2_t );
 
     // Class b
-    if( NvmmCrc32Check( sizeof( LoRaMacClassBNvmData_t ), offset ) == false )
+  if (NvmmCrc32Check (sizeof(LoRaMacClassBNvmData_t), offset) == false)
     {
-        return 0;
+      return 0;
     }
     offset += sizeof( LoRaMacClassBNvmData_t );
 
-	if (NvmmCrc32Check(sizeof(TWiMODLORAWAN_RadioStackConfig), offset) == false) {
-		return 0;
-	}
-	offset += sizeof(TWiMODLORAWAN_RadioStackConfig);
-
-    if( NvmmRead( ( uint8_t* ) nvm, sizeof( LoRaMacNvmData_t ), 0 ) ==
-    		NVMM_SUCCESS )
+  if (NvmmCrc32Check (sizeof(TWiMODLORAWAN_RadioStackConfig), offset) == false)
     {
-        return sizeof( LoRaMacNvmData_t );
+      return 0;
+    }
+  offset += sizeof(TWiMODLORAWAN_RadioStackConfig);
+
+  if (NvmmRead ((uint8_t*) nvm, sizeof(LoRaMacNvmData_t), 0) == NVMM_SUCCESS)
+    {
+      return sizeof(LoRaMacNvmData_t);
     }
 #endif
-    return 0;
+  return 0;
 }
 
 bool NvmDataMgmtFactoryReset( void )

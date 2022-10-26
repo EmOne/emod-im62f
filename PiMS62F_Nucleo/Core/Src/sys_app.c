@@ -131,7 +131,7 @@ void SystemApp_Init(void)
   /*Initialize timer and RTC*/
   UTIL_TIMER_Init();
 
-  Gpio_PreInit();
+//  Gpio_PreInit();
 
 //  MX_GPIO_Init();
 

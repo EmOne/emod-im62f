@@ -83,7 +83,26 @@ const struct UTIL_LPM_Driver_s UTIL_PowerDriver =
 void PWR_EnterOffMode(void)
 {
   /* USER CODE BEGIN EnterOffMode_1 */
+  UTILS_ENTER_CRITICAL_SECTION();
 
+  Sx_Board_IoDeInit ();
+
+  HAL_ADC_MspDeInit (&hadc);
+
+  UTIL_ADV_TRACE_DeInit ();
+
+  /*clear wake up flag*/
+  SET_BIT(PWR->CR, PWR_CR_CWUF);
+
+  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+
+  __HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(&hrtc, RTC_FLAG_WUTF);
+
+  HAL_PWR_EnableWakeUpPin (PWR_WAKEUP_PIN1);
+
+  UTILS_EXIT_CRITICAL_SECTION();
+
+  HAL_PWR_EnterSTANDBYMode ();
   /* USER CODE END EnterOffMode_1 */
 }
 
@@ -112,10 +131,6 @@ void PWR_EnterStopMode(void)
 
   /*clear wake up flag*/
   SET_BIT(PWR->CR, PWR_CR_CWUF);
-
-  SET_BIT(PWR->CR, PWR_CR_LPSDSR);
-
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
 
   UTILS_EXIT_CRITICAL_SECTION();
   /* USER CODE BEGIN EnterStopMode_2 */

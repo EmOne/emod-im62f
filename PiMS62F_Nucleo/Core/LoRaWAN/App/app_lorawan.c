@@ -25,12 +25,13 @@
 #include "sys_app.h"
 #include "stm32_seq.h"
 /* USER CODE BEGIN Includes */
-
+#include "LmHandler.h"
+#include "WiMODLoRaWAN.h"
 /* USER CODE END Includes */
 
 /* External variables ---------------------------------------------------------*/
 /* USER CODE BEGIN EV */
-
+extern LmHandlerParams_t lmHParams;
 /* USER CODE END EV */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,9 +72,13 @@ void MX_LoRaWAN_Init(void)
   /* USER CODE BEGIN MX_LoRaWAN_Init_2 */
 
   /* USER CODE END MX_LoRaWAN_Init_2 */
-  LoRaWAN_Init(); //Use on WiMod activation and reactivation
+    LoRaWAN_Init (); //Use on WiMod activation and reactivation
   /* USER CODE BEGIN MX_LoRaWAN_Init_3 */
+  WiMODLoRaWAN.beginAndAutoSetup ();
 
+  //	WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
+
+  WiMODLoRaWAN.SapLoRaWan->setRegion (lmHParams.ActiveRegion);
 
   /* USER CODE END MX_LoRaWAN_Init_3 */
 }

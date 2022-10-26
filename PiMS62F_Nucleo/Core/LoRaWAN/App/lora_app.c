@@ -239,6 +239,18 @@ static UTIL_TIMER_Object_t JoinLedTimer;
 void LoRaWAN_Init(void)
 {
   /* USER CODE BEGIN LoRaWAN_Init_1 */
+  if (__HAL_PWR_GET_FLAG (PWR_FLAG_SB) != 0)
+    {
+      __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+
+      HAL_PWR_DisableWakeUpPin (PWR_WAKEUP_PIN1 | PWR_WAKEUP_PIN2);
+
+      if (HAL_RTCEx_SetWakeUpTimer_IT (&hrtc, 0x1F4,
+				       RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK) //Wake up 0x1F4:500ms 16MHz interval
+	{
+	  Error_Handler ();
+	}
+    }
 
   LED_Init(LED_BLUE);
   LED_Init(LED_RED1);
