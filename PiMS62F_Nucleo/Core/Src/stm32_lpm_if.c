@@ -30,6 +30,7 @@
 #include "stm32_seq.h"
 #include "stm32_timer.h"
 #include "utilities_def.h"
+#include "rtc.h"
 /* USER CODE END Includes */
 
 /* External variables ---------------------------------------------------------*/
@@ -101,6 +102,7 @@ void PWR_EnterStopMode(void)
   UTILS_ENTER_CRITICAL_SECTION();
 
 //  Gpio_PreInit();
+  HAL_RTCEx_DeactivateWakeUpTimer (&hrtc);
 
   Sx_Board_IoDeInit();
 
@@ -163,6 +165,12 @@ void PWR_ExitStopMode(void)
   Sx_Board_IoInit();
 
   Sx_Board_IoIrqInit(NULL);
+
+  if (HAL_RTCEx_SetWakeUpTimer_IT (&hrtc, 0x1F4, RTC_WAKEUPCLOCK_RTCCLK_DIV16)
+      != HAL_OK) //Wake up 0x1F4:500ms 16MHz interval
+    {
+      Error_Handler ();
+    }
 
   UTILS_EXIT_CRITICAL_SECTION();
   /* USER CODE BEGIN ExitStopMode_2 */

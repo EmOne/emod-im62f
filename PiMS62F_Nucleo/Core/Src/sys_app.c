@@ -201,7 +201,11 @@ void SystemApp_Init(void)
 //#else
 //      HAL_TIM_Base_Start_IT(&htim8);
 //#endif
-
+  if (HAL_RTCEx_SetWakeUpTimer_IT (&hrtc, 0x1F4, RTC_WAKEUPCLOCK_RTCCLK_DIV16)
+      != HAL_OK) //Wake up 0x1F4:500ms 16MHz interval
+    {
+      Error_Handler ();
+    }
 
   /* USER CODE END SystemApp_Init_2 */
 }

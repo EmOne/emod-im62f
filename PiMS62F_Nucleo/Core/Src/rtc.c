@@ -100,10 +100,10 @@ void MX_RTC_Init(void)
 	}
   /* USER CODE BEGIN RTC_Init 2 */
 
-	if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x1F4, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK) //Wake up 0x1F4:500ms 16MHz interval
-	{
-		Error_Handler();
-	}
+//	if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x1F4, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK) //Wake up 0x1F4:500ms 16MHz interval
+//	{
+//		Error_Handler();
+//	}
   /* USER CODE END RTC_Init 2 */
 
 }
