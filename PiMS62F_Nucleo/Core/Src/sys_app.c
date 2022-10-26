@@ -173,15 +173,15 @@ void SystemApp_Init(void)
   UTIL_ADV_TRACE_StartRxProcess(&emod_UART_RxCpltCallback);
 
   /* USER CODE BEGIN SystemApp_Init_2 */
-//  MX_TIM2_Init();
-//  MX_TIM3_Init();
-  MX_TIM4_Init();
-#if defined (USE_EMOD_IMS62F)
-	//  MX_TIM5_Init();
-//  MX_TIM9_Init();
-#else
-    MX_TIM8_Init();
-#endif
+////  MX_TIM2_Init();
+////  MX_TIM3_Init();
+//  MX_TIM4_Init();
+//#if defined (USE_EMOD_IMS62F)
+//	//  MX_TIM5_Init();
+////  MX_TIM9_Init();
+//#else
+//    MX_TIM8_Init();
+//#endif
 
     //TODO: Restore user setting
 
@@ -193,14 +193,14 @@ void SystemApp_Init(void)
     #error "Please define your MCU series"
 #endif
 
-//	HAL_TIM_Base_Start_IT(&htim2);
-	HAL_TIM_Base_Start_IT(&htim4);
-#if defined (USE_EMOD_IMS62F)
-	//  HAL_TIM_Base_Start_IT(&htim5);
-//	HAL_TIM_Base_Start_IT(&htim9);
-#else
-      HAL_TIM_Base_Start_IT(&htim8);
-#endif
+////	HAL_TIM_Base_Start_IT(&htim2);
+//	HAL_TIM_Base_Start_IT(&htim4);
+//#if defined (USE_EMOD_IMS62F)
+//	//  HAL_TIM_Base_Start_IT(&htim5);
+////	HAL_TIM_Base_Start_IT(&htim9);
+//#else
+//      HAL_TIM_Base_Start_IT(&htim8);
+//#endif
 
 
   /* USER CODE END SystemApp_Init_2 */

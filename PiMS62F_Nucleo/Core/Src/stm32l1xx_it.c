@@ -278,12 +278,12 @@ void TIM4_IRQHandler(void)
   /* USER CODE BEGIN TIM4_IRQn 0 */
 //	TWiMODLRHCI.WaitForResponse(0x01, 0x01);
 
-	if(EmWimodData.ReceiveFrmUserRequest) {
-		WiMODLoRaWAN.Process(&TWiMODLRHCI.Rx.Message);
-		EmWimodData.ReceiveFrmUserRequest = 0x0;
-		memset(&Rx2_buffer, 0x00, kMaxUARTPayloadSize);
-//		UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_RX_Id), UTIL_LPM_ENABLE);
-	}
+//	if(EmWimodData.ReceiveFrmUserRequest) {
+//		WiMODLoRaWAN.Process(&TWiMODLRHCI.Rx.Message);
+//		EmWimodData.ReceiveFrmUserRequest = 0x0;
+//		memset(&Rx2_buffer, 0x00, kMaxUARTPayloadSize);
+////		UTIL_LPM_SetStopMode((1 << CFG_LPM_UART_RX_Id), UTIL_LPM_ENABLE);
+//	}
   /* USER CODE END TIM4_IRQn 0 */
   HAL_TIM_IRQHandler(&htim4);
   /* USER CODE BEGIN TIM4_IRQn 1 */
@@ -444,6 +444,29 @@ void RTC_Alarm_IRQHandler(void)
   /* USER CODE BEGIN RTC_Alarm_IRQn 1 */
 
   /* USER CODE END RTC_Alarm_IRQn 1 */
+}
+
+
+/**
+  * @brief This function handles RTC Wakeup Interrupt.
+  */
+void RTC_WKUP_IRQHandler( void )
+{
+  /* USER CODE BEGIN RTC_WKUP_IRQn 0 */
+	if (TWiMODLRHCI.Process) {
+		TWiMODLRHCI.Process();
+	}
+
+  /* USER CODE END RTC_WKUP_IRQn 0 */
+	HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
+  /* USER CODE BEGIN RTC_WKUP_IRQn 1 */
+	if (EmWimodData.ReceiveFrmUserRequest) {
+		WiMODLoRaWAN.Process(&TWiMODLRHCI.Rx.Message);
+		EmWimodData.ReceiveFrmUserRequest = 0x0;
+		memset(&Rx2_buffer, 0x00, kMaxUARTPayloadSize);
+//		UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+	}
+  /* USER CODE END RTC_WKUP_IRQn 1 */	
 }
 
 void WWDG_IRQhandle ( void ) {

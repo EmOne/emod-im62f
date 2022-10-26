@@ -2779,6 +2779,7 @@ void process (TWiMODLR_HCIMessage* rxMsg)
     {
         case    DEVMGMT_SAP_ID:
         	WiMODLoRaWAN.SapDevMgmt->Process(&WiMODLoRaWAN.lastStatusRsp, rxMsg);
+        	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
                 break;
 
         case    LORAWAN_SAP_ID:

@@ -263,7 +263,7 @@
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
-								<outputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.output.elf.2063531526" outputPrefix="${DATETIME}" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.output.elf"/>
+								<outputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.output.elf.2063531526" outputPrefix="uc-" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.linker.output.elf"/>
 							</tool>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker.731776136" name="MCU G++ Linker" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.linker"/>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.archiver.435996860" name="MCU GCC Archiver" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.archiver"/>
@@ -426,6 +426,9 @@
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1637818955;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.189903775">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.635508211;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1335149147.635508211.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1249187654;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1231155698">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1866538353;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1802193720.1866538353.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.662631287;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.344979891">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>

@@ -1367,6 +1367,8 @@ TWiMODLRResultCodes deactivateDevice(UINT8* statusRsp)
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
 
+	UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+
     return result;
 }
 

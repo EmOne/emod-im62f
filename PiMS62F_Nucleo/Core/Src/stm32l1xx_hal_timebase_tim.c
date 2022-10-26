@@ -37,21 +37,21 @@
   * @param  htim : TIM handle
   * @retval None
   */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM4) {
-	  TWiMODLRHCI.Process();
-  }
-//  else if (htim->Instance == TIM6) {
-//	HAL_IncTick();
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+//{
+//  /* USER CODE BEGIN Callback 0 */
+//
+//  /* USER CODE END Callback 0 */
+//  if (htim->Instance == TIM4) {
+////	  TWiMODLRHCI.Process();
 //  }
-  /* USER CODE BEGIN Callback 1 */
-
-  /* USER CODE END Callback 1 */
-}
+////  else if (htim->Instance == TIM6) {
+////	HAL_IncTick();
+////  }
+//  /* USER CODE BEGIN Callback 1 */
+//
+//  /* USER CODE END Callback 1 */
+//}
 
 /**
   * @brief  This function configures the TIM6 as a time base source.

@@ -100,6 +100,10 @@ void MX_RTC_Init(void)
 	}
   /* USER CODE BEGIN RTC_Init 2 */
 
+	if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 0x1F4, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK) //Wake up 0x1F4:500ms 16MHz interval
+	{
+		Error_Handler();
+	}
   /* USER CODE END RTC_Init 2 */
 
 }
@@ -140,6 +144,10 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* rtcHandle)
      HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0x0, 0);
      HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
 
+    /*##-4- Configure the NVIC for RTC Wake up ###################################*/
+     HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 0x0, 0);
+     HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
+
   /* USER CODE END RTC_MspInit 1 */
   }
 }
@@ -157,6 +165,7 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
 
     /* RTC interrupt Deinit */
     HAL_NVIC_DisableIRQ(RTC_Alarm_IRQn);
+    HAL_NVIC_DisableIRQ(RTC_WKUP_IRQn);
   /* USER CODE BEGIN RTC_MspDeInit 1 */
 
   /* USER CODE END RTC_MspDeInit 1 */
@@ -164,5 +173,8 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
 }
 
 /* USER CODE BEGIN 1 */
+void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
+{
 
+}
 /* USER CODE END 1 */
