@@ -30,7 +30,7 @@
 //! </PRE>
 //------------------------------------------------------------------------------
 
-#include "FreqCalc_SX127x.h"
+#include "FreqCalc.h"
 
 /**
  * @brief Translates a given frequency to the according register values of the TRX

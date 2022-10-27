@@ -51,6 +51,7 @@
 //#include <cstddef>
 #include <string.h>
 
+#include "WiMOD_SAP_HWTEST.h"
 #include "WiMOD_SAP_LORAWAN.h"
 #include "WiMOD_SAP_DEVMGMT.h"
 #include "WiMOD_SAP_Generic.h"
@@ -188,6 +189,7 @@ typedef struct {
     void (*Process)(TWiMODLR_HCIMessage* rxMsg);
 //protected:
     WiMOD_SAP_DevMgmt_t*   SapDevMgmt;                                           /*!< Service Access Point for 'DeviceManagement' */
+  WiMOD_SAP_HwTest_t *SapHwTest; /*!< Service Access Point for 'HardwareTest' */
     WiMOD_SAP_LoRaWAN_t*   SapLoRaWan;                                           /*!< Service Access Point for 'LoRaWAN' */
     WiMOD_SAP_Generic_t*   SapGeneric;											/*!< dummy SAP for generic HCI command */
 

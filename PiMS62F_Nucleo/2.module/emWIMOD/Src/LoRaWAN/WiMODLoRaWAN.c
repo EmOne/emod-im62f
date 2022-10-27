@@ -253,6 +253,8 @@ void Begin(TLoRaWANregion region)
 	WiMODLoRaWAN.SapLoRaWan->HciParser = &TWiMODLRHCI;
 	WiMODLoRaWAN.SapDevMgmt = &WiMOD_SAP_DevMgmt;
 	WiMODLoRaWAN.SapDevMgmt->HciParser = &TWiMODLRHCI;
+  WiMODLoRaWAN.SapHwTest = &WiMOD_SAP_HwTest;
+  WiMODLoRaWAN.SapHwTest->HciParser = &TWiMODLRHCI;
 	WiMODLoRaWAN.SapGeneric = &WiMOD_SAP_Generic;
 	WiMODLoRaWAN.SapGeneric->HciParser = &TWiMODLRHCI;
 
@@ -287,6 +289,11 @@ void BeginAndAutoSetup(void)
 //    isOpen = true;
 //    WiMODLoRaWAN.SapLoRaWan.setRegion(LoRaWAN_Region_EU868); // default pre-set
 //    WiMODLoRaWAN.autoSetupSupportedRegion();
+
+  TWiMODLR_HCIMessage *tx = &WiMODLoRaWAN.SapLoRaWan->HciParser->TxMessage;
+  WiMODLoRaWAN.SapLoRaWan->HciParser->PostMessage (
+      LORAWAN_SAP_ID, LORAWAN_MSG_RECV_DEVNONCE_RST_IND,
+      &tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 0);
 }
 //! @endcond
 
@@ -2785,6 +2792,10 @@ void process (TWiMODLR_HCIMessage* rxMsg)
         case    LORAWAN_SAP_ID:
         	WiMODLoRaWAN.SapLoRaWan->Process(&WiMODLoRaWAN.lastStatusRsp, rxMsg);
                 break;
+
+    case HWTEST_SAP_ID:
+      WiMODLoRaWAN.SapHwTest->Process (&WiMODLoRaWAN.lastStatusRsp, rxMsg);
+      break;
 
         default:
                 if (TWiMODLRHCI.StackErrorClientCB) {

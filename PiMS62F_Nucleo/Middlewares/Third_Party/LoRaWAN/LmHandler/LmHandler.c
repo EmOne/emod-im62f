@@ -1946,3 +1946,38 @@ LmHandlerErrorStatus_t LmHandlerGetMaxPayloadReq( int8_t dr, uint8_t* sz )
 	*sz = GetMaxAppPayloadWithoutFOptsLength(dr);
 	return LORAMAC_HANDLER_SUCCESS;
 }
+
+LmHandlerErrorStatus_t
+LmHandlerStartTXCW (uint16_t timeout)
+{
+  if (LoRaMacStop () != LORAMAC_STATUS_OK)
+    {
+      return LORAMAC_HANDLER_ERROR;
+    }
+
+  MlmeReq_t mlmeReq;
+  mlmeReq.Type = MLME_TXCW;
+  mlmeReq.Req.TxCw.Timeout = (uint16_t) (timeout);
+
+  LoRaMacMlmeRequest (&mlmeReq);
+
+  return LORAMAC_STATUS_OK;
+}
+
+LmHandlerErrorStatus_t
+LmHandlerStartTXCW1 (uint8_t power, uint32_t freq, uint16_t timeout)
+{
+  if (LoRaMacStop () != LORAMAC_STATUS_OK)
+    {
+      return LORAMAC_HANDLER_ERROR;
+    }
+  MlmeReq_t mlmeReq;
+  mlmeReq.Type = MLME_TXCW_1;
+  mlmeReq.Req.TxCw.Timeout = (uint16_t) timeout;
+  mlmeReq.Req.TxCw.Frequency = (uint32_t) (freq) * 100;
+  mlmeReq.Req.TxCw.Power = power;
+
+  LoRaMacMlmeRequest (&mlmeReq);
+
+  return LORAMAC_STATUS_OK;
+}
