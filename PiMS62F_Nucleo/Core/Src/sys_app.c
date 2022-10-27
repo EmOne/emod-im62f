@@ -131,7 +131,7 @@ void SystemApp_Init(void)
   /*Initialize timer and RTC*/
   UTIL_TIMER_Init();
 
-//  Gpio_PreInit();
+  Gpio_PreInit();
 
 //  MX_GPIO_Init();
 
@@ -147,6 +147,8 @@ void SystemApp_Init(void)
 
   /*Set verbose LEVEL*/
   UTIL_ADV_TRACE_SetVerboseLevel(VERBOSE_LEVEL);
+
+  UTIL_ADV_TRACE_StartRxProcess(&emod_UART_RxCpltCallback);
 
   /*Initialize the temperature and Battery measurement services */
   SYS_InitMeasurement();
@@ -170,7 +172,7 @@ void SystemApp_Init(void)
 #error LOW_POWER_DISABLE not defined
 #endif /* LOW_POWER_DISABLE */
 
-  UTIL_ADV_TRACE_StartRxProcess(&emod_UART_RxCpltCallback);
+
 
   /* USER CODE BEGIN SystemApp_Init_2 */
 ////  MX_TIM2_Init();

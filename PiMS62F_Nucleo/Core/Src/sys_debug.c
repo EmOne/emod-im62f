@@ -83,7 +83,7 @@ void DBG_Disable(void)
 #endif /* DEBUGGER_OFF */
 
   /* Disabled HAL_DBGMCU_  */
-  DBG_ConfigForLpm(1);
+  DBG_ConfigForLpm(DEBUGGER_ENABLED);
 
   /* USER CODE BEGIN DBG_Init_Last */
 

@@ -75,7 +75,7 @@ void S62F_RADIO_IoInit( void )
 //   Set DioIrqHandler port in IT_RISING mode
   RADIO_DIO_1_GPIO_CLK_ENABLE();
   initStruct.Mode = GPIO_MODE_IT_RISING;
-  initStruct.Pull = GPIO_PULLDOWN;
+  initStruct.Pull = GPIO_NOPULL;
   initStruct.Speed = GPIO_SPEED_HIGH;
   initStruct.Pin = RADIO_DIO_1_PIN;
   HAL_GPIO_Init(RADIO_DIO_1_PORT, &initStruct);
@@ -114,7 +114,7 @@ void S62F_RADIO_IoInit( void )
   /* NSS initialization */
   RADIO_NSS_CLK_ENABLE();
   initStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  initStruct.Pull = GPIO_PULLUP;
+  initStruct.Pull = GPIO_NOPULL;
   initStruct.Pin = RADIO_NSS_PIN;
   HAL_GPIO_Init( RADIO_NSS_PORT, &initStruct );
   HAL_GPIO_WritePin(RADIO_NSS_PORT, RADIO_NSS_PIN, GPIO_PIN_SET);
@@ -140,23 +140,41 @@ void S62F_RADIO_IoInit( void )
 void S62F_RADIO_IoDeInit( void )
 {
   /* SPI IO DeInit */
-	S62F_RADIO_SPI_IoDeInit();
+  S62F_RADIO_SPI_IoDeInit ();
 
 //  HAL_GPIO_DeInit ( RADIO_DIO_1_PORT, RADIO_DIO_1_PIN);
-//	GPIO_InitTypeDef initStruct={0};
-//	initStruct.Mode = GPIO_MODE_ANALOG;
-//	initStruct.Pull = GPIO_NOPULL;
-//	initStruct.Pin = RADIO_DIO_1_PIN;
-//	HAL_GPIO_Init( RADIO_DIO_1_PORT, &initStruct);
+	GPIO_InitTypeDef initStruct={0};
+	initStruct.Mode = GPIO_MODE_ANALOG;
+	initStruct.Pull = GPIO_NOPULL;
+	initStruct.Pin = RADIO_DIO_1_PIN;
+	HAL_GPIO_Init( RADIO_DIO_1_PORT, &initStruct);
 
 	HAL_EXTI_ClearPending(&hRADIO_DIO_exti[0], EXTI_TRIGGER_RISING_FALLING);
 	HAL_EXTI_ClearConfigLine(&hRADIO_DIO_exti[0]);
 	HAL_NVIC_DisableIRQ(RADIO_DIO_1_IRQn);
 
 //  HAL_GPIO_DeInit ( RADIO_BUSY_PORT, RADIO_BUSY_PIN);
-//	initStruct.Pin = RADIO_BUSY_PIN;
-//	HAL_GPIO_Init( RADIO_BUSY_PORT, &initStruct);
+	initStruct.Pin = RADIO_BUSY_PIN;
+	HAL_GPIO_Init( RADIO_BUSY_PORT, &initStruct);
 
+	initStruct.Pin = RADIO_DIO_2_PIN;
+	HAL_GPIO_Init( RADIO_DIO_2_PORT, &initStruct);
+
+	initStruct.Pin = RADIO_RX_SWITCH_POWER_PIN;
+	HAL_GPIO_Init( RADIO_RX_SWITCH_POWER_PORT, &initStruct);
+	initStruct.Pin = RADIO_TX_SWITCH_POWER_PIN;
+	HAL_GPIO_Init( RADIO_TX_SWITCH_POWER_PORT, &initStruct);
+
+	initStruct.Pin = RADIO_LEDTX_PIN;
+	HAL_GPIO_Init( RADIO_LEDTX_PORT, &initStruct);
+	initStruct.Pin = RADIO_LEDRX_PIN;
+	HAL_GPIO_Init( RADIO_LEDTX_PORT, &initStruct);
+  initStruct.Pin = DEVICE_SEL_PIN;
+  HAL_GPIO_Init ( DEVICE_SEL_PORT, &initStruct);
+//  initStruct.Pin = RADIO_NSS_PIN;
+//  HAL_GPIO_Init ( RADIO_NSS_PORT, &initStruct);
+//  initStruct.Pin = RADIO_RESET_PIN;
+//  HAL_GPIO_Init ( RADIO_RESET_PORT, &initStruct);
 }
 
 void S62F_RADIO_IoIrqInit( DioIrqHandler **irqHandlers )
@@ -405,11 +423,12 @@ static void S62F_RADIO_SPI_IoInit(SPI_HandleTypeDef *spiHandle)
   */
 static void S62F_RADIO_SPI_IoDeInit(void)
 {
-//  GPIO_InitTypeDef GPIO_InitStruct;
+  GPIO_InitTypeDef GPIO_InitStruct;
 
   /* Peripheral clock disable */
   /* no need to call SPI1_CLK_DISABLE() because going in LowPower it gets disabled automatically */
 
+  __HAL_SPI_DISABLE(&hspi1);
   /* DeInitialize Peripheral GPIOs */
   /* Instead of using HAL_GPIO_DeInit() which set ANALOG mode
      it's preferred to set in OUTPUT_PP mode, with the pins set to 0 */
@@ -417,14 +436,14 @@ static void S62F_RADIO_SPI_IoDeInit(void)
 //  HAL_GPIO_DeInit (RADIO_SPI_MISO_GPIO_PORT, RADIO_SPI_MISO_GPIO_PIN);
 //  HAL_GPIO_DeInit (RADIO_SPI_SCK_GPIO_PORT, RADIO_SPI_SCK_GPIO_PIN);
 
-//  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-//  GPIO_InitStruct.Pull = GPIO_PULLUP;
-//  GPIO_InitStruct.Pin = RADIO_SPI_MOSI_GPIO_PIN;
-//  HAL_GPIO_Init(RADIO_SPI_MOSI_GPIO_PORT, &GPIO_InitStruct);
-//  GPIO_InitStruct.Pin = RADIO_SPI_MISO_GPIO_PIN;
-//  HAL_GPIO_Init(RADIO_SPI_MISO_GPIO_PORT, &GPIO_InitStruct);
-//  GPIO_InitStruct.Pin = RADIO_SPI_SCK_GPIO_PIN;
-//  HAL_GPIO_Init(RADIO_SPI_SCK_GPIO_PORT, &GPIO_InitStruct);
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pin = RADIO_SPI_MOSI_GPIO_PIN;
+  HAL_GPIO_Init (RADIO_SPI_MOSI_GPIO_PORT, &GPIO_InitStruct);
+  GPIO_InitStruct.Pin = RADIO_SPI_MISO_GPIO_PIN;
+  HAL_GPIO_Init (RADIO_SPI_MISO_GPIO_PORT, &GPIO_InitStruct);
+  GPIO_InitStruct.Pin = RADIO_SPI_SCK_GPIO_PIN;
+  HAL_GPIO_Init (RADIO_SPI_SCK_GPIO_PORT, &GPIO_InitStruct);
 //
 //
 //  HAL_GPIO_WritePin(RADIO_SPI_MOSI_GPIO_PORT, RADIO_SPI_MOSI_GPIO_PIN, GPIO_PIN_RESET);

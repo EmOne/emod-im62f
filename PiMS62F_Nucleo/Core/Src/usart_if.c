@@ -145,6 +145,7 @@ UTIL_ADV_TRACE_Status_t vcom_DeInit(void)
 
   /* ##-3- Disable the NVIC for DMA ########################################### */
   /* USER CODE BEGIN 1 */
+  HAL_DMA_DeInit (&hdma_usart1_tx);
   HAL_NVIC_DisableIRQ(DMA1_Channel4_IRQn);
 #else
   /* ##-1- Reset peripherals ################################################## */
@@ -313,14 +314,14 @@ void vcom_ResumeCallback ( void )
 
 void vcom_Sleep ( void )
 {
-	GPIO_InitTypeDef gpioInitType;
-
-	USARTx_RX_GPIO_CLK_ENABLE();
-	gpioInitType.Mode = GPIO_MODE_IT_FALLING;
-	gpioInitType.Pin = USARTx_RX_PIN;
-	gpioInitType.Pull = GPIO_NOPULL;
-	gpioInitType.Speed = GPIO_SPEED_MEDIUM;
-	HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &gpioInitType);
+//	GPIO_InitTypeDef gpioInitType;
+//
+//	USARTx_RX_GPIO_CLK_ENABLE();
+//	gpioInitType.Mode = GPIO_MODE_IT_FALLING;
+//	gpioInitType.Pin = USARTx_RX_PIN;
+//	gpioInitType.Pull = GPIO_NOPULL;
+//	gpioInitType.Speed = GPIO_SPEED_MEDIUM;
+//	HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &gpioInitType);
 
   	EXTI_ConfigTypeDef hExtiConfig;
   	hExtiConfig.Line = EXTI_LINE_10; // PA10

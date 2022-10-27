@@ -322,13 +322,6 @@ void LoRaWAN_Init(void)
 
   /* USER CODE BEGIN LoRaWAN_Init_Last */
 
-	WiMODLoRaWAN.beginAndAutoSetup();
-
-//	WiMODLoRaWAN.PrintBasicDeviceInfo(&Serial);
-
-	WiMODLoRaWAN.SapLoRaWan->setRegion(lmHParams.ActiveRegion);
-
-//	JoinRequest();
   /* USER CODE END LoRaWAN_Init_Last */
 }
 
@@ -397,8 +390,9 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 				LORAWAN_SAP_ID,
 				LORAWAN_MSG_RECV_NO_DATA_IND,
 						&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 1);
+
 			}
-    		UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+	      UTIL_LPM_SetStopMode ((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
 		} else {
 			//LRW Port LEN: 1
 			tx->Payload[offset++] = appData->Port;

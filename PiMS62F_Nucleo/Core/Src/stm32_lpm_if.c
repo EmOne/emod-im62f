@@ -75,7 +75,7 @@ const struct UTIL_LPM_Driver_s UTIL_PowerDriver =
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-
+void ulp_SystemClock_Config(void);
 /* USER CODE END PFP */
 
 /* Exported functions --------------------------------------------------------*/
@@ -91,10 +91,16 @@ void PWR_EnterOffMode(void)
 
   UTIL_ADV_TRACE_DeInit ();
 
+  ulp_SystemClock_Config();
+
+  if (HAL_RTCEx_SetWakeUpTimer_IT (&hrtc, 0x2710, RTC_WAKEUPCLOCK_RTCCLK_DIV16)
+      != HAL_OK) //Wake up 0x1388:5000ms 16MHz interval
+    {
+      Error_Handler ();
+    }
+
   /*clear wake up flag*/
   SET_BIT(PWR->CR, PWR_CR_CWUF);
-
-  __HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
 
   __HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(&hrtc, RTC_FLAG_WUTF);
 
@@ -121,20 +127,25 @@ void PWR_EnterStopMode(void)
   UTILS_ENTER_CRITICAL_SECTION();
 
 //  Gpio_PreInit();
-  HAL_RTCEx_DeactivateWakeUpTimer (&hrtc);
 
   Sx_Board_IoDeInit();
 
-  HAL_ADC_MspDeInit(&hadc);
+  __HAL_ADC_DISABLE(&hadc);
+//  HAL_ADC_MspDeInit(&hadc);
 
   UTIL_ADV_TRACE_DeInit();
 
-  /*clear wake up flag*/
+  HAL_RTCEx_DeactivateWakeUpTimer (&hrtc);
+
+//  __HAL_RCC_LSI_DISABLE();
+
+  ulp_SystemClock_Config ();
+
+   /*clear wake up flag*/
   SET_BIT(PWR->CR, PWR_CR_CWUF);
 
   UTILS_EXIT_CRITICAL_SECTION();
   /* USER CODE BEGIN EnterStopMode_2 */
-
   /* USER CODE END EnterStopMode_2 */
   /* Enter Stop Mode */
   HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
@@ -150,10 +161,7 @@ void PWR_ExitStopMode(void)
 
   /* USER CODE END ExitStopMode_1 */
   /* Disable IRQ while the MCU is not running on HSI */
-
   UTILS_ENTER_CRITICAL_SECTION();
-
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /* After wake-up from STOP reconfigure the system clock */
   /* Enable HSI */
   __HAL_RCC_HSI_ENABLE();
@@ -166,6 +174,9 @@ void PWR_ExitStopMode(void)
   /* Wait till PLL is ready */
   while (__HAL_RCC_GET_FLAG(RCC_FLAG_PLLRDY) == RESET) {}
 
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /* Select PLL as system clock source */
   __HAL_RCC_SYSCLK_CONFIG(RCC_SYSCLKSOURCE_PLLCLK);
 
@@ -173,6 +184,11 @@ void PWR_ExitStopMode(void)
   while (__HAL_RCC_GET_SYSCLK_SOURCE() != RCC_SYSCLKSOURCE_STATUS_PLLCLK) {}
 
   /* initializes the peripherals */
+  __HAL_RCC_LSI_ENABLE();
+  while (__HAL_RCC_GET_FLAG(RCC_FLAG_LSIRDY) == RESET)
+    {
+    }
+
   UTIL_ADV_TRACE_Resume();
 
   HAL_ADC_MspInit(&hadc);
@@ -258,7 +274,52 @@ void PWR_ExitSleepMode(void)
 
 /* Private Functions Definition -----------------------------------------------*/
 /* USER CODE BEGIN PrFD */
+void ulp_SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
 
+	__HAL_RCC_PWR_CLK_ENABLE();
+	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
+
+	/* Poll VOSF bit of in PWR_CSR. Wait until it is reset to 0 */
+	while (__HAL_PWR_GET_FLAG(PWR_FLAG_VOS) != RESET) {
+	};
+  /** Configure the main internal regulator output voltage
+  */
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+  RCC_OscInitStruct.MSICalibrationValue = RCC_MSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_3;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+//  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK;
+//  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
+//
+//  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
+//  {
+//    Error_Handler();
+//  }
+  //	/* Set Voltage scale1 as MCU will run at 1MHz */
+  __HAL_RCC_SYSCLK_CONFIG(RCC_SYSCLKSOURCE_MSI);
+
+  while (__HAL_RCC_GET_SYSCLK_SOURCE() != RCC_SYSCLKSOURCE_STATUS_MSI) {}
+
+
+	__HAL_RCC_PWR_CLK_ENABLE();
+	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
+
+	/* Poll VOSF bit of in PWR_CSR. Wait until it is reset to 0 */
+	while (__HAL_PWR_GET_FLAG(PWR_FLAG_VOS) != RESET) {
+	};
+}
 /* USER CODE END PrFD */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
