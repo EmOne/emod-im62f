@@ -1955,6 +1955,8 @@ LmHandlerStartTXCW (uint16_t timeout)
       return LORAMAC_HANDLER_ERROR;
     }
 
+  LoRaMacStart();
+
   MlmeReq_t mlmeReq;
   mlmeReq.Type = MLME_TXCW;
   mlmeReq.Req.TxCw.Timeout = (uint16_t) (timeout);
@@ -1971,6 +1973,9 @@ LmHandlerStartTXCW1 (uint8_t power, uint32_t freq, uint16_t timeout)
     {
       return LORAMAC_HANDLER_ERROR;
     }
+
+  LoRaMacStart();
+
   MlmeReq_t mlmeReq;
   mlmeReq.Type = MLME_TXCW_1;
   mlmeReq.Req.TxCw.Timeout = (uint16_t) timeout;
