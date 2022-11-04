@@ -46,6 +46,8 @@
 /* External variables ---------------------------------------------------------*/
 /* USER CODE BEGIN EV */
 extern WiMODLoRaWAN_t WiMODLoRaWAN;
+extern TWiMODLORAWAN_RadioStackConfig radioStack;
+static uint8_t rejoinCounter = 0;
 /* USER CODE END EV */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -85,7 +87,7 @@ typedef enum TxEventType_e
 /**
   * @brief  LoRa End Node send request
   */
-static void SendTxData(void);
+static void Rejoin(void);
 
 /**
   * @brief  TX timer callback function
@@ -285,7 +287,7 @@ void LoRaWAN_Init(void)
 
   /* USER CODE END LoRaWAN_Init_1 */
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LmHandlerProcess), UTIL_SEQ_RFU, LmHandlerProcess);
-  UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), UTIL_SEQ_RFU, SendTxData);
+  UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LoRaRejoinEvent), UTIL_SEQ_RFU, Rejoin);
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_Reset), UTIL_SEQ_RFU, NVIC_SystemReset);
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_Join), UTIL_SEQ_RFU, JoinRequest);
   /* Init Info table used by LmHandler*/
@@ -494,6 +496,11 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 						&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 						1 + 9);
 				LmHandlerSetTxDatarate(lmHParams.TxDatarate);
+				rejoinCounter = 0;
+	      MibRequestConfirm_t mibSet;
+	      mibSet.Type = MIB_DEVICE_CLASS;
+	      mibSet.Param.Class = CLASS_A;
+	      LoRaMacMibSetRequestConfirm (&mibSet);
 				UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
 
 			} else {
@@ -506,13 +513,17 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
   /* USER CODE END OnRxData_1 */
  }
 
-static void SendTxData(void)
+static void Rejoin(void)
 {
 //  /* USER CODE BEGIN SendTxData_1 */
 //  uint16_t pressure = 0;
 //  int16_t temperature = 0;
 //  sensor_t sensor_data;
-//  UTIL_TIMER_Time_t nextTxIn = 0;
+	UTIL_TIMER_Time_t nextTxIn = 0;
+	LmHandlerAppData_t AppData;
+	AppData.Port = 0;
+	AppData.BufferSize = 0;
+	AppData.Buffer = NULL;
 //
 //#ifdef CAYENNE_LPP
 //  uint8_t channel = 0;
@@ -586,15 +597,16 @@ static void SendTxData(void)
 //  AppData.BufferSize = i;
 //#endif /* CAYENNE_LPP */
 
+	rejoinCounter++;
 
-//  if (LORAMAC_HANDLER_SUCCESS == LmHandlerSend(&AppData, MsgType, &nextTxIn, false))
-//  {
-//    APP_LOG(TS_ON, VLEVEL_L, "SEND REQUEST\r\n");
-//  }
-//  else if (nextTxIn > 0)
-//  {
-//    APP_LOG(TS_ON, VLEVEL_L, "Next Tx in  : ~%d second(s)\r\n", (nextTxIn / 1000));
-//  }
+  if (LORAMAC_HANDLER_SUCCESS == LmHandlerSend(&AppData, MsgType, &nextTxIn, false))
+  {
+    APP_LOG(TS_ON, VLEVEL_L, "SEND REQUEST\r\n");
+  }
+  else if (nextTxIn > 0)
+  {
+    APP_LOG(TS_ON, VLEVEL_L, "Next Tx in  : ~%d second(s)\r\n", (nextTxIn / 1000));
+  }
 
   /* USER CODE END SendTxData_1 */
 }
@@ -713,32 +725,10 @@ static void OnTxData(LmHandlerTxParams_t *params)
 
 static void JoinRequest( void )
 {
+	rejoinCounter = 0;
 	UTIL_TIMER_Start(&JoinLedTimer);
 	LmHandlerJoin(ActivationType);
-	if (ActivationType != ACTIVATION_TYPE_OTAA) {
-		UTIL_TIMER_Time_t nextTxIn = 0;
-		LmHandlerAppData_t AppData;
-		AppData.Port = 0;
-		AppData.BufferSize = 0;
-		AppData.Buffer = NULL;
 
-//		MibRequestConfirm_t mibSet;
-//		mibSet.Type = MIB_DEVICE_CLASS;
-//		mibSet.Param.Class = CLASS_A;
-//		LoRaMacMibSetRequestConfirm(&mibSet);
-
-		if (LORAMAC_HANDLER_SUCCESS
-				== LmHandlerSend(&AppData, LORAMAC_HANDLER_UNCONFIRMED_MSG,
-						&nextTxIn, false)) {
-			APP_LOG(TS_ON, VLEVEL_L, "SEND ACTIVATE REQUEST\r\n");
-		} else if (nextTxIn > 0) {
-			APP_LOG(TS_ON, VLEVEL_L, "Next Tx in  : ~%d second(s)\r\n", (nextTxIn / 1000));
-		}
-	}
-	else
-	{
-
-	}
 }
 
 static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
@@ -762,7 +752,7 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
       {
         APP_LOG(TS_OFF, VLEVEL_M, "OTAA =====================\r\n");
       }
-
+	  UTIL_LPM_SetStopMode ((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     }
     else
     {
@@ -774,8 +764,21 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
 		LORAWAN_SAP_ID,
 		LORAWAN_MSG_RECV_NO_DATA_IND,
 				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS], 1 + 1);
+
+		if ( rejoinCounter < radioStack.Retransmissions)
+		{
+			UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaRejoinEvent), CFG_SEQ_Prio_0);
+		}
+		else
+		{
+				MibRequestConfirm_t mibSet;
+				mibSet.Type = MIB_DEVICE_CLASS;
+				mibSet.Param.Class = CLASS_A;
+				LoRaMacMibSetRequestConfirm(&mibSet);
+			UTIL_LPM_SetStopMode ((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+		}
     }
-    UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+
   }
   /* USER CODE END OnJoinRequest_1 */
 }

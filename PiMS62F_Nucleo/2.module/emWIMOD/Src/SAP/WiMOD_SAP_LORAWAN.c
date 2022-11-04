@@ -1695,7 +1695,7 @@ TWiMODLRResultCodes sendMacCmd(const TWiMODLORAWAN_MacCmd* cmd, UINT8* statusRsp
 			1);
 
 	//TODO: Prepare MAC command to buffer
-	UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
+	UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaRejoinEvent), CFG_SEQ_Prio_0);
 
     return result;
 }

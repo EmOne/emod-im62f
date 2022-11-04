@@ -530,6 +530,19 @@ void LmHandlerJoin( ActivationType_t mode )
         mlmeReq.Req.Join.Datarate = LmHandlerParams.TxDatarate;
         LoRaMacMlmeRequest( &mlmeReq );
 
+		UTIL_TIMER_Time_t nextTxIn = 0;
+		LmHandlerAppData_t AppData;
+		AppData.Port = 0;
+		AppData.BufferSize = 0;
+		AppData.Buffer = NULL;
+		//		MibRequestConfirm_t mibSet;
+		//		mibSet.Type = MIB_DEVICE_CLASS;
+		//		mibSet.Param.Class = CLASS_A;
+		//		LoRaMacMibSetRequestConfirm(&mibSet);
+
+		LmHandlerSend(&AppData, LORAMAC_HANDLER_UNCONFIRMED_MSG, &nextTxIn,
+				false);
+
         // Notify upper layer
         LmHandlerCallbacks->OnJoinRequest( &JoinParams );
         LmHandlerRequestClass(LmHandlerParams.DefaultClass);
@@ -591,6 +604,7 @@ LmHandlerErrorStatus_t LmHandlerSend( LmHandlerAppData_t *appData, LmHandlerMsgT
         // The network isn't joined, try again.
         LmHandlerJoin(JoinParams.Mode);
         return LORAMAC_HANDLER_NO_NETWORK_JOINED;
+
     }
 
     if( ( LmHandlerPackages[PACKAGE_ID_COMPLIANCE]->IsRunning( ) == true ) && ( appData->Port != LmHandlerPackages[PACKAGE_ID_COMPLIANCE]->Port ) && ( appData->Port != 0 ) )

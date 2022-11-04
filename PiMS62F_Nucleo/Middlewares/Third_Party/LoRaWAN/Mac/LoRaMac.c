@@ -2349,27 +2349,30 @@ static LoRaMacStatus_t SendReJoinReq( JoinReqIdentifier_t joinReqType )
     // Setup join/rejoin message
     switch( joinReqType )
     {
-        case JOIN_REQ:
-        {
-            SwitchClass( CLASS_C );
 
-            MacCtx.TxMsg.Type = LORAMAC_MSG_TYPE_JOIN_REQUEST;
-            MacCtx.TxMsg.Message.JoinReq.Buffer = MacCtx.PktBuffer;
-            MacCtx.TxMsg.Message.JoinReq.BufSize = LORAMAC_PHY_MAXPAYLOAD;
+    case JOIN_REQ:
+      {
+	SwitchClass (CLASS_C);
 
-            macHdr.Bits.MType = FRAME_TYPE_JOIN_REQ;
-            MacCtx.TxMsg.Message.JoinReq.MHDR.Value = macHdr.Value;
+	MacCtx.TxMsg.Type = LORAMAC_MSG_TYPE_JOIN_REQUEST;
+	MacCtx.TxMsg.Message.JoinReq.Buffer = MacCtx.PktBuffer;
+	MacCtx.TxMsg.Message.JoinReq.BufSize = LORAMAC_PHY_MAXPAYLOAD;
 
-            memcpy1( MacCtx.TxMsg.Message.JoinReq.JoinEUI, SecureElementGetJoinEui( ), LORAMAC_JOIN_EUI_FIELD_SIZE );
-            memcpy1( MacCtx.TxMsg.Message.JoinReq.DevEUI, SecureElementGetDevEui( ), LORAMAC_DEV_EUI_FIELD_SIZE );
+	macHdr.Bits.MType = FRAME_TYPE_JOIN_REQ;
+	MacCtx.TxMsg.Message.JoinReq.MHDR.Value = macHdr.Value;
 
-            allowDelayedTx = false;
+	memcpy1 (MacCtx.TxMsg.Message.JoinReq.JoinEUI,
+		 SecureElementGetJoinEui (), LORAMAC_JOIN_EUI_FIELD_SIZE);
+	memcpy1 (MacCtx.TxMsg.Message.JoinReq.DevEUI, SecureElementGetDevEui (),
+		 LORAMAC_DEV_EUI_FIELD_SIZE);
 
-            break;
-        }
-        default:
-            status = LORAMAC_STATUS_SERVICE_UNKNOWN;
-            break;
+	allowDelayedTx = false;
+
+	break;
+      }
+    default:
+      status = LORAMAC_STATUS_SERVICE_UNKNOWN;
+      break;
     }
 
     // Schedule frame
@@ -4626,19 +4629,22 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t* mlmeRequest )
                 return LORAMAC_STATUS_BUSY;
             }
 
-            ResetMacParameters( );
+	ResetMacParameters ();
 
-            Nvm.MacGroup1.ChannelsDatarate = RegionAlternateDr( Nvm.MacGroup2.Region, mlmeRequest->Req.Join.Datarate, ALTERNATE_DR );
+	Nvm.MacGroup1.ChannelsDatarate = RegionAlternateDr (
+	    Nvm.MacGroup2.Region, mlmeRequest->Req.Join.Datarate, ALTERNATE_DR);
 
-            queueElement.Status = LORAMAC_EVENT_INFO_STATUS_JOIN_FAIL;
+	queueElement.Status = LORAMAC_EVENT_INFO_STATUS_JOIN_FAIL;
 
-            status = SendReJoinReq( JOIN_REQ );
+	status = SendReJoinReq (JOIN_REQ);
 
-            if( status != LORAMAC_STATUS_OK )
-            {
-                // Revert back the previous datarate ( mainly used for US915 like regions )
-                Nvm.MacGroup1.ChannelsDatarate = RegionAlternateDr( Nvm.MacGroup2.Region, mlmeRequest->Req.Join.Datarate, ALTERNATE_DR_RESTORE );
-            }
+	if (status != LORAMAC_STATUS_OK)
+	  {
+	    // Revert back the previous datarate ( mainly used for US915 like regions )
+	    Nvm.MacGroup1.ChannelsDatarate = RegionAlternateDr (
+		Nvm.MacGroup2.Region, mlmeRequest->Req.Join.Datarate,
+		ALTERNATE_DR_RESTORE);
+	  }
             break;
         }
         case MLME_LINK_CHECK:
