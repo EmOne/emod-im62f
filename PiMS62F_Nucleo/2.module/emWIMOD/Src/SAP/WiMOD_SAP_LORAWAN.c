@@ -272,6 +272,13 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
 
     	ActivationType = ACTIVATION_TYPE_ABP;
 
+      LoRaMacStart ();
+      NvmDataMgmtEvent (
+	  LORAMAC_NVM_NOTIFY_FLAG_CRYPTO
+	      | LORAMAC_NVM_NOTIFY_FLAG_SECURE_ELEMENT |
+      LORAMAC_NVM_NOTIFY_FLAG_MAC_GROUP2);
+      NvmDataMgmtStore ();
+
         //copy response status
         result = WiMODLR_RESULT_OK;
 #endif
@@ -1207,6 +1214,15 @@ TWiMODLRResultCodes setRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 				radioStack.SubBandMask2 = data->SubBandMask2;
 			}
 
+	  MibRequestConfirm_t mibReq;
+	  mibReq.Type = MIB_NVM_CTXS;
+	  LoRaMacMibGetRequestConfirm (&mibReq);
+	  LoRaMacNvmData_t *nvm = mibReq.Param.Contexts;
+	  nvm->userSettings = radioStack;
+	  NvmDataMgmtEvent (
+	      LORAMAC_NVM_NOTIFY_FLAG_USER_SETTING
+		  | LORAMAC_NVM_NOTIFY_FLAG_MAC_GROUP1);
+	  NvmDataMgmtStore ();
 			result = LoRaWAN_Status_Ok;
 		}
     } else {
@@ -1257,9 +1273,18 @@ TWiMODLRResultCodes getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 //        if (result == WiMODLR_RESULT_OK) {
 //            const TWiMODLR_HCIMessage* rx = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage();
 //
-    		LmHandlerGetTxDatarate((int8_t *)&radioStack.DataRateIndex);
-            data->DataRateIndex   		= radioStack.DataRateIndex; //rx->Payload[offset++];
+      MibRequestConfirm_t mibReq;
+      mibReq.Type = MIB_NVM_CTXS;
+      LoRaMacMibGetRequestConfirm (&mibReq);
+      LoRaMacNvmData_t *nvm = mibReq.Param.Contexts;
+      radioStack = nvm->userSettings;
 
+      LmHandlerGetTxDatarate ((int8_t*) &data->DataRateIndex);
+      if (data->DataRateIndex != radioStack.DataRateIndex)
+	{
+	  data->DataRateIndex = radioStack.DataRateIndex; //rx->Payload[offset++];
+	  LmHandlerSetTxDatarate (data->DataRateIndex);
+	}
             getPhy.Attribute = PHY_DEF_MAX_EIRP;
             phyParam = RegionGetPhyParam( WiMOD_SAP_LoRaWAN.region, &getPhy );
 
@@ -1267,21 +1292,42 @@ TWiMODLRResultCodes getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
             data->TXPowerLevel    		= (UINT8) phyParam.fValue - (radioStack.TXPowerLevel * 2); //rx->Payload[offset++];
             bool state = true;
             if(LmHandlerGetAdrEnable(&state) == LORAMAC_HANDLER_SUCCESS )
-            	radioStack.Options |=  state << 0;
-            else
-            	radioStack.Options |=  0x1 << 0;
-
+	{
+	  if ((radioStack.Options & 0x01) != state)
+	    {
+	      LmHandlerSetAdrEnable (!state);
+	    }
+//	  radioStack.Options |= state << 0;
+	}
+//            else
+//	{
+//            	radioStack.Options |=  0x1 << 0;
+//	}
 			if (LmHandlerGetDutyCycleEnable(&state) == LORAMAC_HANDLER_SUCCESS)
-				radioStack.Options |= state << 1;
-			else
-				radioStack.Options |= 0x1 << 1;
+	{
+	  if (((radioStack.Options >> 1) & 0x01) != state)
+	    {
+	      LmHandlerSetDutyCycleEnable (!state);
+	    }
+//	  radioStack.Options |= state << 1;
+	}
 
-			DeviceClass_t currentClass = CLASS_A;
-			if (LmHandlerGetCurrentClass(&currentClass) == LORAMAC_HANDLER_SUCCESS)
-				if(currentClass == CLASS_C) { radioStack.Options |= (0x1 << 2); }
-				else {radioStack.Options &= ~(0x1 << 2);}
-			else
-				radioStack.Options &= ~(0x1 << 2);
+//			else
+//				radioStack.Options |= 0x1 << 1;
+
+      DeviceClass_t currentClass = CLASS_A;
+      if (LmHandlerGetCurrentClass (&currentClass) == LORAMAC_HANDLER_SUCCESS)
+	if (currentClass != ((radioStack.Options >> 2) & 0x01))
+	  {
+	    LmHandlerRequestClass (!currentClass);
+//	    radioStack.Options |= (0x1 << 2);
+	  }
+//	else
+//	  {
+//	    radioStack.Options &= ~(0x1 << 2);
+//	  }
+//      else
+//	radioStack.Options &= ~(0x1 << 2);
 
             data->Options         		= radioStack.Options; //rx->Payload[offset++];
             data->PowerSavingMode 		= radioStack.PowerSavingMode; //rx->Payload[offset++];

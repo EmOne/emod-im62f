@@ -3404,9 +3404,9 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t* primitives, LoRaMacC
 		Nvm.SecureElement.Crc32 = crc;
 		notifyFlags |= LORAMAC_NVM_NOTIFY_FLAG_SECURE_ELEMENT;
 	}
-	CallNvmDataChangeCallback(notifyFlags);
-	MacCtx.MacState = LORAMAC_IDLE;
-	NvmDataMgmtStore();
+//	CallNvmDataChangeCallback(notifyFlags);
+//	MacCtx.MacState = LORAMAC_IDLE;
+//	NvmDataMgmtStore();
 #endif
 
     return LORAMAC_STATUS_OK;

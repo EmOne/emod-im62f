@@ -24,10 +24,11 @@
 #include "utilities.h"
 #include "eeprom-board.h"
 #include "lorawan_conf.h"
+#include "nvmm.h"
 
 uint8_t EepromMcuWriteBuffer( uint16_t addr, uint8_t *buffer, uint16_t size )
 {
-    uint8_t status = FAIL;
+  uint8_t status = FAIL;
 
     assert_param( ( FLASH_EEPROM_BASE + addr ) >= FLASH_EEPROM_BASE );
     assert_param( buffer != NULL );
@@ -48,7 +49,7 @@ uint8_t EepromMcuWriteBuffer( uint16_t addr, uint8_t *buffer, uint16_t size )
 
         }
         CRITICAL_SECTION_END( );
-        status = SUCCESS;
+      status = SUCCESS;
     }
 
     HAL_FLASHEx_DATAEEPROM_Lock( );
@@ -62,7 +63,7 @@ uint8_t EepromMcuReadBuffer( uint16_t addr, uint8_t *buffer, uint16_t size )
     assert_param( size < ( FLASH_EEPROM_END - FLASH_EEPROM_BASE ) );
 
     memcpy1( buffer, ( uint8_t* )( FLASH_EEPROM_BASE + addr ), size );
-    return SUCCESS;
+  return SUCCESS;
 }
 
 void EepromMcuSetDeviceAddr( uint8_t addr )

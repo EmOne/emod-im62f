@@ -43,8 +43,7 @@ extern "C"
 #include <stdbool.h>
 
 enum {
-	NVMM_FAIL = 0,
-	NVMM_SUCCESS
+  NVMM_SUCCESS = 0, NVMM_FAIL = ~NVMM_SUCCESS
 };
 
 /*!

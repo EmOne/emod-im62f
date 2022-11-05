@@ -122,8 +122,16 @@ void PWR_ExitOffMode(void)
 void PWR_EnterStopMode(void)
 {
   /* USER CODE BEGIN EnterStopMode_1 */
+//	GPIO_InitTypeDef GPIO_InitStruct = { 0 };
+//	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+//	GPIO_InitStruct.Pull = GPIO_NOPULL;
+//
+//	GPIO_InitStruct.Pin = CS_Pin;
+//	HAL_GPIO_Init(CS_GPIO_Port, &GPIO_InitStruct);
+//	HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_SET);
+	HAL_GPIO_DeInit(CS_GPIO_Port, CS_Pin);
 
-  /* USER CODE END EnterStopMode_1 */
+  /* USER C	ODE END EnterStopMode_1 */
   UTILS_ENTER_CRITICAL_SECTION();
 
 //  Gpio_PreInit();
@@ -141,6 +149,7 @@ void PWR_EnterStopMode(void)
 
   ulp_SystemClock_Config ();
 
+  __HAL_RCC_LSI_DISABLE();
    /*clear wake up flag*/
   SET_BIT(PWR->CR, PWR_CR_CWUF);
 

@@ -84,6 +84,12 @@ typedef enum TxEventType_e
 /* USER CODE END PM */
 
 /* Private function prototypes -----------------------------------------------*/
+
+/**
+ * @brief  LoRa End Node request reset
+ */
+static void
+Reset (void);
 /**
   * @brief  LoRa End Node send request
   */
@@ -288,8 +294,9 @@ void LoRaWAN_Init(void)
   /* USER CODE END LoRaWAN_Init_1 */
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LmHandlerProcess), UTIL_SEQ_RFU, LmHandlerProcess);
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LoRaRejoinEvent), UTIL_SEQ_RFU, Rejoin);
-  UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_Reset), UTIL_SEQ_RFU, NVIC_SystemReset);
+  UTIL_SEQ_RegTask ((1 << CFG_SEQ_Task_Reset), UTIL_SEQ_RFU, Reset);
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_Join), UTIL_SEQ_RFU, JoinRequest);
+
   /* Init Info table used by LmHandler*/
   LoraInfo_Init();
 
@@ -299,10 +306,18 @@ void LoRaWAN_Init(void)
   LmHandlerConfigure(&lmHParams);
 
   /* USER CODE BEGIN LoRaWAN_Init_2 */
+  WiMODLoRaWAN.beginAndAutoSetup ();
+
+  WiMODLoRaWAN.SapLoRaWan->setRegion (lmHParams.ActiveRegion);
 
 //  UTIL_TIMER_Start(&JoinLedTimer);
 
   /* USER CODE END LoRaWAN_Init_2 */
+//  if (LmHandlerJoinStatus () == LORAMAC_HANDLER_SET)
+//    {
+//      JoinRequest ();
+//    }
+
 
 //  LmHandlerJoin(ActivationType);
 
@@ -512,6 +527,12 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 	}
   /* USER CODE END OnRxData_1 */
  }
+
+static void
+Reset (void)
+{
+  NVIC_SystemReset ();
+}
 
 static void Rejoin(void)
 {
@@ -752,6 +773,27 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
       {
         APP_LOG(TS_OFF, VLEVEL_M, "OTAA =====================\r\n");
       }
+
+	  UTIL_TIMER_Time_t nextTxIn = 0;
+	  LmHandlerAppData_t AppData;
+	  AppData.Port = 0;
+	  AppData.BufferSize = 0;
+	  AppData.Buffer = NULL;
+	  //		MibRequestConfirm_t mibSet;
+	  //		mibSet.Type = MIB_DEVICE_CLASS;
+	  //		mibSet.Param.Class = CLASS_A;
+	  //		LoRaMacMibSetRequestConfirm(&mibSet);
+
+	  LmHandlerSend (&AppData, LORAMAC_HANDLER_UNCONFIRMED_MSG, &nextTxIn,
+	  false);
+
+	  MibRequestConfirm_t mibReq;
+	  mibReq.Type = MIB_NVM_CTXS;
+	  LoRaMacMibGetRequestConfirm (&mibReq);
+	  LoRaMacNvmData_t *nvm = mibReq.Param.Contexts;
+
+	  nvm->MacGroup1.ChannelsDatarate = nvm->userSettings.DataRateIndex;
+
 	  UTIL_LPM_SetStopMode ((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     }
     else

@@ -362,29 +362,54 @@ LmHandlerErrorStatus_t LmHandlerConfigure( LmHandlerParams_t *handlerParams )
     // Try to restore from NVM and query the mac if possible.
     if( nbNvmData > 0 )
     {
-        CtxRestoreDone = true;
+      CtxRestoreDone = true;
+      mibReq.Type = MIB_DEV_ADDR;
+      LoRaMacMibGetRequestConfirm (&mibReq);
+      memcpy1 ((uint8_t*) &CommissioningParams.DevAddr,
+	       (uint8_t*) &mibReq.Param.DevAddr, 4);
     }
     else
     {
-        CtxRestoreDone = false;
-    }
-
-    // Read secure-element DEV_EUI and JOIN_EUI values.
-	mibReq.Type = MIB_DEV_EUI;
-	LoRaMacMibGetRequestConfirm(&mibReq);
-	memcpy1(CommissioningParams.DevEui, mibReq.Param.DevEui, 8);
-
-    mibReq.Type = MIB_JOIN_EUI;
-    LoRaMacMibGetRequestConfirm( &mibReq );
-    memcpy1( CommissioningParams.JoinEui, mibReq.Param.JoinEui, 8 );
+      CtxRestoreDone = false;
 
 #if ( STATIC_DEVICE_ADDRESS != 1 )
-    CommissioningParams.DevAddr = LmHandlerCallbacks->GetDevAddr();
+      CommissioningParams.DevAddr = LmHandlerCallbacks->GetDevAddr ();
 #endif /* STATIC_DEVICE_ADDRESS != 1 */
 
-    mibReq.Type = MIB_DEV_ADDR;
-    mibReq.Param.DevAddr = CommissioningParams.DevAddr;
-    LoRaMacMibSetRequestConfirm(&mibReq);
+      mibReq.Type = MIB_DEV_ADDR;
+      mibReq.Param.DevAddr = CommissioningParams.DevAddr;
+      LoRaMacMibSetRequestConfirm (&mibReq);
+
+      mibReq.Type = MIB_PUBLIC_NETWORK;
+      mibReq.Param.EnablePublicNetwork = LORAWAN_PUBLIC_NETWORK;
+      LoRaMacMibSetRequestConfirm (&mibReq);
+
+      mibReq.Type = MIB_NET_ID;
+      mibReq.Param.NetID = LORAWAN_NETWORK_ID;
+      LoRaMacMibSetRequestConfirm (&mibReq);
+
+      mibReq.Type = MIB_REPEATER_SUPPORT;
+      mibReq.Param.EnableRepeaterSupport = LORAWAN_REPEATER_SUPPORT;
+      LoRaMacMibSetRequestConfirm (&mibReq);
+
+      mibReq.Type = MIB_ADR;
+      mibReq.Param.AdrEnable = LmHandlerParams.AdrEnable;
+      LoRaMacMibSetRequestConfirm (&mibReq);
+
+    }
+
+  mibReq.Type = MIB_ABP_LORAWAN_VERSION;
+  mibReq.Param.AbpLrWanVersion.Value = ABP_ACTIVATION_LRWAN_VERSION;
+  LoRaMacMibSetRequestConfirm (&mibReq);
+
+  // Read secure-element DEV_EUI and JOIN_EUI values.
+  mibReq.Type = MIB_DEV_EUI;
+  LoRaMacMibGetRequestConfirm (&mibReq);
+  memcpy1 (CommissioningParams.DevEui, mibReq.Param.DevEui, 8);
+
+  mibReq.Type = MIB_JOIN_EUI;
+  LoRaMacMibGetRequestConfirm (&mibReq);
+  memcpy1 (CommissioningParams.JoinEui, mibReq.Param.JoinEui, 8);
 
     MW_LOG(TS_OFF, VLEVEL_M, "###### DevEui:  %02X:%02X:%02X:%02X:%02X:%02X:%02X:%02X\r\n",
            HEX8(CommissioningParams.DevEui));
@@ -400,22 +425,6 @@ LmHandlerErrorStatus_t LmHandlerConfigure( LmHandlerParams_t *handlerParams )
     MW_LOG(TS_OFF, VLEVEL_L, "###### KMS ENABLED \r\n");
 #endif /* LORAWAN_KMS == 1 */
 
-    mibReq.Type = MIB_PUBLIC_NETWORK;
-    mibReq.Param.EnablePublicNetwork = LORAWAN_PUBLIC_NETWORK;
-    LoRaMacMibSetRequestConfirm(&mibReq);
-
-    mibReq.Type = MIB_NET_ID;
-    mibReq.Param.NetID = LORAWAN_NETWORK_ID;
-    LoRaMacMibSetRequestConfirm(&mibReq);
-
-    mibReq.Type = MIB_REPEATER_SUPPORT;
-    mibReq.Param.EnableRepeaterSupport = LORAWAN_REPEATER_SUPPORT;
-    LoRaMacMibSetRequestConfirm( &mibReq );
-
-    mibReq.Type = MIB_ADR;
-    mibReq.Param.AdrEnable = LmHandlerParams.AdrEnable;
-    LoRaMacMibSetRequestConfirm( &mibReq );
-
     GetPhyParams_t getPhy;
     PhyParam_t phyParam;
     getPhy.Attribute = PHY_DUTY_CYCLE;
@@ -427,6 +436,7 @@ LmHandlerErrorStatus_t LmHandlerConfigure( LmHandlerParams_t *handlerParams )
     /* override previous value if reconfigure new region */
     LoRaMacTestSetDutyCycleOn( LmHandlerParams.DutyCycleEnabled );
 
+  LoRaMacStart ();
     return LORAMAC_HANDLER_SUCCESS;
 }
 
@@ -529,19 +539,6 @@ void LmHandlerJoin( ActivationType_t mode )
         mlmeReq.Type = MLME_LINK_CHECK;
         mlmeReq.Req.Join.Datarate = LmHandlerParams.TxDatarate;
         LoRaMacMlmeRequest( &mlmeReq );
-
-		UTIL_TIMER_Time_t nextTxIn = 0;
-		LmHandlerAppData_t AppData;
-		AppData.Port = 0;
-		AppData.BufferSize = 0;
-		AppData.Buffer = NULL;
-		//		MibRequestConfirm_t mibSet;
-		//		mibSet.Type = MIB_DEVICE_CLASS;
-		//		mibSet.Param.Class = CLASS_A;
-		//		LoRaMacMibSetRequestConfirm(&mibSet);
-
-		LmHandlerSend(&AppData, LORAMAC_HANDLER_UNCONFIRMED_MSG, &nextTxIn,
-				false);
 
         // Notify upper layer
         LmHandlerCallbacks->OnJoinRequest( &JoinParams );

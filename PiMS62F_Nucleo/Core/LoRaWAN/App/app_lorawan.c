@@ -74,8 +74,7 @@ void MX_LoRaWAN_Init(void)
   /* USER CODE END MX_LoRaWAN_Init_2 */
     LoRaWAN_Init (); //Use on WiMod activation and reactivation
   /* USER CODE BEGIN MX_LoRaWAN_Init_3 */
-  WiMODLoRaWAN.beginAndAutoSetup ();
-  WiMODLoRaWAN.SapLoRaWan->setRegion (lmHParams.ActiveRegion);
+
   /* USER CODE END MX_LoRaWAN_Init_3 */
 }
 
