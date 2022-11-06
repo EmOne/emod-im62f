@@ -101,8 +101,7 @@ TWiMODLR_DevMgmt_FwInfo firmwareInfo = {
 		WiMODLR_RESULT_OK,
 		0x00,
 		0x01,
-		0x0000,
-		"21 OCT 22",
+		0x0001, "6 NOV 22",
 		"eMOD Module by EmOne",
 };
 

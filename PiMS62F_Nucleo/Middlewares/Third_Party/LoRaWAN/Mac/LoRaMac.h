@@ -337,6 +337,14 @@ typedef struct sLoRaMacRxStatus
     * Holds the current rx window slot
     */
     LoRaMacRxSlot_t RxSlot;
+  /*
+   * Holds the current rx channel
+   */
+  uint8_t Channel;
+  /*
+   * Holds the current rx DataRate
+   */
+  uint8_t DataRate;
 }LoRaMacRxStatus_t;
 
 /*!
@@ -2455,7 +2463,9 @@ typedef struct sLoRaMacPrimitives
      *
      * \param   [OUT] MLME-Indication parameters
      */
-    void ( *MacMlmeIndication )( MlmeIndication_t* MlmeIndication, LoRaMacRxStatus_t* RxStatus );
+  void
+  (*MacMlmeIndication) (MlmeIndication_t *MlmeIndication,
+			LoRaMacRxStatus_t *RxStatus);
 }LoRaMacPrimitives_t;
 
 /*!

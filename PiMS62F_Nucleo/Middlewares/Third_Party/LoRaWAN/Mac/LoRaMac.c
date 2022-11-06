@@ -831,6 +831,8 @@ static void ProcessRadioRxDone( void )
     MacCtx.RxStatus.Rssi = rssi;
     MacCtx.RxStatus.Snr = snr;
     MacCtx.RxStatus.RxSlot = MacCtx.RxSlot;
+  MacCtx.RxStatus.Channel = MacCtx.Channel;
+
     MacCtx.McpsIndication.Port = 0;
     MacCtx.McpsIndication.Multicast = 0;
     MacCtx.McpsIndication.FramePending = 0;
@@ -1429,7 +1431,8 @@ static void LoRaMacHandleIndicationEvents( void )
     if( MacCtx.MacFlags.Bits.MlmeInd == 1 )
     {
         MacCtx.MacFlags.Bits.MlmeInd = 0;
-        MacCtx.MacPrimitives->MacMlmeIndication( &MacCtx.MlmeIndication, &MacCtx.RxStatus );
+      MacCtx.MacPrimitives->MacMlmeIndication (&MacCtx.MlmeIndication,
+					       &MacCtx.RxStatus);
         UpdateRxSlotIdleState();
     }
 
@@ -1439,7 +1442,8 @@ static void LoRaMacHandleIndicationEvents( void )
         schduleUplinkIndication.MlmeIndication = MLME_SCHEDULE_UPLINK;
         schduleUplinkIndication.Status = LORAMAC_EVENT_INFO_STATUS_OK;
 
-        MacCtx.MacPrimitives->MacMlmeIndication( &schduleUplinkIndication, &MacCtx.RxStatus );
+      MacCtx.MacPrimitives->MacMlmeIndication (&schduleUplinkIndication,
+					       &MacCtx.RxStatus);
         MacCtx.MacFlags.Bits.MlmeSchedUplinkInd = 0;
     }
 

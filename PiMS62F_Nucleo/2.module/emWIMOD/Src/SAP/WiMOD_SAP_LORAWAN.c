@@ -260,7 +260,7 @@ TWiMODLRResultCodes activateDevice(TWiMODLORAWAN_ActivateDeviceData* activationD
         }
 #else
 
-        LmHandlerStop();
+//        LmHandlerStop();
 
         memcpy(activateData.AppSKey, activationData->AppSKey, 16);
         memcpy(activateData.NwkSKey, activationData->NwkSKey, 16);
@@ -531,6 +531,7 @@ TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data *data,
 		appData.Port = data->Port;
 		appData.Buffer = (uint8_t *)&data->Payload;
 		MsgType = LORAMAC_HANDLER_UNCONFIRMED_MSG;
+
 		LmHandlerSend(&appData, LORAMAC_HANDLER_UNCONFIRMED_MSG, &u32CreditTime, false);
 
 //		UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
@@ -593,6 +594,7 @@ TWiMODLRResultCodes sendCData(const TWiMODLORAWAN_TX_Data* data, UINT8* statusRs
 		//TODO: Register send unreliable data to LORA message queue and expected air-time calculation
 		u32CreditTime = 0xFFFFFFFF;
 
+      LmHandlerRequestClass (CLASS_C);
 		appData.BufferSize = MIN((WiMOD_LORAWAN_TX_PAYLOAD_SIZE-1), data->Length);
 		appData.Port = data->Port;
 		appData.Buffer = (uint8_t *) &data->Payload;
@@ -1442,6 +1444,8 @@ TWiMODLRResultCodes factoryReset(UINT8* statusRsp)
 //            *statusRsp = WiMOD_SAP_LoRaWAN.HciParser->GetRxMessage()->Payload[WiMODLR_HCI_RSP_STATUS_POS];
 //        }
     	NvmDataMgmtFactoryReset();
+      LmHandlerStop ();
+      LmHandlerConfigure (&lmHParams, true);
     	result = WiMODLR_RESULT_OK;
     } else {
     	result = WiMODLR_RESULT_PAYLOAD_PTR_ERROR;
@@ -1455,7 +1459,7 @@ TWiMODLRResultCodes factoryReset(UINT8* statusRsp)
 			LORAWAN_MSG_FACTORY_RESET_RSP,
 			&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 			1);
-
+  UTIL_LPM_SetStopMode ((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
     return result;
 }
 

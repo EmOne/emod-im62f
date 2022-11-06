@@ -320,7 +320,8 @@ LmHandlerErrorStatus_t LmHandlerRequestClass(DeviceClass_t newClass);
  * \retval status Returns \ref LORAMAC_HANDLER_SUCCESS if configuration is
  *                done else \ref LORAMAC_HANDLER_ERROR
  */
-LmHandlerErrorStatus_t LmHandlerConfigure(LmHandlerParams_t *handlerParams);
+LmHandlerErrorStatus_t
+LmHandlerConfigure (LmHandlerParams_t *handlerParams, bool factoryReset);
 
 /*!
  * \brief LoRaMac handler package initialization

@@ -303,7 +303,7 @@ void LoRaWAN_Init(void)
   /* Init the Lora Stack*/
   LmHandlerInit(&LmHandlerCallbacks);
 
-  LmHandlerConfigure(&lmHParams);
+  LmHandlerConfigure (&lmHParams, false);
 
   /* USER CODE BEGIN LoRaWAN_Init_2 */
   WiMODLoRaWAN.beginAndAutoSetup ();
@@ -497,7 +497,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 				//Channel idx
 				tx->Payload[5] = params->Channel;
 				//DR idx
-				tx->Payload[6] = params->Datarate;
+	      tx->Payload[6] = params->Datarate;
 				//RSSi
 				tx->Payload[7] = params->Rssi;
 				//SNR
@@ -516,6 +516,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 	      mibSet.Type = MIB_DEVICE_CLASS;
 	      mibSet.Param.Class = CLASS_A;
 	      LoRaMacMibSetRequestConfirm (&mibSet);
+	      LoRaMacStart ();
 				UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
 
 			} else {
@@ -710,6 +711,7 @@ static void OnTxData(LmHandlerTxParams_t *params)
 				LORAWAN_MSG_SEND_CDATA_TX_IND,
 				&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 				1 + 8);
+	      UTIL_LPM_SetStopMode ((1 << CFG_LPM_APPLI_Id), UTIL_LPM_DISABLE);
       }
       else
       {
@@ -719,7 +721,7 @@ static void OnTxData(LmHandlerTxParams_t *params)
 								LORAWAN_MSG_SEND_UDATA_TX_IND,
 								&tx->Payload[WiMODLR_HCI_RSP_STATUS_POS],
 								1 + 2);
-		UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+	      UTIL_LPM_SetStopMode ((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
       }
 
     } else {
@@ -746,9 +748,10 @@ static void OnTxData(LmHandlerTxParams_t *params)
 
 static void JoinRequest( void )
 {
-	rejoinCounter = 0;
-	UTIL_TIMER_Start(&JoinLedTimer);
-	LmHandlerJoin(ActivationType);
+  rejoinCounter = 0;
+  UTIL_TIMER_Start (&JoinLedTimer);
+
+  LmHandlerJoin (ActivationType);
 
 }
 
@@ -774,19 +777,6 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
         APP_LOG(TS_OFF, VLEVEL_M, "OTAA =====================\r\n");
       }
 
-	  UTIL_TIMER_Time_t nextTxIn = 0;
-	  LmHandlerAppData_t AppData;
-	  AppData.Port = 0;
-	  AppData.BufferSize = 0;
-	  AppData.Buffer = NULL;
-	  //		MibRequestConfirm_t mibSet;
-	  //		mibSet.Type = MIB_DEVICE_CLASS;
-	  //		mibSet.Param.Class = CLASS_A;
-	  //		LoRaMacMibSetRequestConfirm(&mibSet);
-
-	  LmHandlerSend (&AppData, LORAMAC_HANDLER_UNCONFIRMED_MSG, &nextTxIn,
-	  false);
-
 	  MibRequestConfirm_t mibReq;
 	  mibReq.Type = MIB_NVM_CTXS;
 	  LoRaMacMibGetRequestConfirm (&mibReq);
@@ -794,8 +784,8 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
 
 	  nvm->MacGroup1.ChannelsDatarate = nvm->userSettings.DataRateIndex;
 
-	  UTIL_LPM_SetStopMode ((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
-    }
+//	  UTIL_LPM_SetStopMode ((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
+	}
     else
     {
       APP_LOG(TS_OFF, VLEVEL_M, "\r\n###### = JOIN FAILED\r\n");

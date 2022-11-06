@@ -235,7 +235,8 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm );
  * \param   [IN] mlmeIndication - Pointer to the indication structure,
  *               containing indication attributes.
  */
-static void MlmeIndication( MlmeIndication_t *mlmeIndication, LoRaMacRxStatus_t *RxStatus );
+static void
+MlmeIndication (MlmeIndication_t *mlmeIndication, LoRaMacRxStatus_t *RxStatus);
 
 #if ( LORAMAC_CLASSB_ENABLED == 1 )
 /*!
@@ -329,7 +330,8 @@ LmHandlerErrorStatus_t LmHandlerInit( LmHandlerCallbacks_t *handlerCallbacks )
     return LORAMAC_HANDLER_SUCCESS;
 }
 
-LmHandlerErrorStatus_t LmHandlerConfigure( LmHandlerParams_t *handlerParams )
+LmHandlerErrorStatus_t
+LmHandlerConfigure (LmHandlerParams_t *handlerParams, bool factoryReset)
 {
     uint16_t nbNvmData = 0;
     MibRequestConfirm_t mibReq;
@@ -357,7 +359,8 @@ LmHandlerErrorStatus_t LmHandlerConfigure( LmHandlerParams_t *handlerParams )
     }
 
     // Restore data if required
-    nbNvmData = NvmDataMgmtRestore( );
+  nbNvmData = (factoryReset != true) ? NvmDataMgmtRestore () : 0;
+
 
     // Try to restore from NVM and query the mac if possible.
     if( nbNvmData > 0 )
@@ -367,6 +370,22 @@ LmHandlerErrorStatus_t LmHandlerConfigure( LmHandlerParams_t *handlerParams )
       LoRaMacMibGetRequestConfirm (&mibReq);
       memcpy1 ((uint8_t*) &CommissioningParams.DevAddr,
 	       (uint8_t*) &mibReq.Param.DevAddr, 4);
+
+      mibReq.Type = MIB_ADR;
+      LoRaMacMibGetRequestConfirm (&mibReq);
+      memcpy1 ((uint8_t*) &LmHandlerParams.AdrEnable,
+	       (uint8_t*) &mibReq.Param.AdrEnable, 1);
+
+      mibReq.Type = MIB_PUBLIC_NETWORK;
+      LoRaMacMibGetRequestConfirm (&mibReq);
+      memcpy1 ((uint8_t*) &LmHandlerParams.PublicNetworkEnable,
+	       (uint8_t*) &mibReq.Param.EnablePublicNetwork, 1);
+
+      mibReq.Type = MIB_CHANNELS_DATARATE;
+      LoRaMacMibGetRequestConfirm (&mibReq);
+      memcpy1 ((uint8_t*) &LmHandlerParams.TxDatarate,
+	       (uint8_t*) &mibReq.Param.ChannelsDatarate, 1);
+
     }
     else
     {
@@ -536,13 +555,22 @@ void LmHandlerJoin( ActivationType_t mode )
         mibReq.Param.NetworkActivation = ACTIVATION_TYPE_ABP;
         LoRaMacMibSetRequestConfirm( &mibReq );
 
-        mlmeReq.Type = MLME_LINK_CHECK;
-        mlmeReq.Req.Join.Datarate = LmHandlerParams.TxDatarate;
-        LoRaMacMlmeRequest( &mlmeReq );
+//      LmHandlerLinkCheckReq ();
 
-        // Notify upper layer
-        LmHandlerCallbacks->OnJoinRequest( &JoinParams );
-        LmHandlerRequestClass(LmHandlerParams.DefaultClass);
+      UTIL_TIMER_Time_t nextTxIn = 0;
+      uint8_t act = 0x02;
+      LmHandlerAppData_t AppData =
+	{ .Port = 0, .BufferSize = 1, .Buffer = (uint8_t*) &act };
+
+      LmHandlerSend (&AppData, LORAMAC_HANDLER_UNCONFIRMED_MSG, &nextTxIn,
+      false);
+
+      LmHandlerCallbacks->OnMacProcess ();
+
+      // Notify upper layer
+      LmHandlerCallbacks->OnJoinRequest (&JoinParams);
+      LmHandlerRequestClass (LmHandlerParams.DefaultClass);
+
     }
 }
 
@@ -1003,6 +1031,8 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 {
     TxParams.IsMcpsConfirm = 0;
     TxParams.Status = mlmeConfirm->Status;
+  TxParams.Datarate = LmHandlerParams.TxDatarate;
+
     LmHandlerCallbacks->OnTxData( &TxParams );
 
     LmHandlerPackagesNotify( PACKAGE_MLME_CONFIRM, mlmeConfirm );
@@ -1096,13 +1126,16 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
     }
 }
 
-static void MlmeIndication( MlmeIndication_t *mlmeIndication, LoRaMacRxStatus_t *RxStatus )
+static void
+MlmeIndication (MlmeIndication_t *mlmeIndication, LoRaMacRxStatus_t *RxStatus)
 {
     RxParams.IsMcpsIndication = 0;
     RxParams.Status = mlmeIndication->Status;
     RxParams.Rssi = RxStatus->Rssi;
     RxParams.Snr = RxStatus->Snr;
     RxParams.RxSlot = RxStatus->RxSlot;
+  RxParams.Datarate = LmHandlerParams.TxDatarate;
+  RxParams.Channel = RxStatus->Channel;
     if( RxParams.Status != LORAMAC_EVENT_INFO_STATUS_BEACON_LOCKED )
     {
         LmHandlerCallbacks->OnRxData( NULL, &RxParams );
@@ -1457,7 +1490,7 @@ LmHandlerErrorStatus_t LmHandlerSetActiveRegion(LoRaMacRegion_t region)
     if (LmHandlerJoinStatus() != LORAMAC_HANDLER_SET)
     {
         LmHandlerParams.ActiveRegion = region;
-        return LmHandlerConfigure( &LmHandlerParams );
+      return LmHandlerConfigure (&LmHandlerParams, false);
     }
     else
     {
