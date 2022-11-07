@@ -1175,10 +1175,13 @@ TWiMODLRResultCodes setRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
 		}
 		else
 		{
-			if (radioStack.BandIndex != data->BandIndex)
+	  if (radioStack.BandIndex != data->BandIndex)
+	    {
 				LmHandlerSetActiveRegion(lmHParams.ActiveRegion);
-			else
-				radioStack.BandIndex = data->BandIndex;
+	      radioStack.BandIndex = 0x0A;
+	    }
+	  else
+	    radioStack.BandIndex = data->BandIndex;
 
 			radioStack.Options = data->Options;
 			lmHParams.AdrEnable =
@@ -1334,7 +1337,7 @@ TWiMODLRResultCodes getRadioStackConfig(TWiMODLORAWAN_RadioStackConfig* data, UI
             data->Options         		= radioStack.Options; //rx->Payload[offset++];
             data->PowerSavingMode 		= radioStack.PowerSavingMode; //rx->Payload[offset++];
             data->Retransmissions 		= radioStack.Retransmissions; //rx->Payload[offset++];
-            data->BandIndex       		= radioStack.BandIndex; //rx->Payload[offset++];
+      data->BandIndex = radioStack.BandIndex == 0 ? 0x0A : radioStack.BandIndex; //rx->Payload[offset++];
             data->HeaderMacCmdCapacity 	= radioStack.HeaderMacCmdCapacity; //rx->Payload[offset++];
 //
             if (WiMOD_SAP_LoRaWAN.region == LoRaWAN_Region_US915) {
