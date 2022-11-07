@@ -370,6 +370,7 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
     LED_On(LED_BLUE);
 
     UTIL_TIMER_Start(&RxLedTimer);
+      UTIL_TIMER_Stop (&JoinLedTimer);
 
     static const char *slotStrings[] = { "1", "2", "C", "C Multicast", "B Ping-Slot", "B Multicast Ping-Slot" };
 
@@ -804,7 +805,6 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
 		if ( rejoinCounter < radioStack.Retransmissions)
 		{
 	      UTIL_TIMER_Start (&JoinLedTimer);
-
 //			UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaRejoinEvent), CFG_SEQ_Prio_0);
 		}
 		else
