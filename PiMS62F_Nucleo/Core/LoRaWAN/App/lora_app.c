@@ -289,7 +289,7 @@ void LoRaWAN_Init(void)
 //  UTIL_TIMER_SetPeriod(&WakeupTimer, 10000);
   UTIL_TIMER_SetPeriod(&TxLedTimer, 500);
   UTIL_TIMER_SetPeriod(&RxLedTimer, 500);
-  UTIL_TIMER_SetPeriod(&JoinLedTimer, 500);
+  UTIL_TIMER_SetPeriod (&JoinLedTimer, 50000);
 
   /* USER CODE END LoRaWAN_Init_1 */
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LmHandlerProcess), UTIL_SEQ_RFU, LmHandlerProcess);
@@ -668,6 +668,8 @@ static void OnRxTimerLedEvent(void *context)
 static void OnJoinTimerLedEvent(void *context)
 {
   LED_Toggle(LED_RED1) ;
+  UTIL_TIMER_Stop (&JoinLedTimer);
+  UTIL_SEQ_SetTask ((1 << CFG_SEQ_Task_LoRaRejoinEvent), CFG_SEQ_Prio_0);
 }
 
 /* USER CODE END PrFD_LedEvents */
@@ -727,7 +729,9 @@ static void OnTxData(LmHandlerTxParams_t *params)
     } else {
 
     	//Number TX packet
-		tx->Payload[3] = params->UplinkCounter;
+	  tx->Payload[3] =
+	      params->UplinkCounter == 0 ?
+		  rejoinCounter : params->UplinkCounter;
 
 		WiMOD_SAP_LoRaWAN.HciParser->PostMessage(
 			LORAWAN_SAP_ID,
@@ -749,7 +753,7 @@ static void OnTxData(LmHandlerTxParams_t *params)
 static void JoinRequest( void )
 {
   rejoinCounter = 0;
-  UTIL_TIMER_Start (&JoinLedTimer);
+//  UTIL_TIMER_Start (&JoinLedTimer);
 
   LmHandlerJoin (ActivationType);
 
@@ -799,7 +803,9 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
 
 		if ( rejoinCounter < radioStack.Retransmissions)
 		{
-			UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaRejoinEvent), CFG_SEQ_Prio_0);
+	      UTIL_TIMER_Start (&JoinLedTimer);
+
+//			UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaRejoinEvent), CFG_SEQ_Prio_0);
 		}
 		else
 		{

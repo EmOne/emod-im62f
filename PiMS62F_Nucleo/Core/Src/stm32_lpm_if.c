@@ -149,7 +149,7 @@ void PWR_EnterStopMode(void)
 
   ulp_SystemClock_Config ();
 
-  __HAL_RCC_LSI_DISABLE();
+//  __HAL_RCC_LSI_DISABLE();
    /*clear wake up flag*/
   SET_BIT(PWR->CR, PWR_CR_CWUF);
 

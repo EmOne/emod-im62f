@@ -170,11 +170,18 @@ uint16_t NvmDataMgmtRestore( void )
     LoRaMacNvmData_t* nvm = mibReq.Param.Contexts;
     uint16_t offset = 0;
 
+  LoRaMacNvmData_t backup = *nvm;
+
+
     // Crypto
   if (NvmmCrc32Check (sizeof(LoRaMacCryptoNvmData_t), offset) == true)
     {
       NvmmRead ((uint8_t*) &nvm->Crypto, sizeof(LoRaMacCryptoNvmData_t),
 		offset);
+      if (nvm->Crypto.Crc32 == 0)
+	{
+	  nvm->Crypto = backup.Crypto;
+	}
     }
     offset += sizeof( LoRaMacCryptoNvmData_t );
 
@@ -183,6 +190,10 @@ uint16_t NvmDataMgmtRestore( void )
     {
       NvmmRead ((uint8_t*) &nvm->MacGroup1, sizeof(LoRaMacNvmDataGroup1_t),
 		offset);
+      if (nvm->MacGroup1.Crc32 == 0)
+	{
+	  nvm->MacGroup1 = backup.MacGroup1;
+	}
     }
     offset += sizeof( LoRaMacNvmDataGroup1_t );
 
@@ -191,6 +202,10 @@ uint16_t NvmDataMgmtRestore( void )
     {
       NvmmRead ((uint8_t*) &nvm->MacGroup2, sizeof(LoRaMacNvmDataGroup2_t),
 		offset);
+      if (nvm->MacGroup2.Crc32 == 0)
+	{
+	  nvm->MacGroup2 = backup.MacGroup2;
+	}
 //      return 0;
     }
     offset += sizeof( LoRaMacNvmDataGroup2_t );
@@ -200,6 +215,10 @@ uint16_t NvmDataMgmtRestore( void )
     {
       NvmmRead ((uint8_t*) &nvm->SecureElement, sizeof(SecureElementNvmData_t),
 		offset);
+      if (nvm->SecureElement.Crc32 == 0)
+	{
+	  nvm->SecureElement = backup.SecureElement;
+	}
 //      return 0;
     }
     offset += sizeof( SecureElementNvmData_t );
@@ -209,6 +228,10 @@ uint16_t NvmDataMgmtRestore( void )
     {
       NvmmRead ((uint8_t*) &nvm->RegionGroup1, sizeof(RegionNvmDataGroup1_t),
 		offset);
+      if (nvm->RegionGroup1.Crc32 == 0)
+	{
+	  nvm->RegionGroup1 = backup.RegionGroup1;
+	}
     }
     offset += sizeof( RegionNvmDataGroup1_t );
 
@@ -217,6 +240,10 @@ uint16_t NvmDataMgmtRestore( void )
     {
       NvmmRead ((uint8_t*) &nvm->RegionGroup2, sizeof(RegionNvmDataGroup2_t),
 		offset);
+      if (nvm->RegionGroup2.Crc32 == 0)
+	{
+	  nvm->RegionGroup2 = backup.RegionGroup2;
+	}
     }
     offset += sizeof( RegionNvmDataGroup2_t );
 
@@ -225,6 +252,10 @@ uint16_t NvmDataMgmtRestore( void )
     {
       NvmmRead ((uint8_t*) &nvm->ClassB, sizeof(LoRaMacClassBNvmData_t),
 		offset);
+      if (nvm->ClassB.Crc32 == 0)
+	{
+	  nvm->ClassB = backup.ClassB;
+	}
     }
     offset += sizeof( LoRaMacClassBNvmData_t );
 
