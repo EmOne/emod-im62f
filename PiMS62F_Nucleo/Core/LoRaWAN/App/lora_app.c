@@ -518,6 +518,14 @@ static void OnRxData(LmHandlerAppData_t *appData, LmHandlerRxParams_t *params)
 	      mibSet.Param.Class = CLASS_A;
 	      LoRaMacMibSetRequestConfirm (&mibSet);
 	      LoRaMacStart ();
+				UTIL_TIMER_Time_t nextTxIn = 0;
+				uint8_t act = 0x02;
+				LmHandlerAppData_t AppData = { .Port = 0, .BufferSize = 1,
+						.Buffer = (uint8_t*) &act };
+
+				LmHandlerSend(&AppData, LORAMAC_HANDLER_UNCONFIRMED_MSG,
+						&nextTxIn,
+						false);
 				UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_ENABLE);
 
 			} else {
