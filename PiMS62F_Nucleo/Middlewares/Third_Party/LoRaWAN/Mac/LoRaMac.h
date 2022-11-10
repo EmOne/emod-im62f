@@ -1311,6 +1311,11 @@ typedef struct sMlmeConfirm
      * The channel of the next beacon
      */
     uint8_t BeaconTimingChannel;
+
+	/*!
+	 * The channel
+	 */
+	uint8_t Channel;
 }MlmeConfirm_t;
 
 /*!

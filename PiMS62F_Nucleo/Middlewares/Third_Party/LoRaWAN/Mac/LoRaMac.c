@@ -2882,6 +2882,7 @@ static LoRaMacStatus_t SendFrameOnChannel( uint8_t channel )
     // Store the time on air
     MacCtx.McpsConfirm.TxTimeOnAir = MacCtx.TxTimeOnAir;
     MacCtx.MlmeConfirm.TxTimeOnAir = MacCtx.TxTimeOnAir;
+	MacCtx.MlmeConfirm.Channel = channel;
 
     if( LoRaMacClassBIsBeaconModeActive( ) == true )
     {

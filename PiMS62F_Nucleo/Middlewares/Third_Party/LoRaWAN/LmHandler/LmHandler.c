@@ -1031,7 +1031,9 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 {
     TxParams.IsMcpsConfirm = 0;
     TxParams.Status = mlmeConfirm->Status;
-  TxParams.Datarate = LmHandlerParams.TxDatarate;
+	TxParams.Datarate = LmHandlerParams.TxDatarate;
+	TxParams.UplinkCounter = mlmeConfirm->NbRetries;
+	TxParams.Channel = mlmeConfirm->Channel;
 
     LmHandlerCallbacks->OnTxData( &TxParams );
 
@@ -1040,7 +1042,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
     switch( mlmeConfirm->MlmeRequest )
     {
     case MLME_JOIN:
-        {
+	{
             MibRequestConfirm_t mibReq;
             mibReq.Type = MIB_DEV_ADDR;
             LoRaMacMibGetRequestConfirm( &mibReq );

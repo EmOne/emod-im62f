@@ -805,7 +805,7 @@ static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
 		if ( rejoinCounter < radioStack.Retransmissions)
 		{
 	      UTIL_TIMER_Start (&JoinLedTimer);
-//			UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaRejoinEvent), CFG_SEQ_Prio_0);
+				UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_DISABLE);
 		}
 		else
 		{
