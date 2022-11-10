@@ -460,7 +460,8 @@ void RTC_WKUP_IRQHandler( void )
   /* USER CODE END RTC_WKUP_IRQn 0 */
 	HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
   /* USER CODE BEGIN RTC_WKUP_IRQn 1 */
-	if (EmWimodData.ReceiveFrmUserRequest) {
+	if (EmWimodData.ReceiveFrmUserRequest)
+	{
 		WiMODLoRaWAN.Process(&TWiMODLRHCI.Rx.Message);
 		EmWimodData.ReceiveFrmUserRequest = 0x0;
 		memset(&Rx2_buffer, 0x00, kMaxUARTPayloadSize);

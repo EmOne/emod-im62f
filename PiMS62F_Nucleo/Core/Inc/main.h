@@ -66,8 +66,8 @@ void UART2_ReInit (void);
 
 /* Private defines -----------------------------------------------------------*/
 #define RTC_N_PREDIV_S 10
-#define RTC_PREDIV_S ((1<<RTC_N_PREDIV_S)-1) //1023
-#define RTC_PREDIV_A ((1<<(15-RTC_N_PREDIV_S))-1) //31
+#define RTC_PREDIV_S ((1<<RTC_N_PREDIV_S)-1) //1023  295//1155
+#define RTC_PREDIV_A 35 //((1<<(15-RTC_N_PREDIV_S))-1) //31 124//
 #define USART_BAUDRATE 115200
 
 #if defined (USE_EMOD_IMS62F)

@@ -335,20 +335,24 @@ bool S62F_RADIO_BoardIsTcxo(void)
 
 void S62F_RADIO_BoardSetLedTx( bool state )
 {
+#if defined (DEBUGGER_ENABLED) && ( DEBUGGER_ENABLED == 1 )
 	if (state == false)	{
 		HAL_GPIO_WritePin(RADIO_LEDTX_PORT, RADIO_LEDTX_PIN, GPIO_PIN_RESET);
 	} else {
 		HAL_GPIO_WritePin(RADIO_LEDTX_PORT, RADIO_LEDTX_PIN, GPIO_PIN_SET);
 	}
+#endif
 }
 
 void S62F_RADIO_BoardSetLedRx( bool state )
 {
+#if defined (DEBUGGER_ENABLED) && ( DEBUGGER_ENABLED == 1 )
 	if (state == false) {
 		HAL_GPIO_WritePin(RADIO_LEDRX_PORT, RADIO_LEDRX_PIN, GPIO_PIN_RESET);
 	} else {
 		HAL_GPIO_WritePin(RADIO_LEDRX_PORT, RADIO_LEDRX_PIN, GPIO_PIN_SET);
 	}
+#endif
 }
 
 /* Bus mapping to SPI */

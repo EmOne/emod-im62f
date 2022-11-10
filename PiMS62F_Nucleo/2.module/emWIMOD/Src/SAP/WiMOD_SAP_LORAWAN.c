@@ -532,6 +532,7 @@ TWiMODLRResultCodes sendUData(const TWiMODLORAWAN_TX_Data *data,
 		appData.Buffer = (uint8_t *)&data->Payload;
 		MsgType = LORAMAC_HANDLER_UNCONFIRMED_MSG;
 
+		LoRaMacStart();
 		LmHandlerSend(&appData, LORAMAC_HANDLER_UNCONFIRMED_MSG, &u32CreditTime, false);
 
 //		UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent), CFG_SEQ_Prio_0);
